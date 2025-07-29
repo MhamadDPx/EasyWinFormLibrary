@@ -52,7 +52,7 @@ namespace EasyWinFormLibrary.Extension
                 return "0";
             if (!double.TryParse(value, out double result))
                 return "0";
-            int actualRoundNumber = roundNumber ?? LibrarySetting.NumberDefaultRound;
+            int actualRoundNumber = roundNumber ?? LibrarySettings.NumberDefaultRound;
             return result.ToString($"n{actualRoundNumber}");
         }
 

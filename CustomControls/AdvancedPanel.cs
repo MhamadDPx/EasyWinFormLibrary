@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace EasyWinFormLibrary.CustomControls
 {
@@ -25,16 +27,50 @@ namespace EasyWinFormLibrary.CustomControls
         Bump
     }
 
-    #endregion
     /// <summary>
-    /// Advanced Panel control with custom border styling, gradient backgrounds, and enhanced visual effects.
-    /// Supports rounded corners, gradient fills, custom borders, and shadow effects.
-    /// Optimized for .NET Framework 4.8 with designer support and comprehensive customization options.
+    /// Preset style options
+    /// </summary>
+    public enum PresetStyle
+    {
+        Modern,
+        Classic,
+        Flat,
+        Card,
+        Neon
+    }
+
+    #endregion
+
+    /// <summary>
+    /// High-performance Advanced Panel control using Windows API for rounded corners and visual effects.
+    /// Supports rounded corners, gradient backgrounds, custom borders, shadow effects, and 3D styling.
+    /// Optimized for .NET Framework 4.8 with hardware acceleration and intelligent caching.
     /// </summary>
     [ToolboxItem(true)]
     [Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design")]
     public class AdvancedPanel : Panel
     {
+        #region Windows API Declarations
+        [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn(
+            int nLeftRect, int nTopRect, int nRightRect, int nBottomRect,
+            int nWidthEllipse, int nHeightEllipse);
+
+        [DllImport("gdi32.dll")]
+        private static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("user32.dll")]
+        private static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool bRedraw);
+
+        [DllImport("gdi32.dll")]
+        private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
+        [DllImport("gdi32.dll")]
+        private static extern int CombineRgn(IntPtr hrgnDest, IntPtr hrgnSrc1, IntPtr hrgnSrc2, int fnCombineMode);
+
+        // Region combine modes
+        private const int RGN_COPY = 5;
+        #endregion
 
         #region Private Fields
 
@@ -53,6 +89,16 @@ namespace EasyWinFormLibrary.CustomControls
         private Color _highlightColor = Color.White;
         private Color _shadowBorderColor = Color.Gray;
 
+        // Performance optimization fields
+        private IntPtr _currentRegion = IntPtr.Zero;
+        private Size _lastSize = Size.Empty;
+        private int _lastRadius = -1;
+        private bool _regionUpdateRequired = true;
+
+        // Region caching for better performance
+        private static readonly Dictionary<string, IntPtr> _regionCache = new Dictionary<string, IntPtr>();
+        private const int MAX_CACHE_SIZE = 30;
+
         #endregion
 
         #region Properties
@@ -70,9 +116,14 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (value < 0) value = 0;
                 if (value > Math.Min(Width, Height) / 2) value = Math.Min(Width, Height) / 2;
-                
-                _borderRadius = value;
-                Invalidate();
+
+                if (_borderRadius != value)
+                {
+                    _borderRadius = value;
+                    _regionUpdateRequired = true;
+                    UpdateRegionIfNeeded();
+                    Invalidate();
+                }
             }
         }
 
@@ -89,9 +140,12 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (value < 0) value = 0;
                 if (value > 20) value = 20;
-                
-                _borderThickness = value;
-                Invalidate();
+
+                if (_borderThickness != value)
+                {
+                    _borderThickness = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -106,8 +160,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _borderColor; }
             set
             {
-                _borderColor = value;
-                Invalidate();
+                if (_borderColor != value)
+                {
+                    _borderColor = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -122,8 +179,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _useGradient; }
             set
             {
-                _useGradient = value;
-                Invalidate();
+                if (_useGradient != value)
+                {
+                    _useGradient = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -138,8 +198,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _gradientStartColor; }
             set
             {
-                _gradientStartColor = value;
-                if (_useGradient) Invalidate();
+                if (_gradientStartColor != value)
+                {
+                    _gradientStartColor = value;
+                    if (_useGradient) Invalidate();
+                }
             }
         }
 
@@ -154,8 +217,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _gradientEndColor; }
             set
             {
-                _gradientEndColor = value;
-                if (_useGradient) Invalidate();
+                if (_gradientEndColor != value)
+                {
+                    _gradientEndColor = value;
+                    if (_useGradient) Invalidate();
+                }
             }
         }
 
@@ -170,8 +236,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _gradientDirection; }
             set
             {
-                _gradientDirection = value;
-                if (_useGradient) Invalidate();
+                if (_gradientDirection != value)
+                {
+                    _gradientDirection = value;
+                    if (_useGradient) Invalidate();
+                }
             }
         }
 
@@ -186,8 +255,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _enableShadow; }
             set
             {
-                _enableShadow = value;
-                Invalidate();
+                if (_enableShadow != value)
+                {
+                    _enableShadow = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -202,8 +274,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _shadowColor; }
             set
             {
-                _shadowColor = value;
-                if (_enableShadow) Invalidate();
+                if (_shadowColor != value)
+                {
+                    _shadowColor = value;
+                    if (_enableShadow) Invalidate();
+                }
             }
         }
 
@@ -220,9 +295,12 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (value < 0) value = 0;
                 if (value > 20) value = 20;
-                
-                _shadowOffset = value;
-                if (_enableShadow) Invalidate();
+
+                if (_shadowOffset != value)
+                {
+                    _shadowOffset = value;
+                    if (_enableShadow) Invalidate();
+                }
             }
         }
 
@@ -239,9 +317,12 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (value < 0) value = 0;
                 if (value > 20) value = 20;
-                
-                _shadowBlur = value;
-                if (_enableShadow) Invalidate();
+
+                if (_shadowBlur != value)
+                {
+                    _shadowBlur = value;
+                    if (_enableShadow) Invalidate();
+                }
             }
         }
 
@@ -256,8 +337,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _borderStyle; }
             set
             {
-                _borderStyle = value;
-                Invalidate();
+                if (_borderStyle != value)
+                {
+                    _borderStyle = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -272,8 +356,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _highlightColor; }
             set
             {
-                _highlightColor = value;
-                if (_borderStyle != BorderStyle3D.None) Invalidate();
+                if (_highlightColor != value)
+                {
+                    _highlightColor = value;
+                    if (_borderStyle != BorderStyle3D.None) Invalidate();
+                }
             }
         }
 
@@ -288,8 +375,11 @@ namespace EasyWinFormLibrary.CustomControls
             get { return _shadowBorderColor; }
             set
             {
-                _shadowBorderColor = value;
-                if (_borderStyle != BorderStyle3D.None) Invalidate();
+                if (_shadowBorderColor != value)
+                {
+                    _shadowBorderColor = value;
+                    if (_borderStyle != BorderStyle3D.None) Invalidate();
+                }
             }
         }
 
@@ -303,13 +393,96 @@ namespace EasyWinFormLibrary.CustomControls
         public AdvancedPanel()
         {
             // Enable double buffering for smooth rendering
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | 
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
                      ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 
             // Set default properties
             BackColor = Color.Transparent;
             Size = new Size(200, 100);
+        }
+
+        #endregion
+
+        #region High-Performance Region Management
+
+        /// <summary>
+        /// Updates the control's region using Windows API for better performance
+        /// </summary>
+        private void UpdateRegionIfNeeded()
+        {
+            if (!IsHandleCreated || (!_regionUpdateRequired && Size == _lastSize && _borderRadius == _lastRadius))
+                return;
+
+            try
+            {
+                CleanupCurrentRegion();
+
+                if (_borderRadius > 0)
+                {
+                    // Try to get from cache first
+                    string cacheKey = $"{Width}x{Height}x{_borderRadius}";
+
+                    IntPtr hRgn = IntPtr.Zero;
+
+                    if (_regionCache.ContainsKey(cacheKey))
+                    {
+                        // Create a copy of cached region
+                        IntPtr cachedRgn = _regionCache[cacheKey];
+                        hRgn = CreateRectRgn(0, 0, 0, 0);
+                        CombineRgn(hRgn, cachedRgn, IntPtr.Zero, RGN_COPY);
+                    }
+                    else
+                    {
+                        // Create new rounded region using Windows API
+                        hRgn = CreateRoundRectRgn(0, 0, Width, Height, _borderRadius * 2, _borderRadius * 2);
+
+                        // Cache the region if cache isn't full
+                        if (_regionCache.Count < MAX_CACHE_SIZE && hRgn != IntPtr.Zero)
+                        {
+                            IntPtr cacheRgn = CreateRectRgn(0, 0, 0, 0);
+                            CombineRgn(cacheRgn, hRgn, IntPtr.Zero, RGN_COPY);
+                            _regionCache[cacheKey] = cacheRgn;
+                        }
+                    }
+
+                    if (hRgn != IntPtr.Zero)
+                    {
+                        // Apply the region using Windows API
+                        SetWindowRgn(Handle, hRgn, true);
+                        _currentRegion = hRgn;
+                    }
+                }
+                else
+                {
+                    // Remove region for rectangular panels
+                    SetWindowRgn(Handle, IntPtr.Zero, true);
+                }
+
+                _lastSize = Size;
+                _lastRadius = _borderRadius;
+                _regionUpdateRequired = false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating region: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Cleans up the current region
+        /// </summary>
+        private void CleanupCurrentRegion()
+        {
+            if (_currentRegion != IntPtr.Zero)
+            {
+                // Don't delete cached regions
+                if (!_regionCache.ContainsValue(_currentRegion))
+                {
+                    DeleteObject(_currentRegion);
+                }
+                _currentRegion = IntPtr.Zero;
+            }
         }
 
         #endregion
@@ -322,9 +495,13 @@ namespace EasyWinFormLibrary.CustomControls
         /// <param name="e">Paint event arguments</param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            // Don't call base.OnPaint to have full control over rendering
+            // Ensure region is up to date
+            UpdateRegionIfNeeded();
+
+            // Use high-quality rendering
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
 
             // Calculate drawing rectangle (account for shadow if enabled)
             Rectangle drawRect = GetDrawingRectangle();
@@ -332,14 +509,14 @@ namespace EasyWinFormLibrary.CustomControls
             // Draw shadow first if enabled
             if (_enableShadow)
             {
-                DrawShadow(e.Graphics, drawRect);
+                DrawShadowOptimized(e.Graphics, drawRect);
             }
 
             // Draw background
-            DrawBackground(e.Graphics, drawRect);
+            DrawBackgroundOptimized(e.Graphics, drawRect);
 
             // Draw border
-            DrawBorder(e.Graphics, drawRect);
+            DrawBorderOptimized(e.Graphics, drawRect);
 
             // Draw 3D effects if enabled
             if (_borderStyle != BorderStyle3D.None)
@@ -355,29 +532,41 @@ namespace EasyWinFormLibrary.CustomControls
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            
+
             // Ensure border radius doesn't exceed panel dimensions
             int maxRadius = Math.Min(Width, Height) / 2;
             if (_borderRadius > maxRadius)
             {
                 _borderRadius = maxRadius;
             }
-            
+
+            _regionUpdateRequired = true;
+            UpdateRegionIfNeeded();
             Invalidate();
         }
 
         /// <summary>
-        /// Creates the region for the panel based on border radius
+        /// Handle creation to ensure region is set
         /// </summary>
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            UpdateRegion();
+            _regionUpdateRequired = true;
+            UpdateRegionIfNeeded();
+        }
+
+        /// <summary>
+        /// Handle destruction to clean up resources
+        /// </summary>
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            CleanupCurrentRegion();
+            base.OnHandleDestroyed(e);
         }
 
         #endregion
 
-        #region Drawing Methods
+        #region Optimized Drawing Methods
 
         /// <summary>
         /// Gets the rectangle used for drawing, accounting for shadows and borders
@@ -386,14 +575,14 @@ namespace EasyWinFormLibrary.CustomControls
         private Rectangle GetDrawingRectangle()
         {
             Rectangle rect = ClientRectangle;
-            
+
             // Account for shadow
             if (_enableShadow)
             {
                 rect.Width -= _shadowOffset + _shadowBlur;
                 rect.Height -= _shadowOffset + _shadowBlur;
             }
-            
+
             // Account for border thickness
             if (_borderThickness > 0)
             {
@@ -403,16 +592,14 @@ namespace EasyWinFormLibrary.CustomControls
                 rect.Width -= _borderThickness;
                 rect.Height -= _borderThickness;
             }
-            
+
             return rect;
         }
 
         /// <summary>
-        /// Draws the drop shadow effect
+        /// Optimized shadow drawing with reduced GDI+ calls
         /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="drawRect">Drawing rectangle</param>
-        private void DrawShadow(Graphics graphics, Rectangle drawRect)
+        private void DrawShadowOptimized(Graphics graphics, Rectangle drawRect)
         {
             // Create shadow rectangle
             Rectangle shadowRect = new Rectangle(
@@ -421,62 +608,41 @@ namespace EasyWinFormLibrary.CustomControls
                 drawRect.Width,
                 drawRect.Height
             );
-            
-            // Create shadow brush with gradient for blur effect
-            using (var shadowBrush = new SolidBrush(_shadowColor))
+
+            // Use simplified shadow drawing for better performance
+            int blurSteps = Math.Min(_shadowBlur, 8); // Limit blur steps for performance
+
+            for (int i = 0; i < blurSteps; i++)
             {
-                if (_borderRadius > 0)
+                int alpha = Math.Max(1, _shadowColor.A * (blurSteps - i) / blurSteps);
+                using (var shadowBrush = new SolidBrush(Color.FromArgb(alpha / 2, _shadowColor)))
                 {
-                    using (var shadowPath = CreateRoundedRectanglePath(shadowRect, _borderRadius))
+                    Rectangle blurRect = new Rectangle(
+                        shadowRect.X - i,
+                        shadowRect.Y - i,
+                        shadowRect.Width + (i * 2),
+                        shadowRect.Height + (i * 2)
+                    );
+
+                    if (_borderRadius > 0)
                     {
-                        // Draw multiple shadow layers for blur effect
-                        for (int i = 0; i < _shadowBlur; i++)
+                        using (var shadowPath = CreateRoundedRectanglePath(blurRect, _borderRadius + i))
                         {
-                            int alpha = Math.Max(1, _shadowColor.A * (1 - i) / _shadowBlur);
-                            using (var blurBrush = new SolidBrush(Color.FromArgb(alpha, _shadowColor)))
-                            {
-                                Rectangle blurRect = new Rectangle(
-                                    shadowRect.X - i,
-                                    shadowRect.Y - i,
-                                    shadowRect.Width + (i * 2),
-                                    shadowRect.Height + (i * 2)
-                                );
-                                
-                                using (var blurPath = CreateRoundedRectanglePath(blurRect, _borderRadius + i))
-                                {
-                                    graphics.FillPath(blurBrush, blurPath);
-                                }
-                            }
+                            graphics.FillPath(shadowBrush, shadowPath);
                         }
                     }
-                }
-                else
-                {
-                    // Draw rectangular shadow with blur
-                    for (int i = 0; i < _shadowBlur; i++)
+                    else
                     {
-                        int alpha = Math.Max(1, _shadowColor.A * (1 - i) / _shadowBlur);
-                        using (var blurBrush = new SolidBrush(Color.FromArgb(alpha, _shadowColor)))
-                        {
-                            Rectangle blurRect = new Rectangle(
-                                shadowRect.X - i,
-                                shadowRect.Y - i,
-                                shadowRect.Width + (i * 2),
-                                shadowRect.Height + (i * 2)
-                            );
-                            graphics.FillRectangle(blurBrush, blurRect);
-                        }
+                        graphics.FillRectangle(shadowBrush, blurRect);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Draws the background of the panel
+        /// Optimized background drawing
         /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="drawRect">Drawing rectangle</param>
-        private void DrawBackground(Graphics graphics, Rectangle drawRect)
+        private void DrawBackgroundOptimized(Graphics graphics, Rectangle drawRect)
         {
             if (drawRect.Width <= 0 || drawRect.Height <= 0) return;
 
@@ -500,7 +666,7 @@ namespace EasyWinFormLibrary.CustomControls
             }
             else if (BackColor != Color.Transparent)
             {
-                // Draw solid background
+                // Draw solid background - use Windows API region clipping for rounded corners
                 using (var backgroundBrush = new SolidBrush(BackColor))
                 {
                     if (_borderRadius > 0)
@@ -519,11 +685,9 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Draws the border of the panel
+        /// Optimized border drawing
         /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="drawRect">Drawing rectangle</param>
-        private void DrawBorder(Graphics graphics, Rectangle drawRect)
+        private void DrawBorderOptimized(Graphics graphics, Rectangle drawRect)
         {
             if (_borderThickness <= 0) return;
 
@@ -554,7 +718,7 @@ namespace EasyWinFormLibrary.CustomControls
 
             Color lightColor = _highlightColor;
             Color darkColor = _shadowBorderColor;
-            
+
             // Adjust colors based on border style
             switch (_borderStyle)
             {
@@ -584,7 +748,7 @@ namespace EasyWinFormLibrary.CustomControls
                 // Top and left edges (light)
                 graphics.DrawLine(lightPen, rect.Left, rect.Top, rect.Right - 1, rect.Top);
                 graphics.DrawLine(lightPen, rect.Left, rect.Top, rect.Left, rect.Bottom - 1);
-                
+
                 // Bottom and right edges (dark)
                 graphics.DrawLine(darkPen, rect.Right - 1, rect.Top + 1, rect.Right - 1, rect.Bottom - 1);
                 graphics.DrawLine(darkPen, rect.Left + 1, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
@@ -602,7 +766,7 @@ namespace EasyWinFormLibrary.CustomControls
                 // Top and left edges (dark)
                 graphics.DrawLine(darkPen, rect.Left, rect.Top, rect.Right - 1, rect.Top);
                 graphics.DrawLine(darkPen, rect.Left, rect.Top, rect.Left, rect.Bottom - 1);
-                
+
                 // Bottom and right edges (light)
                 graphics.DrawLine(lightPen, rect.Right - 1, rect.Top + 1, rect.Right - 1, rect.Bottom - 1);
                 graphics.DrawLine(lightPen, rect.Left + 1, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
@@ -616,7 +780,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             Rectangle outerRect = rect;
             Rectangle innerRect = new Rectangle(rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2);
-            
+
             DrawSunken3DBorder(graphics, outerRect, lightColor, darkColor);
             DrawRaised3DBorder(graphics, innerRect, lightColor, darkColor);
         }
@@ -628,7 +792,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             Rectangle outerRect = rect;
             Rectangle innerRect = new Rectangle(rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2);
-            
+
             DrawRaised3DBorder(graphics, outerRect, lightColor, darkColor);
             DrawSunken3DBorder(graphics, innerRect, lightColor, darkColor);
         }
@@ -642,52 +806,34 @@ namespace EasyWinFormLibrary.CustomControls
         private GraphicsPath CreateRoundedRectanglePath(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
-            
+
             if (radius <= 0)
             {
                 path.AddRectangle(rect);
                 return path;
             }
-            
+
             int diameter = radius * 2;
             Size size = new Size(diameter, diameter);
             Rectangle arc = new Rectangle(rect.Location, size);
-            
+
             // Top left arc
             path.AddArc(arc, 180, 90);
-            
+
             // Top right arc
             arc.X = rect.Right - diameter;
             path.AddArc(arc, 270, 90);
-            
+
             // Bottom right arc
             arc.Y = rect.Bottom - diameter;
             path.AddArc(arc, 0, 90);
-            
+
             // Bottom left arc
             arc.X = rect.Left;
             path.AddArc(arc, 90, 90);
-            
+
             path.CloseFigure();
             return path;
-        }
-
-        /// <summary>
-        /// Updates the control's region based on border radius
-        /// </summary>
-        private void UpdateRegion()
-        {
-            if (_borderRadius > 0)
-            {
-                using (var path = CreateRoundedRectanglePath(ClientRectangle, _borderRadius))
-                {
-                    Region = new Region(path);
-                }
-            }
-            else
-            {
-                Region = null;
-            }
         }
 
         #endregion
@@ -717,10 +863,18 @@ namespace EasyWinFormLibrary.CustomControls
         /// <param name="color">Border color</param>
         public void SetBorder(int radius, int thickness, Color color)
         {
+            bool radiusChanged = _borderRadius != Math.Max(0, radius);
+
             _borderRadius = Math.Max(0, radius);
             _borderThickness = Math.Max(0, thickness);
             _borderColor = color;
-            UpdateRegion();
+
+            if (radiusChanged)
+            {
+                _regionUpdateRequired = true;
+                UpdateRegionIfNeeded();
+            }
+
             Invalidate();
         }
 
@@ -737,6 +891,16 @@ namespace EasyWinFormLibrary.CustomControls
             _shadowColor = color;
             _shadowOffset = Math.Max(0, offset);
             _shadowBlur = Math.Max(0, blur);
+            Invalidate();
+        }
+
+        /// <summary>
+        /// Forces region update - useful for troubleshooting
+        /// </summary>
+        public void RefreshRegion()
+        {
+            _regionUpdateRequired = true;
+            UpdateRegionIfNeeded();
             Invalidate();
         }
 
@@ -768,29 +932,52 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
-        #region Preset Styles
+        #region Static Cache Management
 
         /// <summary>
-        /// Preset style options
+        /// Clears the region cache to free memory
         /// </summary>
-        public enum PresetStyle
+        public static void ClearRegionCache()
         {
-            Modern,
-            Classic,
-            Flat,
-            Card,
-            Neon
+            foreach (var region in _regionCache.Values)
+            {
+                DeleteObject(region);
+            }
+            _regionCache.Clear();
         }
+
+        /// <summary>
+        /// Gets the current region cache size
+        /// </summary>
+        /// <returns>Number of cached regions</returns>
+        public static int GetRegionCacheSize()
+        {
+            return _regionCache.Count;
+        }
+
+        /// <summary>
+        /// Gets region cache information
+        /// </summary>
+        /// <returns>Cache statistics</returns>
+        public static string GetRegionCacheInfo()
+        {
+            return $"Region Cache: {_regionCache.Count}/{MAX_CACHE_SIZE}";
+        }
+
+        #endregion
+
+        #region Preset Styles
 
         /// <summary>
         /// Applies modern style preset
         /// </summary>
         private void ApplyModernStyle()
         {
-            SetBorder(10, 1, Color.FromArgb(200, 200, 200));
+            SetBorder(12, 1, Color.FromArgb(200, 200, 200));
             SetGradient(Color.FromArgb(250, 250, 250), Color.FromArgb(240, 240, 240), LinearGradientMode.Vertical);
-            SetShadow(true, Color.FromArgb(30, 0, 0, 0), 2, 4);
+            SetShadow(true, Color.FromArgb(30, 0, 0, 0), 3, 6);
             _borderStyle = BorderStyle3D.None;
+            Invalidate();
         }
 
         /// <summary>
@@ -803,6 +990,9 @@ namespace EasyWinFormLibrary.CustomControls
             BackColor = SystemColors.Control;
             _enableShadow = false;
             _borderStyle = BorderStyle3D.Raised;
+            _highlightColor = Color.White;
+            _shadowBorderColor = Color.Gray;
+            Invalidate();
         }
 
         /// <summary>
@@ -815,6 +1005,7 @@ namespace EasyWinFormLibrary.CustomControls
             BackColor = Color.White;
             _enableShadow = false;
             _borderStyle = BorderStyle3D.None;
+            Invalidate();
         }
 
         /// <summary>
@@ -822,11 +1013,12 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         private void ApplyCardStyle()
         {
-            SetBorder(8, 0, Color.Transparent);
+            SetBorder(10, 0, Color.Transparent);
             _useGradient = false;
             BackColor = Color.White;
-            SetShadow(true, Color.FromArgb(25, 0, 0, 0), 4, 8);
+            SetShadow(true, Color.FromArgb(25, 0, 0, 0), 4, 10);
             _borderStyle = BorderStyle3D.None;
+            Invalidate();
         }
 
         /// <summary>
@@ -834,15 +1026,16 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         private void ApplyNeonStyle()
         {
-            SetBorder(15, 2, Color.FromArgb(0, 255, 255));
+            SetBorder(18, 3, Color.FromArgb(0, 255, 255));
             SetGradient(Color.FromArgb(20, 20, 40), Color.FromArgb(40, 40, 80), LinearGradientMode.Vertical);
-            SetShadow(true, Color.FromArgb(100, 0, 255, 255), 0, 10);
+            SetShadow(true, Color.FromArgb(120, 0, 255, 255), 0, 12);
             _borderStyle = BorderStyle3D.None;
+            Invalidate();
         }
 
         #endregion
 
-        #region Designer Support
+        #region Designer Support and Cleanup
 
         /// <summary>
         /// Provides design-time support for the control
@@ -851,6 +1044,27 @@ namespace EasyWinFormLibrary.CustomControls
         {
             get { return true; }
             set { base.DoubleBuffered = value; }
+        }
+
+        /// <summary>
+        /// Clean up any resources being used
+        /// </summary>
+        /// <param name="disposing">True if managed resources should be disposed</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                CleanupCurrentRegion();
+            }
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Finalizer to ensure native resources are cleaned up
+        /// </summary>
+        ~AdvancedPanel()
+        {
+            CleanupCurrentRegion();
         }
 
         #endregion

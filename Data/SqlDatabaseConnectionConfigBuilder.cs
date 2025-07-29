@@ -12,6 +12,8 @@ namespace EasyWinFormLibrary.Data
         private string _password;
         private string _authUserId;
         private bool _sqlActionsLocked = true;
+
+        public static SqlDatabaseConnectionConfig SelectedDatabaseConfig;
         public SqlDatabaseConnectionConfigBuilder SetServerName(string serverName)
         {
             _serverName = serverName;
@@ -60,6 +62,11 @@ namespace EasyWinFormLibrary.Data
         public SqlDatabaseConnectionConfig Build()
         {
             return new SqlDatabaseConnectionConfig(_serverName, _databaseName, _databaseYear, _port, _integratedSecurity, _userId, _password, _authUserId, _sqlActionsLocked);
+        }
+
+        public static void SelectDatabase(SqlDatabaseConnectionConfig config)
+        {
+            SelectedDatabaseConfig = config;
         }
     }
 }

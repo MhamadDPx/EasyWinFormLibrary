@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.CustomControls
 {
-    public partial class FormTopMenuBar : UserControl
+    public partial class AdvancedFormTopMenuBar : UserControl
     {
         #region Private Fields
         private string _englishTitle = string.Empty;
@@ -122,7 +122,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Initializes a new instance of the AdvancedForm class
         /// </summary>
-        public FormTopMenuBar()
+        public AdvancedFormTopMenuBar()
         {
             InitializeComponent();
         }

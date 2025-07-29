@@ -519,7 +519,7 @@ namespace EasyWinFormLibrary.Extension
             };
 
             // Set number formatting
-            int digits = roundNumber ?? LibrarySetting.NumberDefaultRound;
+            int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             column.DefaultCellStyle.Format = isPercentage ? $"p{digits}" : $"n{digits}";
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
@@ -620,7 +620,7 @@ namespace EasyWinFormLibrary.Extension
         {
             if (dgv?.Columns[columnName] == null) return;
 
-            int digits = roundNumber ?? LibrarySetting.NumberDefaultRound;
+            int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"n{digits}";
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
@@ -632,7 +632,7 @@ namespace EasyWinFormLibrary.Extension
         {
             if (dgv?.Columns[columnName] == null) return;
 
-            int digits = roundNumber ?? LibrarySetting.NumberDefaultRound;
+            int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"p{digits}";
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
@@ -644,7 +644,7 @@ namespace EasyWinFormLibrary.Extension
         {
             if (dgv?.Columns[columnName] == null) return;
 
-            int digits = roundNumber ?? LibrarySetting.NumberDefaultRound;
+            int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"c{digits}";
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }

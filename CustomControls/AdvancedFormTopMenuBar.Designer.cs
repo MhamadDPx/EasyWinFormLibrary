@@ -1,6 +1,6 @@
 ﻿namespace EasyWinFormLibrary.CustomControls
 {
-    partial class FormTopMenuBar
+    partial class AdvancedFormTopMenuBar
     {
         /// <summary> 
         /// Required designer variable.
@@ -95,17 +95,18 @@
             this.btnClose.BorderColor = System.Drawing.Color.Gray;
             this.btnClose.BorderRadius = 0;
             this.btnClose.BorderSize = 0;
-            this.btnClose.ButtonImage = global::EasyWinFormLibrary.Properties.Resources.multiply_24px;
+            this.btnClose.ButtonImage = global::EasyWinFormLibrary.Properties.Resources.multiply_32px;
             this.btnClose.ButtonImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.HoverBackColor = System.Drawing.Color.SlateBlue;
-            this.btnClose.HoverBorderColor = System.Drawing.Color.MediumSlateBlue;
+            this.btnClose.HoverBackColor = System.Drawing.Color.RosyBrown;
+            this.btnClose.HoverBorderColor = System.Drawing.Color.RosyBrown;
+            this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnClose.ImageSize = new System.Drawing.Size(25, 25);
             this.btnClose.ImageTextSpacing = 5;
             this.btnClose.Location = new System.Drawing.Point(817, 3);
             this.btnClose.Name = "btnClose";
-            this.btnClose.PressedBackColor = System.Drawing.Color.DarkSlateBlue;
+            this.btnClose.PressedBackColor = System.Drawing.Color.IndianRed;
             this.btnClose.Size = new System.Drawing.Size(44, 40);
             this.btnClose.TabIndex = 5;
             this.btnClose.TextColor = System.Drawing.Color.White;
@@ -124,6 +125,7 @@
             this.btnMinimize.ForeColor = System.Drawing.Color.White;
             this.btnMinimize.HoverBackColor = System.Drawing.Color.SlateBlue;
             this.btnMinimize.HoverBorderColor = System.Drawing.Color.MediumSlateBlue;
+            this.btnMinimize.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMinimize.ImageSize = new System.Drawing.Size(25, 25);
             this.btnMinimize.ImageTextSpacing = 5;
             this.btnMinimize.Location = new System.Drawing.Point(767, 3);
@@ -134,7 +136,7 @@
             this.btnMinimize.TextColor = System.Drawing.Color.White;
             this.btnMinimize.UseVisualStyleBackColor = false;
             // 
-            // FormTopMenuBar
+            // AdvancedFormTopMenuBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -142,7 +144,7 @@
             this.Controls.Add(this.TopMenuPanel);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "FormTopMenuBar";
+            this.Name = "AdvancedFormTopMenuBar";
             this.Size = new System.Drawing.Size(864, 47);
             this.TopMenuPanel.ResumeLayout(false);
             this.tblpForm.ResumeLayout(false);

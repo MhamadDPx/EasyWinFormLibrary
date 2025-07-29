@@ -48,8 +48,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\AdvancedActionButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedAddDialogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedAddDialogForm.Designer.cs">
+      <DependentUpon>AdvancedAddDialogForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedAlertForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedAlertForm.Designer.cs">
+      <DependentUpon>AdvancedAlertForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedDashboardCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedDashboardCard.Designer.cs">
+      <DependentUpon>AdvancedDashboardCard.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\AdvancedDataGridView.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedElipse.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedMessageBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedMessageBoxForm.Designer.cs">
+      <DependentUpon>AdvancedMessageBoxForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\AdvancedPanel.cs">
       <SubType>Component</SubType>
@@ -57,15 +90,25 @@
     <Compile Include="CustomControls\AdvancedButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CustomControls\FormTopMenuBar.cs">
+    <Compile Include="CustomControls\AdvancedTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CustomControls\FormTopMenuBar.Designer.cs">
-      <DependentUpon>FormTopMenuBar.cs</DependentUpon>
+    <Compile Include="CustomControls\AdvancedUserMetaLog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedUserMetaLog.Designer.cs">
+      <DependentUpon>AdvancedUserMetaLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedFormTopMenuBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AdvancedFormTopMenuBar.Designer.cs">
+      <DependentUpon>AdvancedFormTopMenuBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\SqlDatabaseActions.cs" />
     <Compile Include="Data\SqlDatabaseConnectionConfig.cs" />
     <Compile Include="Data\SqlQueryBuilder.cs" />
+    <Compile Include="Data\AuthUserInfo.cs" />
     <Compile Include="Extension\ControlEventExtensions.cs" />
     <Compile Include="Extension\ControlPerformanceExtensions.cs" />
     <Compile Include="Extension\ControlTaskDelayExtensions.cs" />
@@ -76,7 +119,7 @@
     <Compile Include="Extension\ControlRequiredCheckerExtensions.cs" />
     <Compile Include="Extension\FormExtensions.cs" />
     <Compile Include="Extension\StringExtensions.cs" />
-    <Compile Include="LibrarySetting.cs" />
+    <Compile Include="LibrarySettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SqlDatabaseConnectionConfigBuilder.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -84,12 +127,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="WinAppNeeds\AdvancedMessageBox.cs" />
+    <Compile Include="WinAppNeeds\AdvancedAlert.cs" />
     <Compile Include="WinAppNeeds\BarcodeGenerator.cs" />
     <Compile Include="WinAppNeeds\HardwareIdentifier.cs" />
     <Compile Include="WinAppNeeds\ImageUtils.cs" />
     <Compile Include="WinAppNeeds\LanguageManager.cs" />
     <Compile Include="WinAppNeeds\NumberInputUtils.cs" />
     <Compile Include="WinAppNeeds\NumberToWordsConverter.cs" />
+    <Compile Include="WinAppNeeds\StringArrayConverter.cs" />
     <Compile Include="WinAppNeeds\TaskDelayUtils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -97,8 +143,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CustomControls\FormTopMenuBar.resx">
-      <DependentUpon>FormTopMenuBar.cs</DependentUpon>
+    <EmbeddedResource Include="CustomControls\AdvancedAddDialogForm.resx">
+      <DependentUpon>AdvancedAddDialogForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\AdvancedAlertForm.resx">
+      <DependentUpon>AdvancedAlertForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\AdvancedDashboardCard.resx">
+      <DependentUpon>AdvancedDashboardCard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\AdvancedMessageBoxForm.resx">
+      <DependentUpon>AdvancedMessageBoxForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\AdvancedUserMetaLog.resx">
+      <DependentUpon>AdvancedUserMetaLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\AdvancedFormTopMenuBar.resx">
+      <DependentUpon>AdvancedFormTopMenuBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -139,6 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\minus_24px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\multiply_32px.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

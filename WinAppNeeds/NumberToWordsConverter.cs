@@ -255,7 +255,7 @@ namespace EasyWinFormLibrary.WinAppNeeds
                 var langData = _languageData[language];
 
                 long amountWhole = (long)amount;
-                long amountDecimal = (long)Math.Round((amount - amountWhole) * Math.Pow(10, decimalPlaces ?? LibrarySetting.NumberDefaultRound));
+                long amountDecimal = (long)Math.Round((amount - amountWhole) * Math.Pow(10, decimalPlaces ?? LibrarySettings.NumberDefaultRound));
 
                 var result = new StringBuilder();
 

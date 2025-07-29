@@ -394,8 +394,7 @@ namespace EasyWinFormLibrary.Data
         /// <summary>
         /// Builds a search condition for a specific column based on its data type.
         /// </summary>
-        private static string BuildColumnSearchCondition(string columnName, string columnType,
-            string searchTerm, bool caseSensitive)
+        private static string BuildColumnSearchCondition(string columnName, string columnType, string searchTerm, bool caseSensitive)
         {
             switch (columnType)
             {

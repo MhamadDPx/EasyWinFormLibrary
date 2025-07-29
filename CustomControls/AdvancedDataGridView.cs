@@ -382,12 +382,9 @@ namespace EasyWinFormLibrary.CustomControls
         {
             this.AllowUserToAddRows = false;
             this.AllowUserToDeleteRows = false;
-            this.ReadOnly = true;
-            this.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             this.MultiSelect = false;
             this.AutoGenerateColumns = true;
             this.EnableHeadersVisualStyles = false;
-            this.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.RowHeadersVisible = false;
         }
 
