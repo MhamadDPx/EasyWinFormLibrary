@@ -32,24 +32,24 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedAddDialogForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.dgvBackPanel = new EasyWinFormLibrary.CustomControls.AdvancedPanel();
+            this.DGV = new EasyWinFormLibrary.CustomControls.AdvancedDataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.lbl = new System.Windows.Forms.Label();
-            this.formTopMenuBar1 = new EasyWinFormLibrary.CustomControls.AdvancedFormTopMenuBar();
-            this.advancedPanel1 = new EasyWinFormLibrary.CustomControls.AdvancedPanel();
-            this.DGV = new EasyWinFormLibrary.CustomControls.AdvancedDataGridView();
             this.txt = new EasyWinFormLibrary.CustomControls.AdvancedTextBox();
             this.btnSave = new EasyWinFormLibrary.CustomControls.AdvancedActionButton();
+            this.formTopMenuBar1 = new EasyWinFormLibrary.CustomControls.AdvancedFormTopMenuBar();
             this.dgvElipse = new EasyWinFormLibrary.CustomControls.AdvancedElipse();
             this.panel1.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.advancedPanel1.SuspendLayout();
+            this.dgvBackPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DGV)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.advancedPanel1);
+            this.panel1.Controls.Add(this.dgvBackPanel);
             this.panel1.Controls.Add(this.tableLayoutPanel1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -57,62 +57,19 @@
             this.panel1.Size = new System.Drawing.Size(508, 615);
             this.panel1.TabIndex = 1;
             // 
-            // tableLayoutPanel1
+            // dgvBackPanel
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.24793F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.75207F));
-            this.tableLayoutPanel1.Controls.Add(this.lbl, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.txt, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.btnSave, 1, 1);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(11, 52);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 84);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // lbl
-            // 
-            this.lbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lbl.AutoSize = true;
-            this.lbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lbl.Location = new System.Drawing.Point(3, 13);
-            this.lbl.Name = "lbl";
-            this.lbl.Size = new System.Drawing.Size(31, 29);
-            this.lbl.TabIndex = 0;
-            this.lbl.Text = "lbl";
-            // 
-            // formTopMenuBar1
-            // 
-            this.formTopMenuBar1.BackColor = System.Drawing.Color.White;
-            this.formTopMenuBar1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(124)))), ((int)(((byte)(169)))));
-            this.formTopMenuBar1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.formTopMenuBar1.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.formTopMenuBar1.FormTitlArabic = "";
-            this.formTopMenuBar1.FormTitlEnglish = "";
-            this.formTopMenuBar1.FormTitlKurdish = "";
-            this.formTopMenuBar1.Location = new System.Drawing.Point(0, 0);
-            this.formTopMenuBar1.Name = "formTopMenuBar1";
-            this.formTopMenuBar1.ShowMinimizeButton = false;
-            this.formTopMenuBar1.Size = new System.Drawing.Size(508, 47);
-            this.formTopMenuBar1.TabIndex = 0;
-            this.formTopMenuBar1.TopMenuBarHeight = 47;
-            // 
-            // advancedPanel1
-            // 
-            this.advancedPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dgvBackPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.advancedPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
-            this.advancedPanel1.BorderRadius = 10;
-            this.advancedPanel1.BorderThickness = 0;
-            this.advancedPanel1.Controls.Add(this.DGV);
-            this.advancedPanel1.Location = new System.Drawing.Point(11, 142);
-            this.advancedPanel1.Name = "advancedPanel1";
-            this.advancedPanel1.Size = new System.Drawing.Size(484, 460);
-            this.advancedPanel1.TabIndex = 1;
+            this.dgvBackPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.dgvBackPanel.BorderRadius = 10;
+            this.dgvBackPanel.BorderThickness = 0;
+            this.dgvBackPanel.Controls.Add(this.DGV);
+            this.dgvBackPanel.Location = new System.Drawing.Point(11, 142);
+            this.dgvBackPanel.Name = "dgvBackPanel";
+            this.dgvBackPanel.Size = new System.Drawing.Size(484, 460);
+            this.dgvBackPanel.TabIndex = 1;
             // 
             // DGV
             // 
@@ -168,6 +125,33 @@
             this.DGV.TabIndex = 0;
             this.DGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCellClick);
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.24793F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.75207F));
+            this.tableLayoutPanel1.Controls.Add(this.lbl, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.txt, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.btnSave, 1, 1);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(11, 52);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 84);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // lbl
+            // 
+            this.lbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl.AutoSize = true;
+            this.lbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.lbl.Location = new System.Drawing.Point(3, 13);
+            this.lbl.Name = "lbl";
+            this.lbl.Size = new System.Drawing.Size(31, 29);
+            this.lbl.TabIndex = 0;
+            this.lbl.Text = "lbl";
+            // 
             // txt
             // 
             this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -190,7 +174,9 @@
             // btnSave
             // 
             this.btnSave.BackColor = System.Drawing.Color.White;
+            this.btnSave.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(218)))), ((int)(((byte)(223)))));
             this.btnSave.BorderRadius = 5;
+            this.btnSave.BorderSize = 2;
             this.btnSave.ButtonImageSize = 20;
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -207,6 +193,22 @@
             this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnClick);
+            // 
+            // formTopMenuBar1
+            // 
+            this.formTopMenuBar1.BackColor = System.Drawing.Color.White;
+            this.formTopMenuBar1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.formTopMenuBar1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.formTopMenuBar1.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.formTopMenuBar1.FormTitlArabic = "ملاحضة";
+            this.formTopMenuBar1.FormTitlEnglish = "Title";
+            this.formTopMenuBar1.FormTitlKurdish = "تایتڵ";
+            this.formTopMenuBar1.Location = new System.Drawing.Point(0, 0);
+            this.formTopMenuBar1.Name = "formTopMenuBar1";
+            this.formTopMenuBar1.ShowMinimizeButton = false;
+            this.formTopMenuBar1.Size = new System.Drawing.Size(508, 40);
+            this.formTopMenuBar1.TabIndex = 0;
+            this.formTopMenuBar1.TopMenuBarHeight = 40;
             // 
             // dgvElipse
             // 
@@ -229,10 +231,10 @@
             this.Load += new System.EventHandler(this.AdvancedAddDialogForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AdvancedAddDialogForm_KeyDown);
             this.panel1.ResumeLayout(false);
+            this.dgvBackPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DGV)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.advancedPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.DGV)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -245,7 +247,7 @@
         private System.Windows.Forms.Label lbl;
         private AdvancedTextBox txt;
         private AdvancedActionButton btnSave;
-        private AdvancedPanel advancedPanel1;
+        private AdvancedPanel dgvBackPanel;
         private AdvancedDataGridView DGV;
         private AdvancedElipse dgvElipse;
     }

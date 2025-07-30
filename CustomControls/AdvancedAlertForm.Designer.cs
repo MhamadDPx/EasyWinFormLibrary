@@ -3,24 +3,6 @@ namespace EasyWinFormLibrary.CustomControls
 {
     partial class AdvancedAlertForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -52,7 +34,7 @@ namespace EasyWinFormLibrary.CustomControls
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(549, 104);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(549, 93);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // lblMessage
@@ -60,14 +42,14 @@ namespace EasyWinFormLibrary.CustomControls
             this.lblMessage.BackColor = System.Drawing.Color.MediumSeaGreen;
             this.lblMessage.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lblMessage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblMessage.Font = new System.Drawing.Font("Cera Pro", 10F, System.Drawing.FontStyle.Bold);
+            this.lblMessage.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.ForeColor = System.Drawing.Color.White;
             this.lblMessage.Location = new System.Drawing.Point(99, 10);
             this.lblMessage.Margin = new System.Windows.Forms.Padding(3, 10, 10, 10);
             this.lblMessage.Multiline = true;
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.ReadOnly = true;
-            this.lblMessage.Size = new System.Drawing.Size(400, 84);
+            this.lblMessage.Size = new System.Drawing.Size(400, 73);
             this.lblMessage.TabIndex = 5;
             this.lblMessage.TabStop = false;
             this.lblMessage.Text = "Successfully Inserted";
@@ -79,7 +61,7 @@ namespace EasyWinFormLibrary.CustomControls
             this.pictureBox.Location = new System.Drawing.Point(10, 10);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(10);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(76, 84);
+            this.pictureBox.Size = new System.Drawing.Size(76, 73);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
@@ -103,7 +85,7 @@ namespace EasyWinFormLibrary.CustomControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.MediumSeaGreen;
-            this.ClientSize = new System.Drawing.Size(549, 104);
+            this.ClientSize = new System.Drawing.Size(549, 93);
             this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

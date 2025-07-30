@@ -9,7 +9,6 @@ namespace EasyWinFormLibrary.Data
 {
     public static class AuthUserInfo
     {
-        private static SqlDatabaseActions actions = new SqlDatabaseActions(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig);
         public static string UserID { get; set; }
         public static string Username { get; set; }
         public static string Fullname { get; set; }
@@ -108,20 +107,20 @@ namespace EasyWinFormLibrary.Data
 
         public static async void Register()
         {
-            SetUserActions((await actions.GetDataAsync($"SELECT (SELECT action_name FROM tbl_actions WHERE action_id=action_id_fk) AS action_name FROM tbl_user_actions WHERE user_id_fk={UserID}")).Data);
-            SetUserRolesList((await actions.GetDataAsync($"SELECT (SELECT role_name FROM tbl_roles WHERE role_id=role_id_fk) AS role_name, btn_insert, btn_update, btn_delete, btn_view FROM tbl_user_roles WHERE user_id_fk={UserID}")).Data);
-            LoginCountID = ((await actions.GetSingleValueAsync($"SELECT ISNULL(MAX(count_id),0) FROM tbl_check_user WHERE user_id_fk={UserID}")).Value.TextToInt() + 1).ToString();
+            SetUserActions((await SqlDatabaseActions.GetDataAsync($"SELECT (SELECT action_name FROM tbl_actions WHERE action_id=action_id_fk) AS action_name FROM tbl_user_actions WHERE user_id_fk={UserID}")).Data);
+            SetUserRolesList((await SqlDatabaseActions.GetDataAsync($"SELECT (SELECT role_name FROM tbl_roles WHERE role_id=role_id_fk) AS role_name, btn_insert, btn_update, btn_delete, btn_view FROM tbl_user_roles WHERE user_id_fk={UserID}")).Data);
+            LoginCountID = ((await SqlDatabaseActions.GetSingleValueAsync($"SELECT ISNULL(MAX(count_id),0) FROM tbl_check_user WHERE user_id_fk={UserID}")).Value.TextToInt() + 1).ToString();
 
-            await actions.ExecuteCommandAsync("INSERT INTO tbl_check_user VALUES (@maxUserID, @userIdFk, @countId)",
+            await SqlDatabaseActions.ExecuteCommandAsync("INSERT INTO tbl_check_user VALUES (@maxUserID, @userIdFk, @countId)",
                 new SqlParameter[] {
-                new SqlParameter("@maxUserID", (await actions.GetMaxNumberAsync("tbl_check_user", "id")).MaxNumber),
+                new SqlParameter("@maxUserID", (await SqlDatabaseActions.GetMaxNumberAsync("tbl_check_user", "id")).MaxNumber),
                 new SqlParameter("@userIdFk", UserID),
                 new SqlParameter("@countId", LoginCountID)
             });
         }
         public static async void RemoveUser(bool isDoubleUser)
         {
-            await actions.ExecuteCommandAsync($"DELETE FROM tbl_user_actions WHERE user_id_fk=@userIdFk {(isDoubleUser ? "AND count_id=@countID" : "")}",
+            await SqlDatabaseActions.ExecuteCommandAsync($"DELETE FROM tbl_user_actions WHERE user_id_fk=@userIdFk {(isDoubleUser ? "AND count_id=@countID" : "")}",
                 new SqlParameter[] {
                     new SqlParameter("@userIdFk", UserID),
                     new SqlParameter("@countID", LoginCountID)

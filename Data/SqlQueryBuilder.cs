@@ -14,6 +14,49 @@ namespace EasyWinFormLibrary.Data
     /// </summary>
     public static class SqlQueryBuilder
     {
+        #region Enum
+
+        /// <summary>
+        /// Enumeration for different search modes in multi-term searches.
+        /// </summary>
+        public enum SearchMode
+        {
+            /// <summary>All search terms must be found</summary>
+            AllTerms,
+            /// <summary>Any of the search terms can be found</summary>
+            AnyTerm,
+            /// <summary>Search for the exact phrase</summary>
+            ExactPhrase
+        }
+
+        /// <summary>
+        /// Enumeration for different comparison operators.
+        /// </summary>
+        public enum ComparisonOperator
+        {
+            /// <summary>Equal to (=)</summary>
+            Equal,
+            /// <summary>Not equal to (<>)</summary>
+            NotEqual,
+            /// <summary>Greater than (>)</summary>
+            GreaterThan,
+            /// <summary>Greater than or equal to (>=)</summary>
+            GreaterThanOrEqual,
+            /// <summary>Less than (<)</summary>
+            LessThan,
+            /// <summary>Less than or equal to (<=)</summary>
+            LessThanOrEqual,
+            /// <summary>Like (LIKE)</summary>
+            Like,
+            /// <summary>Not like (NOT LIKE)</summary>
+            NotLike,
+            /// <summary>In (IN)</summary>
+            In,
+            /// <summary>Not in (NOT IN)</summary>
+            NotIn
+        }
+        #endregion
+
         #region Filter and Query Building
 
         /// <summary>
@@ -533,43 +576,4 @@ namespace EasyWinFormLibrary.Data
         #endregion
     }
 
-    /// <summary>
-    /// Enumeration for different search modes in multi-term searches.
-    /// </summary>
-    public enum SearchMode
-    {
-        /// <summary>All search terms must be found</summary>
-        AllTerms,
-        /// <summary>Any of the search terms can be found</summary>
-        AnyTerm,
-        /// <summary>Search for the exact phrase</summary>
-        ExactPhrase
-    }
-
-    /// <summary>
-    /// Enumeration for different comparison operators.
-    /// </summary>
-    public enum ComparisonOperator
-    {
-        /// <summary>Equal to (=)</summary>
-        Equal,
-        /// <summary>Not equal to (<>)</summary>
-        NotEqual,
-        /// <summary>Greater than (>)</summary>
-        GreaterThan,
-        /// <summary>Greater than or equal to (>=)</summary>
-        GreaterThanOrEqual,
-        /// <summary>Less than (<)</summary>
-        LessThan,
-        /// <summary>Less than or equal to (<=)</summary>
-        LessThanOrEqual,
-        /// <summary>Like (LIKE)</summary>
-        Like,
-        /// <summary>Not like (NOT LIKE)</summary>
-        NotLike,
-        /// <summary>In (IN)</summary>
-        In,
-        /// <summary>Not in (NOT IN)</summary>
-        NotIn
-    }
 }

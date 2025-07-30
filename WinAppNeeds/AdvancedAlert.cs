@@ -8,6 +8,14 @@ namespace EasyWinFormLibrary.WinAppNeeds
 {
     public static class AdvancedAlert
     {
+        /// <summary>
+        /// Shows an alert message with multi-language support and customizable appearance.
+        /// </summary>
+        /// <param name="messageKu">The message text in Kurdish</param>
+        /// <param name="messageAr">The message text in Arabic</param>
+        /// <param name="messageEn">The message text in English</param>
+        /// <param name="alertType">The type of alert to display (Success, Info, Error, Warning)</param>
+        /// <param name="visableSeconds">Number of seconds to display the alert before auto-closing (default: 3)</param>
         public static void ShowAlert(string messageKu, string messageAr, string messageEn, AlertType alertType, int visableSeconds = 3)
         {
             AdvancedAlertForm frm = new AdvancedAlertForm();
@@ -44,7 +52,21 @@ namespace EasyWinFormLibrary.WinAppNeeds
             frm.RightToLeft = LanguageManager.SelectedLanguage == FormLanguage.English ? RightToLeft.No : RightToLeft.Yes;
             frm.Show();
         }
-        public enum AlertType { Success = 0, Info = 1, Error = 2, Warning = 3 }
+
+        /// <summary>
+        /// Defines the available types of alerts that can be displayed.
+        /// </summary>
+        public enum AlertType 
+        { 
+            /// <summary>Success alert type with green color scheme</summary>
+            Success = 0,
+            /// <summary>Information alert type with blue color scheme</summary>
+            Info = 1, 
+            /// <summary>Error alert type with red color scheme</summary>
+            Error = 2,
+            /// <summary>Warning alert type with orange color scheme</summary>
+            Warning = 3 
+        }
 
         #region Base64 Images
 

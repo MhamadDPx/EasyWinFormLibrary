@@ -6,22 +6,24 @@ using System.Windows.Forms;
 namespace EasyWinFormLibrary.Extension
 {
     /// <summary>
-    /// Control types for UI helper operations
-    /// </summary>
-    public enum ControlType
-    {
-        Text,       // Default text controls
-        Number,     // Numeric input controls  
-        Check,      // Checkbox controls
-        DateTime,   // DateTime picker controls
-        Date        // Date-only picker controls
-    }
-
-    /// <summary>
     /// Helper class for working with Windows Forms controls
     /// </summary>
     public static class ControlCleanerExtensions
     {
+        #region Enums
+        /// <summary>
+        /// Control types for UI helper operations
+        /// </summary>
+        public enum ControlType
+        {
+            Text,       // Default text controls
+            Number,     // Numeric input controls  
+            Check,      // Checkbox controls
+            DateTime,   // DateTime picker controls
+            Date        // Date-only picker controls
+        }
+        #endregion
+
         #region Table Layout Panel Operations
 
         /// <summary>
@@ -145,6 +147,11 @@ namespace EasyWinFormLibrary.Extension
 
         #region Default Value Application
 
+        /// <summary>
+        /// Resets a control to its default value based on its type
+        /// </summary>
+        /// <param name="control">The control to reset</param>
+        /// <param name="controlType">The type of control being reset</param>
         private static void ResetControlToDefault(Control control, ControlType controlType)
         {
             if (control == null) return;
@@ -180,6 +187,12 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Applies a default value to a control based on its type
+        /// </summary>
+        /// <param name="control">The control to update</param>
+        /// <param name="controlType">The type of the control</param>
+        /// <param name="defaultValue">The default value to apply</param>
         private static void ApplyDefaultValue(Control control, ControlType controlType, object defaultValue)
         {
             if (control == null) return;
@@ -230,6 +243,11 @@ namespace EasyWinFormLibrary.Extension
 
         #region Control-Specific Reset Methods
 
+        /// <summary>
+        /// Resets a ComboBox control to its default state based on its control type
+        /// </summary>
+        /// <param name="cmb">The ComboBox control to reset</param>
+        /// <param name="controlType">The type of control, affecting default value behavior</param>
         private static void ResetComboBox(ComboBox cmb, ControlType controlType)
         {
             switch (controlType)
@@ -249,6 +267,11 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Resets a text-based control to its default value based on control type
+        /// </summary>
+        /// <param name="txt">The text control to reset</param>
+        /// <param name="controlType">The type of control, determining the default format and value</param>
         private static void ResetTextControl(Control txt, ControlType controlType)
         {
             switch (controlType)
@@ -271,6 +294,14 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Resets a CheckBox control based on its tag property
+        /// </summary>
+        /// <param name="chk">The CheckBox control to reset</param>
+        /// <param name="controlType">The type of control (not used in current implementation)</param>
+        /// <remarks>
+        /// The checkbox will be checked if its tag contains the word "check" (case-insensitive)
+        /// </remarks>
         private static void ResetCheckBox(CheckBox chk, ControlType controlType)
         {
             // Check if the tag contains "check" to determine if it should be checked
@@ -278,6 +309,11 @@ namespace EasyWinFormLibrary.Extension
             chk.Checked = tag.Contains("check");
         }
 
+        /// <summary>
+        /// Resets a DateTimePicker control to its default state and format
+        /// </summary>
+        /// <param name="dtp">The DateTimePicker to reset</param>
+        /// <param name="controlType">The type of control being reset</param>
         private static void ResetDateTimePicker(DateTimePicker dtp, ControlType controlType)
         {
             switch (controlType)
@@ -296,6 +332,19 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Resets third-party custom controls to their default state based on control type and name pattern
+        /// </summary>
+        /// <param name="control">The custom control to reset</param>
+        /// <param name="controlType">The type of control, determining default values and behavior</param>
+        /// <remarks>
+        /// Handles controls whose type names contain "guna" or "auto". Supports:
+        /// - ComboBox-like controls: Resets selected index and text
+        /// - TextBox-like controls: Sets default text based on control type
+        /// - CheckBox-like controls: Sets checked state based on tag
+        /// - DateTimePicker-like controls: Sets default date/time value
+        /// Uses reflection to set common properties like FillColor.
+        /// </remarks>
         private static void ResetCustomControl(Control control, ControlType controlType)
         {
             string typeName = control.GetType().Name.ToLower();
@@ -337,6 +386,11 @@ namespace EasyWinFormLibrary.Extension
 
         #region Helper Methods
 
+        /// <summary>
+        /// Sets the text property of a control with proper thread synchronization
+        /// </summary>
+        /// <param name="control">The control to update</param>
+        /// <param name="text">The text value to set</param>
         private static void SetControlText(Control control, string text)
         {
             if (control.InvokeRequired)
@@ -345,6 +399,11 @@ namespace EasyWinFormLibrary.Extension
                 control.Text = text;
         }
 
+        /// <summary>
+        /// Sets the checked state of a control with proper thread synchronization
+        /// </summary>
+        /// <param name="control">The control to update</param>
+        /// <param name="isChecked">The checked state to set</param>
         private static void SetControlChecked(Control control, bool isChecked)
         {
             if (control is CheckBox chk)
@@ -360,6 +419,11 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Sets the date/time value of a control with proper thread synchronization
+        /// </summary>
+        /// <param name="control">The control to update</param>
+        /// <param name="dateTime">The date/time value to set</param>
         private static void SetControlDateTime(Control control, DateTime dateTime)
         {
             if (control is DateTimePicker dtp)
@@ -375,6 +439,11 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Sets the background color of a control with proper thread synchronization
+        /// </summary>
+        /// <param name="control">The control to update</param>
+        /// <param name="color">The color to set</param>
         private static void SetControlBackColor(Control control, Color color)
         {
             try
@@ -399,6 +468,12 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        /// <summary>
+        /// Attempts to set a property value on an object using reflection
+        /// </summary>
+        /// <param name="obj">The object to update</param>
+        /// <param name="propertyName">The name of the property to set</param>
+        /// <param name="value">The value to set</param>
         private static void TrySetProperty(object obj, string propertyName, object value)
         {
             try
@@ -449,6 +524,12 @@ namespace EasyWinFormLibrary.Extension
             return isValid;
         }
 
+        /// <summary>
+        /// Validates a single control based on its type
+        /// </summary>
+        /// <param name="control">The control to validate</param>
+        /// <param name="controlType">The type of control being validated</param>
+        /// <returns>True if the control's value is valid for its type</returns>
         private static bool ValidateControl(Control control, ControlType controlType)
         {
             switch (controlType)

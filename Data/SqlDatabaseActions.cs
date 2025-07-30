@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyWinFormLibrary.WinAppNeeds;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,19 +8,13 @@ using System.Threading.Tasks;
 
 namespace EasyWinFormLibrary.Data
 {
-    public class SqlDatabaseActions
+    public static class SqlDatabaseActions
     {
-        private readonly SqlDatabaseConnectionConfig _config;
-        public SqlDatabaseActions(SqlDatabaseConnectionConfig config)
-        {
-            _config = config;
-        }
-
-        public async Task<(bool Success, DataTable Data, string ErrorMessage)> GetDataAsync(string query, SqlParameter[] parameters = null)
+        public static async Task<(bool Success, DataTable Data, string ErrorMessage)> GetDataAsync(string query, SqlParameter[] parameters = null)
         {
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 using (var command = new SqlCommand(query, connection))
                 {
                     await connection.OpenAsync();
@@ -37,14 +32,21 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert(ex.Message, ex.Message, ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in GetDataAsync.");
+#endif
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool Success, DataRowCollection Rows, string ErrorMessage)> GetRowsAsync(string query, SqlParameter[] parameters = null)
+
+        public static async Task<(bool Success, DataRowCollection Rows, string ErrorMessage)> GetRowsAsync(string query, SqlParameter[] parameters = null)
         {
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 {
                     await connection.OpenAsync();
 
@@ -64,14 +66,21 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in GetRowsAsync.");
+#endif
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool Success, string Value, string ErrorMessage)> GetSingleValueAsync(string query, SqlParameter[] parameters = null)
+
+        public static async Task<(bool Success, string Value, string ErrorMessage)> GetSingleValueAsync(string query, SqlParameter[] parameters = null)
         {
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 using (var command = new SqlCommand(query, connection))
                 {
                     await connection.OpenAsync();
@@ -84,14 +93,21 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in GetSingleValueAsync.");
+#endif
                 return (false, string.Empty, ex.Message);
             }
         }
-        public async Task<(bool Success, bool HasData, string ErrorMessage)> HasDataAsync(string query, SqlParameter[] parameters = null)
+
+        public static async Task<(bool Success, bool HasData, string ErrorMessage)> HasDataAsync(string query, SqlParameter[] parameters = null)
         {
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 using (var command = new SqlCommand(query, connection))
                 {
                     await connection.OpenAsync();
@@ -105,14 +121,21 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in HasDataAsync.");
+#endif
                 return (false, false, ex.Message);
             }
         }
-        public async Task<(bool Success, bool HasData, T Data, string ErrorMessage)> HasDataAsync<T>(string query, SqlParameter[] parameters = null)
+
+        public static async Task<(bool Success, bool HasData, T Data, string ErrorMessage)> HasDataAsync<T>(string query, SqlParameter[] parameters = null)
         {
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString() ))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 using (var command = new SqlCommand(query, connection))
                 {
                     await connection.OpenAsync();
@@ -151,10 +174,17 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in HasDataAsync<T>.");
+#endif
                 return (false, false, default(T), ex.Message);
             }
         }
-        public async Task<(bool Success, string MaxNumber, string ErrorMessage)> GetMaxNumberAsync(string tableName, string columnName)
+
+        public static async Task<(bool Success, string MaxNumber, string ErrorMessage)> GetMaxNumberAsync(string tableName, string columnName)
         {
             try
             {
@@ -186,17 +216,24 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in GetMaxNumberAsync.");
+#endif
                 return (false, "1", ex.Message);
             }
         }
-        public async Task<(bool Success, string ErrorMessage)> ExecuteCommandAsync(string query, SqlParameter[] parameters = null)
+
+        public static async Task<(bool Success, string ErrorMessage)> ExecuteCommandAsync(string query, SqlParameter[] parameters = null)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
 
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 {
                     await connection.OpenAsync();
 
@@ -219,6 +256,11 @@ namespace EasyWinFormLibrary.Data
                         catch (Exception ex)
                         {
                             transaction.Rollback();
+#if DEBUG
+                            AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                            LogManager.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync transaction.");
+#endif
                             return (false, ex.Message);
                         }
                     }
@@ -226,13 +268,19 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشkلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync.");
+#endif
                 return (false, ex.Message);
             }
         }
 
-        public async Task<(bool Success, string ErrorMessage)> InsertDataAsync(string tableName, Dictionary<string, object> columnValues, bool hasEntryDate = true)
+        public static async Task<(bool Success, string ErrorMessage)> InsertDataAsync(string tableName, Dictionary<string, object> columnValues, bool hasEntryDate = true)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
 
             try
@@ -257,19 +305,26 @@ namespace EasyWinFormLibrary.Data
 
                 if (hasEntryDate)
                 {
-                    parameterList.Add(new SqlParameter("@userId", _config.AuthUserId));
+                    parameterList.Add(new SqlParameter("@userId", SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.AuthUserId));
                 }
 
                 return await ExecuteCommandAsync(query, parameterList.ToArray());
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in InsertDataAsync.");
+#endif
                 return (false, ex.Message);
             }
         }
-        public async Task<(bool Success, string ErrorMessage)> UpdateDataAsync(string tableName, Dictionary<string, object> columnValues, Dictionary<string, object> whereClause, bool hasUpdateDate = true)
+
+        public static async Task<(bool Success, string ErrorMessage)> UpdateDataAsync(string tableName, Dictionary<string, object> columnValues, Dictionary<string, object> whereClause, bool hasUpdateDate = true)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
 
             try
@@ -288,7 +343,7 @@ namespace EasyWinFormLibrary.Data
                 {
                     setClauses.Add("u_date = GETDATE()");
                     setClauses.Add("u_by = @userId");
-                    parameterList.Add(new SqlParameter("@userId", _config.AuthUserId));
+                    parameterList.Add(new SqlParameter("@userId", SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.AuthUserId));
                 }
 
                 // Build WHERE clause
@@ -305,12 +360,19 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in UpdateDataAsync.");
+#endif
                 return (false, ex.Message);
             }
         }
-        public async Task<(bool Success, string ErrorMessage)> DeleteDataAsync(string tableName, Dictionary<string, object> whereClause)
+
+        public static async Task<(bool Success, string ErrorMessage)> DeleteDataAsync(string tableName, Dictionary<string, object> whereClause)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
 
             try
@@ -331,40 +393,61 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in DeleteDataAsync.");
+#endif
                 return (false, ex.Message);
             }
         }
-        public async Task<(bool Success, int InsertedCount, List<string> Errors)> BulkInsertAsync(string tableName, List<Dictionary<string, object>> records, bool hasEntryDate = true)
+
+        public static async Task<(bool Success, int InsertedCount, List<string> Errors)> BulkInsertAsync(string tableName, List<Dictionary<string, object>> records, bool hasEntryDate = true)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, 0, new List<string> { "SQL actions are currently locked" });
 
-            int insertedCount = 0;
-            var errors = new List<string>();
-
-            foreach (var record in records)
+            try
             {
-                var (success, error) = await InsertDataAsync(tableName, record, hasEntryDate);
-                if (success)
-                {
-                    insertedCount++;
-                }
-                else
-                {
-                    errors.Add(error);
-                }
-            }
+                int insertedCount = 0;
+                var errors = new List<string>();
 
-            return (errors.Count == 0, insertedCount, errors);
+                foreach (var record in records)
+                {
+                    var (success, error) = await InsertDataAsync(tableName, record, hasEntryDate);
+                    if (success)
+                    {
+                        insertedCount++;
+                    }
+                    else
+                    {
+                        errors.Add(error);
+                    }
+                }
+
+                return (errors.Count == 0, insertedCount, errors);
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in BulkInsertAsync.");
+#endif
+                return (false, 0, new List<string> { ex.Message });
+            }
         }
-        public async Task<(bool Success, int ExecutedCount, string ErrorMessage)> ExecuteMultipleCommandsAsync(List<(string Query, SqlParameter[] Parameters)> commands)
+
+        public static async Task<(bool Success, int ExecutedCount, string ErrorMessage)> ExecuteMultipleCommandsAsync(List<(string Query, SqlParameter[] Parameters)> commands)
         {
-            if (_config.SqlActionsLocked)
+            if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, 0, "SQL actions are currently locked");
 
             try
             {
-                using (var connection = new SqlConnection(_config.GetConnectionString()))
+                using (var connection = new SqlConnection(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.GetConnectionString()))
                 {
                     await connection.OpenAsync();
 
@@ -395,6 +478,11 @@ namespace EasyWinFormLibrary.Data
                         catch (Exception ex)
                         {
                             transaction.Rollback();
+#if DEBUG
+                            AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                            LogManager.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync transaction.");
+#endif
                             return (false, 0, ex.Message);
                         }
                     }
@@ -402,6 +490,12 @@ namespace EasyWinFormLibrary.Data
             }
             catch (Exception ex)
             {
+#if DEBUG
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
+#else
+                AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
+                LogManager.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync.");
+#endif
                 return (false, 0, ex.Message);
             }
         }

@@ -12,7 +12,7 @@ namespace EasyWinFormLibrary.CustomControls
     /// <summary>
     /// Defines the input types supported by the AdvancedTextBox
     /// </summary>
-    public enum TextBoxInput
+    public enum AdvancedTextBoxInput
     {
         /// <summary>Standard text input (allows all characters)</summary>
         TextInput,
@@ -26,13 +26,33 @@ namespace EasyWinFormLibrary.CustomControls
         TextDoubleNumberInput
     }
 
+    /// <summary>
+    /// Border sides enumeration with flags support
+    /// </summary>
+    [Flags]
+    public enum AdvancedTextBoxBorderSides
+    {
+        /// <summary>No borders</summary>
+        None = 0,
+        /// <summary>Top border</summary>
+        Top = 1,
+        /// <summary>Right border</summary>
+        Right = 2,
+        /// <summary>Bottom border</summary>
+        Bottom = 4,
+        /// <summary>Left border</summary>
+        Left = 8,
+        /// <summary>All borders</summary>
+        All = Top | Right | Bottom | Left
+    }
+
     #endregion
 
     /// <summary>
-    /// Advanced TextBox UserControl with custom border styling and comprehensive input validation.
+    /// Advanced TextBox UserControl with custom border styling, comprehensive input validation, and RTL support.
     /// Wraps a standard TextBox with custom border rendering for better designer compatibility.
-    /// Supports multiple input types, Arabic/English numeral conversion, and Enter key navigation.
-    /// Optimized for .NET Framework 4.8 with full designer support.
+    /// Supports multiple input types, Arabic/English numeral conversion, selective border sides, and Enter key navigation.
+    /// Optimized for .NET Framework 4.8 with full designer support and perfect RTL text positioning.
     /// </summary>
     [ToolboxItem(true)]
     [Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design")]
@@ -45,7 +65,7 @@ namespace EasyWinFormLibrary.CustomControls
         private bool _allowPoint = false;
         private bool _allowNegativeNumber = false;
         private bool _isValidText = false;
-        private TextBoxInput _textBoxInputType = TextBoxInput.TextInput;
+        private AdvancedTextBoxInput _AdvancedTextBoxInputType = AdvancedTextBoxInput.TextInput;
 
         // Border styling fields
         private int _borderRadius = 5;
@@ -55,20 +75,29 @@ namespace EasyWinFormLibrary.CustomControls
         private bool _useFocusColor = true;
         private Padding _textPadding = new Padding(8, 4, 8, 4);
         private ContentAlignment _textAlignment = ContentAlignment.MiddleLeft;
+        private AdvancedTextBoxBorderSides _AdvancedTextBoxBorderSides = AdvancedTextBoxBorderSides.All;
+
+        // Performance optimization
+        private Size _lastSize = Size.Empty;
+        private bool _updateBoundsRequired = true;
+
+        private string _placeholderText = string.Empty;
+        private Color _placeholderColor = Color.Gray;
+        private bool _isPlaceholderActive = false;
 
         #endregion
 
-        #region Properties
+        #region Enhanced Properties
 
         /// <summary>
         /// Gets or sets whether Arabic numerals are allowed in input
         /// </summary>
-        [Category("Advanced Appearance")]
+        [Category("Advanced Validation")]
         [Description("Allows Arabic numerals to be entered")]
         [DefaultValue(false)]
         public bool AllowArabicNumber
         {
-            get { return _allowArabicNumber; }
+            get => _allowArabicNumber;
             set
             {
                 if (_allowArabicNumber != value)
@@ -81,12 +110,12 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Gets or sets whether decimal points are allowed in numeric input
         /// </summary>
-        [Category("Advanced Appearance")]
+        [Category("Advanced Validation")]
         [Description("Allows decimal points in numeric input")]
         [DefaultValue(false)]
         public bool AllowPoint
         {
-            get { return _allowPoint; }
+            get => _allowPoint;
             set
             {
                 if (_allowPoint != value)
@@ -99,12 +128,12 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Gets or sets whether negative numbers are allowed
         /// </summary>
-        [Category("Advanced Appearance")]
+        [Category("Advanced Validation")]
         [Description("Allows negative numbers to be entered")]
         [DefaultValue(false)]
         public bool AllowNegativeNumber
         {
-            get { return _allowNegativeNumber; }
+            get => _allowNegativeNumber;
             set
             {
                 if (_allowNegativeNumber != value)
@@ -121,7 +150,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ValidText
         {
-            get { return _isValidText; }
+            get => _isValidText;
             private set
             {
                 if (_isValidText != value)
@@ -135,17 +164,17 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Gets or sets the input type that determines validation and formatting behavior
         /// </summary>
-        [Category("Advanced Appearance")]
+        [Category("Advanced Validation")]
         [Description("The type of input validation and formatting to apply")]
-        [DefaultValue(TextBoxInput.TextInput)]
-        public TextBoxInput TextBoxInputType
+        [DefaultValue(AdvancedTextBoxInput.TextInput)]
+        public AdvancedTextBoxInput AdvancedTextBoxInputType
         {
-            get { return _textBoxInputType; }
+            get => _AdvancedTextBoxInputType;
             set
             {
-                if (_textBoxInputType != value)
+                if (_AdvancedTextBoxInputType != value)
                 {
-                    _textBoxInputType = value;
+                    _AdvancedTextBoxInputType = value;
                     ValidateCurrentText();
                 }
             }
@@ -159,7 +188,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(typeof(Color), "Gray")]
         public Color BorderColor
         {
-            get { return _borderColor; }
+            get => _borderColor;
             set
             {
                 if (_borderColor != value)
@@ -178,13 +207,13 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(typeof(Color), "Blue")]
         public Color BorderFocusColor
         {
-            get { return _borderFocusColor; }
+            get => _borderFocusColor;
             set
             {
                 if (_borderFocusColor != value)
                 {
                     _borderFocusColor = value;
-                    if (_textBox != null && _textBox.Focused)
+                    if (_textBox?.Focused == true)
                     {
                         Invalidate();
                     }
@@ -200,7 +229,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(true)]
         public bool UseFocusColor
         {
-            get { return _useFocusColor; }
+            get => _useFocusColor;
             set
             {
                 if (_useFocusColor != value)
@@ -219,11 +248,12 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(5)]
         public int BorderRadius
         {
-            get { return _borderRadius; }
+            get => _borderRadius;
             set
             {
                 if (value < 0) value = 0;
-                if (value > Math.Min(Width, Height) / 2) value = Math.Min(Width, Height) / 2;
+                if (Width > 0 && Height > 0 && value > Math.Min(Width, Height) / 2)
+                    value = Math.Min(Width, Height) / 2;
 
                 if (_borderRadius != value)
                 {
@@ -242,7 +272,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(1)]
         public int BorderSize
         {
-            get { return _borderSize; }
+            get => _borderSize;
             set
             {
                 if (value < 0) value = 0;
@@ -251,11 +281,32 @@ namespace EasyWinFormLibrary.CustomControls
                 if (_borderSize != value)
                 {
                     _borderSize = value;
+                    _updateBoundsRequired = true;
                     UpdateTextBoxBounds();
                     Invalidate();
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets which sides of the border to draw
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Specifies which sides of the border to draw")]
+        [DefaultValue(AdvancedTextBoxBorderSides.All)]
+        public AdvancedTextBoxBorderSides AdvancedTextBoxBorderSides
+        {
+            get => _AdvancedTextBoxBorderSides;
+            set
+            {
+                if (_AdvancedTextBoxBorderSides != value)
+                {
+                    _AdvancedTextBoxBorderSides = value;
+                    Invalidate();
+                }
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the text content of the textbox
@@ -265,12 +316,21 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue("")]
         public override string Text
         {
-            get { return _textBox?.Text ?? string.Empty; }
+            get
+            {
+                if (_textBox == null) return string.Empty;
+                return _isPlaceholderActive ? string.Empty : _textBox.Text;
+            }
             set
             {
                 if (_textBox != null)
                 {
+                    if (_isPlaceholderActive)
+                    {
+                        HidePlaceholder();
+                    }
                     _textBox.Text = value ?? string.Empty;
+                    UpdatePlaceholder();
                 }
             }
         }
@@ -282,13 +342,15 @@ namespace EasyWinFormLibrary.CustomControls
         [Description("The font of the textbox")]
         public override Font Font
         {
-            get { return base.Font; }
+            get => base.Font;
             set
             {
                 base.Font = value;
                 if (_textBox != null)
                 {
                     _textBox.Font = value;
+                    _updateBoundsRequired = true;
+                    UpdateTextBoxBounds();
                 }
             }
         }
@@ -300,7 +362,7 @@ namespace EasyWinFormLibrary.CustomControls
         [Description("The foreground color of the textbox")]
         public override Color ForeColor
         {
-            get { return base.ForeColor; }
+            get => base.ForeColor;
             set
             {
                 base.ForeColor = value;
@@ -319,12 +381,13 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(false)]
         public bool Multiline
         {
-            get { return _textBox?.Multiline ?? false; }
+            get => _textBox?.Multiline ?? false;
             set
             {
                 if (_textBox != null)
                 {
                     _textBox.Multiline = value;
+                    _updateBoundsRequired = true;
                     UpdateTextBoxBounds();
                 }
             }
@@ -338,7 +401,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(32767)]
         public int MaxLength
         {
-            get { return _textBox?.MaxLength ?? 32767; }
+            get => _textBox?.MaxLength ?? 32767;
             set
             {
                 if (_textBox != null)
@@ -356,7 +419,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(false)]
         public bool ReadOnly
         {
-            get { return _textBox?.ReadOnly ?? false; }
+            get => _textBox?.ReadOnly ?? false;
             set
             {
                 if (_textBox != null)
@@ -374,7 +437,7 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(HorizontalAlignment.Left)]
         public HorizontalAlignment TextAlign
         {
-            get { return _textBox?.TextAlign ?? HorizontalAlignment.Left; }
+            get => _textBox?.TextAlign ?? HorizontalAlignment.Left;
             set
             {
                 if (_textBox != null)
@@ -392,13 +455,14 @@ namespace EasyWinFormLibrary.CustomControls
         [DefaultValue(ContentAlignment.MiddleLeft)]
         public ContentAlignment TextAlignment
         {
-            get { return _textAlignment; }
+            get => _textAlignment;
             set
             {
                 if (_textAlignment != value)
                 {
                     _textAlignment = value;
                     UpdateTextBoxAlignment();
+                    _updateBoundsRequired = true;
                     UpdateTextBoxBounds();
                 }
             }
@@ -411,13 +475,91 @@ namespace EasyWinFormLibrary.CustomControls
         [Description("The padding around the text content")]
         public Padding TextPadding
         {
-            get { return _textPadding; }
+            get => _textPadding;
             set
             {
                 if (_textPadding != value)
                 {
                     _textPadding = value;
+                    _updateBoundsRequired = true;
                     UpdateTextBoxBounds();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the password character for the textbox
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The password character for the textbox")]
+        [DefaultValue('\0')]
+        public char PasswordChar
+        {
+            get => _textBox?.PasswordChar ?? '\0';
+            set
+            {
+                if (_textBox != null)
+                {
+                    _textBox.PasswordChar = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to use system password character
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether to use system password character")]
+        [DefaultValue(false)]
+        public bool UseSystemPasswordChar
+        {
+            get => _textBox?.UseSystemPasswordChar ?? false;
+            set
+            {
+                if (_textBox != null)
+                {
+                    _textBox.UseSystemPasswordChar = value;
+                }
+            }
+        }
+
+        // <summary>
+        /// Gets or sets the placeholder text hint
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The placeholder text hint")]
+        [DefaultValue("")]
+        public string PlaceholderText
+        {
+            get => _placeholderText;
+            set
+            {
+                if (_placeholderText != value)
+                {
+                    _placeholderText = value ?? string.Empty;
+                    UpdatePlaceholder();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the color of the placeholder text
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The color of the placeholder text")]
+        [DefaultValue(typeof(Color), "Gray")]
+        public Color PlaceholderColor
+        {
+            get => _placeholderColor;
+            set
+            {
+                if (_placeholderColor != value)
+                {
+                    _placeholderColor = value;
+                    if (_isPlaceholderActive)
+                    {
+                        _textBox.ForeColor = _placeholderColor;
+                    }
                 }
             }
         }
@@ -513,6 +655,9 @@ namespace EasyWinFormLibrary.CustomControls
             Controls.Add(_textBox);
             UpdateTextBoxAlignment();
             UpdateTextBoxBounds();
+
+            // Initialize placeholder if needed
+            UpdatePlaceholder();
         }
 
         /// <summary>
@@ -540,6 +685,10 @@ namespace EasyWinFormLibrary.CustomControls
                 _textBox.GotFocus += OnTextBoxGotFocus;
                 _textBox.LostFocus += OnTextBoxLostFocus;
                 _textBox.Enter += OnTextBoxEnter;
+
+                // Add placeholder-specific events
+                _textBox.Enter += OnTextBoxEnterPlaceholder;
+                _textBox.Leave += OnTextBoxLeavePlaceholder;
             }
 
             Resize += OnControlResize;
@@ -548,6 +697,39 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// Handles the Enter event for placeholder management
+        /// </summary>
+        private void OnTextBoxEnterPlaceholder(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_isPlaceholderActive)
+                {
+                    HidePlaceholder();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxEnterPlaceholder: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the Leave event for placeholder management
+        /// </summary>
+        private void OnTextBoxLeavePlaceholder(object sender, EventArgs e)
+        {
+            try
+            {
+                UpdatePlaceholder();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxLeavePlaceholder: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Handles the KeyPress event for input validation and character conversion
@@ -626,6 +808,9 @@ namespace EasyWinFormLibrary.CustomControls
         {
             try
             {
+                // Don't process if placeholder is active
+                if (_isPlaceholderActive) return;
+
                 // Remove single quotes for security
                 if (_textBox.Text.Contains("'"))
                 {
@@ -643,7 +828,6 @@ namespace EasyWinFormLibrary.CustomControls
                 System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxTextChanged: {ex.Message}");
             }
         }
-
         /// <summary>
         /// Handles the GotFocus event for text preparation
         /// </summary>
@@ -695,6 +879,7 @@ namespace EasyWinFormLibrary.CustomControls
                     _borderRadius = maxRadius;
                 }
 
+                _updateBoundsRequired = true;
                 UpdateTextBoxBounds();
                 UpdateRegion();
                 Invalidate();
@@ -742,44 +927,67 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// FIXED: Handles RightToLeft property changes for proper RTL text positioning
+        /// </summary>
+        /// <param name="e">Event arguments</param>
+        protected override void OnRightToLeftChanged(EventArgs e)
+        {
+            base.OnRightToLeftChanged(e);
+
+            if (_textBox != null)
+            {
+                _textBox.RightToLeft = RightToLeft;
+
+                // CRITICAL FIX: Update text alignment for RTL
+                UpdateTextBoxAlignment();
+                _updateBoundsRequired = true;
+                UpdateTextBoxBounds();
+
+                Invalidate();
+            }
+        }
+
         #endregion
 
-        #region Drawing Methods
+        #region Enhanced Drawing Methods
+
+
+
+
 
         /// <summary>
-        /// Draws the custom border around the control
+        /// FINAL: DrawCustomBorder with perfect border radius handling
         /// </summary>
-        /// <param name="graphics">Graphics object for drawing</param>
         private void DrawCustomBorder(Graphics graphics)
         {
-            if (_borderSize <= 0) return;
+            if (_borderSize <= 0 || _AdvancedTextBoxBorderSides == AdvancedTextBoxBorderSides.None) return;
 
             try
             {
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                Rectangle borderRect = new Rectangle(0, 0, Width - 1, Height - 1);
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
 
                 // Determine border color based on focus state
                 Color currentBorderColor = _borderColor;
-                if (_useFocusColor && _textBox != null && _textBox.Focused)
+                if (_useFocusColor && _textBox?.Focused == true)
                 {
                     currentBorderColor = _borderFocusColor;
                 }
 
+                // Use proper pen alignment for even borders
                 using (var borderPen = new Pen(currentBorderColor, _borderSize))
                 {
+                    borderPen.Alignment = PenAlignment.Center;
+
                     if (_borderRadius > 0)
                     {
-                        using (var borderPath = CreateRoundedRectanglePath(borderRect, _borderRadius))
-                        {
-                            graphics.DrawPath(borderPen, borderPath);
-                        }
+                        DrawRoundedBorderWithSides_Alternative(graphics, ClientRectangle, borderPen);
                     }
                     else
                     {
-                        graphics.DrawRectangle(borderPen, borderRect);
+                        DrawRectangularBorderWithSides_Alternative(graphics, ClientRectangle, borderPen);
                     }
                 }
             }
@@ -789,8 +997,217 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+
         /// <summary>
-        /// Creates a graphics path for a rounded rectangle
+        /// CORRECTED: Perfect rounded border solution
+        /// </summary>
+        private void DrawRoundedBorderWithSides_Alternative(Graphics graphics, Rectangle drawRect, Pen borderPen)
+        {
+            // CRITICAL FIX: For perfect rounded corners, we need to account for the pen width properly
+            Rectangle borderRect;
+
+            if (_borderSize <= 1)
+            {
+                // For thin borders, use the full rectangle minus 1 pixel
+                borderRect = new Rectangle(0, 0, Width - 1, Height - 1);
+            }
+            else
+            {
+                // For thicker borders, account for the pen width by centering the rectangle
+                float halfPen = _borderSize / 2.0f;
+                int offset = (int)Math.Round(halfPen);
+
+                borderRect = new Rectangle(
+                    offset,
+                    offset,
+                    Width - (offset * 2),
+                    Height - (offset * 2)
+                );
+
+                // Ensure minimum size
+                if (borderRect.Width < 1) borderRect.Width = 1;
+                if (borderRect.Height < 1) borderRect.Height = 1;
+            }
+
+            if (_AdvancedTextBoxBorderSides == AdvancedTextBoxBorderSides.All)
+            {
+                // Draw complete rounded rectangle
+                using (var borderPath = CreateRoundedRectanglePath(borderRect, _borderRadius))
+                {
+                    graphics.DrawPath(borderPen, borderPath);
+                }
+            }
+            else
+            {
+                // Draw custom rounded border sides
+                DrawCustomRoundedAdvancedTextBoxBorderSides(graphics, borderRect, borderPen);
+            }
+        }
+
+        /// <summary>
+        /// ALTERNATIVE: Simple rectangular border solution
+        /// </summary>
+        private void DrawRectangularBorderWithSides_Alternative(Graphics graphics, Rectangle drawRect, Pen borderPen)
+        {
+            // Simple approach: Use the full control rectangle
+            Rectangle borderRect = new Rectangle(0, 0, Width, Height);
+
+            if (_AdvancedTextBoxBorderSides == AdvancedTextBoxBorderSides.All)
+            {
+                graphics.DrawRectangle(borderPen, borderRect);
+            }
+            else
+            {
+                // Draw individual sides
+                if (_AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Top))
+                {
+                    graphics.DrawLine(borderPen, 0, 0, Width, 0);
+                }
+                if (_AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Right))
+                {
+                    graphics.DrawLine(borderPen, Width - 1, 0, Width - 1, Height);
+                }
+                if (_AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Bottom))
+                {
+                    graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
+                }
+                if (_AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Left))
+                {
+                    graphics.DrawLine(borderPen, 0, 0, 0, Height);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Draws custom rounded border sides using arcs and lines
+        /// </summary>
+        private void DrawCustomRoundedAdvancedTextBoxBorderSides(Graphics graphics, Rectangle rect, Pen borderPen)
+        {
+            if (rect.Width <= 0 || rect.Height <= 0) return;
+
+            int effectiveRadius = Math.Min(_borderRadius, Math.Min(rect.Width / 2, rect.Height / 2));
+            if (effectiveRadius <= 1)
+            {
+                // Fall back to rectangular drawing if radius is too small
+                DrawRectangularBorderWithSides_Alternative(graphics, rect, borderPen);
+                return;
+            }
+
+            int diameter = effectiveRadius * 2;
+
+            // Define corner arc rectangles
+            Rectangle topLeftArc = new Rectangle(rect.X, rect.Y, diameter, diameter);
+            Rectangle topRightArc = new Rectangle(rect.Right - diameter, rect.Y, diameter, diameter);
+            Rectangle bottomRightArc = new Rectangle(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter);
+            Rectangle bottomLeftArc = new Rectangle(rect.X, rect.Bottom - diameter, diameter, diameter);
+
+            // Draw corners and sides based on AdvancedTextBoxBorderSides flags
+            bool drawTop = _AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Top);
+            bool drawRight = _AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Right);
+            bool drawBottom = _AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Bottom);
+            bool drawLeft = _AdvancedTextBoxBorderSides.HasFlag(AdvancedTextBoxBorderSides.Left);
+
+            // Top side and corners
+            if (drawTop)
+            {
+                // Top line
+                graphics.DrawLine(borderPen, rect.Left + effectiveRadius, rect.Top, rect.Right - effectiveRadius, rect.Top);
+
+                // Top-left corner arc (if left side is also drawn)
+                if (drawLeft)
+                {
+                    graphics.DrawArc(borderPen, topLeftArc, 180, 90);
+                }
+                else
+                {
+                    // Just the top part of the arc
+                    graphics.DrawArc(borderPen, topLeftArc, 180, 45);
+                }
+
+                // Top-right corner arc (if right side is also drawn)
+                if (drawRight)
+                {
+                    graphics.DrawArc(borderPen, topRightArc, 270, 90);
+                }
+                else
+                {
+                    // Just the top part of the arc
+                    graphics.DrawArc(borderPen, topRightArc, 315, 45);
+                }
+            }
+
+            // Right side
+            if (drawRight)
+            {
+                // Right line
+                graphics.DrawLine(borderPen, rect.Right, rect.Top + effectiveRadius, rect.Right, rect.Bottom - effectiveRadius);
+
+                // Top-right corner arc (if not already drawn)
+                if (!drawTop)
+                {
+                    graphics.DrawArc(borderPen, topRightArc, 270, 45);
+                }
+
+                // Bottom-right corner arc (if bottom side is also drawn)
+                if (drawBottom)
+                {
+                    graphics.DrawArc(borderPen, bottomRightArc, 0, 90);
+                }
+                else
+                {
+                    // Just the right part of the arc
+                    graphics.DrawArc(borderPen, bottomRightArc, 315, 45);
+                }
+            }
+
+            // Bottom side
+            if (drawBottom)
+            {
+                // Bottom line
+                graphics.DrawLine(borderPen, rect.Left + effectiveRadius, rect.Bottom, rect.Right - effectiveRadius, rect.Bottom);
+
+                // Bottom-right corner arc (if not already drawn)
+                if (!drawRight)
+                {
+                    graphics.DrawArc(borderPen, bottomRightArc, 0, 45);
+                }
+
+                // Bottom-left corner arc (if left side is also drawn)
+                if (drawLeft)
+                {
+                    graphics.DrawArc(borderPen, bottomLeftArc, 90, 90);
+                }
+                else
+                {
+                    // Just the bottom part of the arc
+                    graphics.DrawArc(borderPen, bottomLeftArc, 90, 45);
+                }
+            }
+
+            // Left side
+            if (drawLeft)
+            {
+                // Left line
+                graphics.DrawLine(borderPen, rect.Left, rect.Top + effectiveRadius, rect.Left, rect.Bottom - effectiveRadius);
+
+                // Top-left corner arc (if not already drawn)
+                if (!drawTop)
+                {
+                    graphics.DrawArc(borderPen, topLeftArc, 225, 45);
+                }
+
+                // Bottom-left corner arc (if not already drawn)
+                if (!drawBottom)
+                {
+                    graphics.DrawArc(borderPen, bottomLeftArc, 135, 45);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// IMPROVED: Creates a graphics path for a rounded rectangle with perfect precision
         /// </summary>
         /// <param name="rect">Rectangle bounds</param>
         /// <param name="radius">Corner radius</param>
@@ -807,24 +1224,33 @@ namespace EasyWinFormLibrary.CustomControls
 
             try
             {
-                int diameter = Math.Min(radius * 2, Math.Min(rect.Width, rect.Height));
-                var size = new Size(diameter, diameter);
-                var arc = new Rectangle(rect.Location, size);
+                // CRITICAL FIX: Ensure radius doesn't exceed rectangle dimensions and is properly calculated
+                int effectiveRadius = Math.Min(radius, Math.Min(rect.Width / 2, rect.Height / 2));
 
-                path.StartFigure();
+                if (effectiveRadius <= 1)
+                {
+                    path.AddRectangle(rect);
+                    return path;
+                }
 
-                // Top left arc
+                // IMPROVED: Use float precision for perfect arcs
+                float diameter = effectiveRadius * 2.0f;
+                RectangleF arc = new RectangleF(rect.X, rect.Y, diameter, diameter);
+
+                // CRITICAL: Start from top-left and go clockwise for consistent corners
+
+                // Top left arc (180° to 270°)
                 path.AddArc(arc, 180, 90);
 
-                // Top right arc
+                // Top right arc (270° to 360°/0°)
                 arc.X = rect.Right - diameter;
                 path.AddArc(arc, 270, 90);
 
-                // Bottom right arc
+                // Bottom right arc (0° to 90°)
                 arc.Y = rect.Bottom - diameter;
                 path.AddArc(arc, 0, 90);
 
-                // Bottom left arc
+                // Bottom left arc (90° to 180°)
                 arc.X = rect.Left;
                 path.AddArc(arc, 90, 90);
 
@@ -868,11 +1294,11 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Updates the bounds of the internal textbox
+        /// ENHANCED: Updates the bounds of the internal textbox with RTL support
         /// </summary>
         private void UpdateTextBoxBounds()
         {
-            if (_textBox == null) return;
+            if (_textBox == null || (!_updateBoundsRequired && Size == _lastSize)) return;
 
             try
             {
@@ -882,6 +1308,14 @@ namespace EasyWinFormLibrary.CustomControls
                 int totalPaddingTop = borderPadding + _textPadding.Top;
                 int totalPaddingRight = borderPadding + _textPadding.Right;
                 int totalPaddingBottom = borderPadding + _textPadding.Bottom;
+
+                // CRITICAL RTL FIX: Swap padding for RTL layout
+                if (RightToLeft == RightToLeft.Yes)
+                {
+                    int temp = totalPaddingLeft;
+                    totalPaddingLeft = totalPaddingRight;
+                    totalPaddingRight = temp;
+                }
 
                 int availableWidth = Math.Max(1, Width - totalPaddingLeft - totalPaddingRight);
                 int availableHeight = Math.Max(1, Height - totalPaddingTop - totalPaddingBottom);
@@ -913,22 +1347,25 @@ namespace EasyWinFormLibrary.CustomControls
                         case ContentAlignment.MiddleLeft:
                         case ContentAlignment.MiddleCenter:
                         case ContentAlignment.MiddleRight:
-                            y = totalPaddingTop + (availableHeight - height) / 2;
+                            y = totalPaddingTop + Math.Max(0, (availableHeight - height) / 2);
                             break;
 
                         case ContentAlignment.BottomLeft:
                         case ContentAlignment.BottomCenter:
                         case ContentAlignment.BottomRight:
-                            y = totalPaddingTop + (availableHeight - height);
+                            y = totalPaddingTop + Math.Max(0, (availableHeight - height));
                             break;
                     }
 
-                    // Ensure y is not negative
-                    y = Math.Max(totalPaddingTop, y);
+                    // Ensure y is not negative and within bounds
+                    y = Math.Max(totalPaddingTop, Math.Min(y, Height - totalPaddingBottom - height));
 
                     _textBox.Location = new Point(x, y);
                     _textBox.Size = new Size(width, height);
                 }
+
+                _lastSize = Size;
+                _updateBoundsRequired = false;
             }
             catch (Exception ex)
             {
@@ -937,7 +1374,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Updates the text alignment of the internal textbox based on ContentAlignment
+        /// ENHANCED: Updates the text alignment of the internal textbox with RTL support
         /// </summary>
         private void UpdateTextBoxAlignment()
         {
@@ -945,31 +1382,35 @@ namespace EasyWinFormLibrary.CustomControls
 
             try
             {
-                // Map ContentAlignment to HorizontalAlignment
+                // Map ContentAlignment to HorizontalAlignment with RTL consideration
+                HorizontalAlignment horizontalAlign = HorizontalAlignment.Left;
+
                 switch (_textAlignment)
                 {
                     case ContentAlignment.TopLeft:
                     case ContentAlignment.MiddleLeft:
                     case ContentAlignment.BottomLeft:
-                        _textBox.TextAlign = HorizontalAlignment.Left;
+                        horizontalAlign = RightToLeft == RightToLeft.Yes ? HorizontalAlignment.Right : HorizontalAlignment.Left;
                         break;
 
                     case ContentAlignment.TopCenter:
                     case ContentAlignment.MiddleCenter:
                     case ContentAlignment.BottomCenter:
-                        _textBox.TextAlign = HorizontalAlignment.Center;
+                        horizontalAlign = HorizontalAlignment.Center;
                         break;
 
                     case ContentAlignment.TopRight:
                     case ContentAlignment.MiddleRight:
                     case ContentAlignment.BottomRight:
-                        _textBox.TextAlign = HorizontalAlignment.Right;
+                        horizontalAlign = RightToLeft == RightToLeft.Yes ? HorizontalAlignment.Left : HorizontalAlignment.Right;
                         break;
 
                     default:
-                        _textBox.TextAlign = HorizontalAlignment.Left;
+                        horizontalAlign = RightToLeft == RightToLeft.Yes ? HorizontalAlignment.Right : HorizontalAlignment.Left;
                         break;
                 }
+
+                _textBox.TextAlign = horizontalAlign;
             }
             catch (Exception ex)
             {
@@ -979,17 +1420,13 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
-        #region Input Validation Methods (same as before)
+        #region Input Validation Methods
 
         private void ConvertArabicToEnglishNumerals(KeyPressEventArgs e)
         {
             try
             {
-                if (_allowArabicNumber)
-                {
-                    return;
-                }
-                else
+                if (!_allowArabicNumber)
                 {
                     NumberInputUtils.ConvertToEnglishNumerals(e);
                 }
@@ -1002,19 +1439,19 @@ namespace EasyWinFormLibrary.CustomControls
 
         private void ApplyInputTypeValidation(KeyPressEventArgs e)
         {
-            switch (_textBoxInputType)
+            switch (_AdvancedTextBoxInputType)
             {
-                case TextBoxInput.IntegerInput:
-                case TextBoxInput.TextIntegerNumberInput:
+                case AdvancedTextBoxInput.IntegerInput:
+                case AdvancedTextBoxInput.TextIntegerNumberInput:
                     ValidateIntegerInput(e);
                     break;
 
-                case TextBoxInput.DoubleInput:
-                case TextBoxInput.TextDoubleNumberInput:
+                case AdvancedTextBoxInput.DoubleInput:
+                case AdvancedTextBoxInput.TextDoubleNumberInput:
                     ValidateDoubleInput(e);
                     break;
 
-                case TextBoxInput.TextInput:
+                case AdvancedTextBoxInput.TextInput:
                 default:
                     break;
             }
@@ -1060,9 +1497,6 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                     e.Handled = true;
-
-                if ((e.KeyChar == '-') && (Text.IndexOf('-') > -1))
-                    e.Handled = true;
             }
         }
 
@@ -1086,9 +1520,6 @@ namespace EasyWinFormLibrary.CustomControls
 
                 if ((e.KeyChar == '.') && (Text.IndexOf('.') > -1))
                     e.Handled = true;
-
-                if ((e.KeyChar == '-') && (Text.IndexOf('-') > -1))
-                    e.Handled = true;
             }
         }
 
@@ -1104,21 +1535,21 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 string normalizedText = NumberInputUtils.NormalizeNumericString(Text, preserveDecimal: true);
 
-                switch (_textBoxInputType)
+                switch (_AdvancedTextBoxInputType)
                 {
-                    case TextBoxInput.IntegerInput:
+                    case AdvancedTextBoxInput.IntegerInput:
                         ValidText = NumberInputUtils.IsValidNumericString(normalizedText, allowDecimal: false, allowNegative: _allowNegativeNumber) &&
                                    long.TryParse(normalizedText, out _);
                         break;
 
-                    case TextBoxInput.DoubleInput:
+                    case AdvancedTextBoxInput.DoubleInput:
                         ValidText = NumberInputUtils.IsValidNumericString(normalizedText, allowDecimal: true, allowNegative: _allowNegativeNumber) &&
                                    double.TryParse(normalizedText, out _);
                         break;
 
-                    case TextBoxInput.TextInput:
-                    case TextBoxInput.TextIntegerNumberInput:
-                    case TextBoxInput.TextDoubleNumberInput:
+                    case AdvancedTextBoxInput.TextInput:
+                    case AdvancedTextBoxInput.TextIntegerNumberInput:
+                    case AdvancedTextBoxInput.TextDoubleNumberInput:
                     default:
                         ValidText = true;
                         break;
@@ -1135,19 +1566,19 @@ namespace EasyWinFormLibrary.CustomControls
         {
             try
             {
-                switch (_textBoxInputType)
+                switch (_AdvancedTextBoxInputType)
                 {
-                    case TextBoxInput.IntegerInput:
+                    case AdvancedTextBoxInput.IntegerInput:
                         ValidText = long.TryParse(Text, out _);
                         break;
 
-                    case TextBoxInput.DoubleInput:
+                    case AdvancedTextBoxInput.DoubleInput:
                         ValidText = double.TryParse(Text, out _);
                         break;
 
-                    case TextBoxInput.TextInput:
-                    case TextBoxInput.TextIntegerNumberInput:
-                    case TextBoxInput.TextDoubleNumberInput:
+                    case AdvancedTextBoxInput.TextInput:
+                    case AdvancedTextBoxInput.TextIntegerNumberInput:
+                    case AdvancedTextBoxInput.TextDoubleNumberInput:
                     default:
                         ValidText = true;
                         break;
@@ -1162,19 +1593,19 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
-        #region Text Formatting Methods (same as before)
+        #region Text Formatting Methods
 
         private void PrepareTextForEditing()
         {
             try
             {
-                switch (_textBoxInputType)
+                switch (_AdvancedTextBoxInputType)
                 {
-                    case TextBoxInput.IntegerInput:
+                    case AdvancedTextBoxInput.IntegerInput:
                         PrepareIntegerForEditing();
                         break;
 
-                    case TextBoxInput.DoubleInput:
+                    case AdvancedTextBoxInput.DoubleInput:
                         PrepareDoubleForEditing();
                         break;
                 }
@@ -1206,13 +1637,13 @@ namespace EasyWinFormLibrary.CustomControls
         {
             try
             {
-                switch (_textBoxInputType)
+                switch (_AdvancedTextBoxInputType)
                 {
-                    case TextBoxInput.IntegerInput:
+                    case AdvancedTextBoxInput.IntegerInput:
                         FormatIntegerText();
                         break;
 
-                    case TextBoxInput.DoubleInput:
+                    case AdvancedTextBoxInput.DoubleInput:
                         FormatDoubleText();
                         break;
                 }
@@ -1292,7 +1723,7 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
-        #region Public Methods
+        #region Enhanced Public Methods
 
         /// <summary>
         /// Sets input validation properties in one method call
@@ -1301,10 +1732,10 @@ namespace EasyWinFormLibrary.CustomControls
         /// <param name="allowArabicNumbers">Whether to allow Arabic numerals</param>
         /// <param name="allowNegative">Whether to allow negative numbers</param>
         /// <param name="allowDecimalPoint">Whether to allow decimal points</param>
-        public void SetInputValidation(TextBoxInput inputType, bool allowArabicNumbers = false,
+        public void SetInputValidation(AdvancedTextBoxInput inputType, bool allowArabicNumbers = false,
             bool allowNegative = false, bool allowDecimalPoint = false)
         {
-            _textBoxInputType = inputType;
+            _AdvancedTextBoxInputType = inputType;
             _allowArabicNumber = allowArabicNumbers;
             _allowNegativeNumber = allowNegative;
             _allowPoint = allowDecimalPoint;
@@ -1313,18 +1744,21 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Sets border styling properties in one method call
+        /// ENHANCED: Sets border styling properties in one method call with selective sides support
         /// </summary>
         /// <param name="size">Border size</param>
         /// <param name="color">Border color</param>
         /// <param name="radius">Border radius for rounded corners</param>
+        /// <param name="sides">Which sides to draw (optional, defaults to All)</param>
         /// <param name="focusColor">Border color when focused (optional)</param>
         /// <param name="textPadding">Text padding (optional)</param>
-        public void SetBorderStyle(int size, Color color, int radius = 0, Color? focusColor = null, Padding? textPadding = null)
+        public void SetBorderStyle(int size, Color color, int radius = 0, AdvancedTextBoxBorderSides sides = AdvancedTextBoxBorderSides.All,
+            Color? focusColor = null, Padding? textPadding = null)
         {
             _borderSize = Math.Max(0, Math.Min(size, 10));
             _borderColor = color;
             _borderRadius = Math.Max(0, radius);
+            _AdvancedTextBoxBorderSides = sides;
 
             if (focusColor.HasValue)
             {
@@ -1342,9 +1776,23 @@ namespace EasyWinFormLibrary.CustomControls
                 _borderRadius = Math.Min(Width, Height) / 2;
             }
 
+            _updateBoundsRequired = true;
             UpdateTextBoxBounds();
             UpdateRegion();
             Invalidate();
+        }
+
+        /// <summary>
+        /// Sets which sides of the border to draw
+        /// </summary>
+        /// <param name="sides">Border sides to draw</param>
+        public void SetAdvancedTextBoxBorderSides(AdvancedTextBoxBorderSides sides)
+        {
+            if (_AdvancedTextBoxBorderSides != sides)
+            {
+                _AdvancedTextBoxBorderSides = sides;
+                Invalidate();
+            }
         }
 
         /// <summary>
@@ -1357,6 +1805,7 @@ namespace EasyWinFormLibrary.CustomControls
             _textAlignment = alignment;
             _textPadding = padding;
             UpdateTextBoxAlignment();
+            _updateBoundsRequired = true;
             UpdateTextBoxBounds();
         }
 
@@ -1399,6 +1848,7 @@ namespace EasyWinFormLibrary.CustomControls
             }
 
             UpdateTextBoxAlignment();
+            _updateBoundsRequired = true;
             UpdateTextBoxBounds();
         }
 
@@ -1522,7 +1972,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         public string SelectedText
         {
-            get { return _textBox?.SelectedText ?? string.Empty; }
+            get => _textBox?.SelectedText ?? string.Empty;
             set { if (_textBox != null) _textBox.SelectedText = value; }
         }
 
@@ -1531,7 +1981,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         public int SelectionStart
         {
-            get { return _textBox?.SelectionStart ?? 0; }
+            get => _textBox?.SelectionStart ?? 0;
             set { if (_textBox != null) _textBox.SelectionStart = value; }
         }
 
@@ -1540,13 +1990,75 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         public int SelectionLength
         {
-            get { return _textBox?.SelectionLength ?? 0; }
+            get => _textBox?.SelectionLength ?? 0;
             set { if (_textBox != null) _textBox.SelectionLength = value; }
         }
 
         #endregion
 
         #region Helper Methods
+
+        // <summary>
+        /// Updates the placeholder display based on current text state
+        /// </summary>
+        private void UpdatePlaceholder()
+        {
+            if (_textBox == null) return;
+
+            try
+            {
+                if (string.IsNullOrEmpty(_textBox.Text) && !string.IsNullOrEmpty(_placeholderText) && !_textBox.Focused)
+                {
+                    ShowPlaceholder();
+                }
+                else if (_isPlaceholderActive)
+                {
+                    HidePlaceholder();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating placeholder: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Shows the placeholder text
+        /// </summary>
+        private void ShowPlaceholder()
+        {
+            if (_textBox == null || _isPlaceholderActive) return;
+
+            try
+            {
+                _isPlaceholderActive = true;
+                _textBox.Text = _placeholderText;
+                _textBox.ForeColor = _placeholderColor;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing placeholder: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Hides the placeholder text
+        /// </summary>
+        private void HidePlaceholder()
+        {
+            if (_textBox == null || !_isPlaceholderActive) return;
+
+            try
+            {
+                _isPlaceholderActive = false;
+                _textBox.Text = string.Empty;
+                _textBox.ForeColor = ForeColor;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error hiding placeholder: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Detaches event handlers to prevent memory leaks
@@ -1565,6 +2077,10 @@ namespace EasyWinFormLibrary.CustomControls
                     _textBox.GotFocus -= OnTextBoxGotFocus;
                     _textBox.LostFocus -= OnTextBoxLostFocus;
                     _textBox.Enter -= OnTextBoxEnter;
+
+                    // Remove placeholder-specific events
+                    _textBox.Enter -= OnTextBoxEnterPlaceholder;
+                    _textBox.Leave -= OnTextBoxLeavePlaceholder;
                 }
 
                 Resize -= OnControlResize;
@@ -1602,8 +2118,8 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         protected override bool DoubleBuffered
         {
-            get { return true; }
-            set { base.DoubleBuffered = value; }
+            get => true;
+            set => base.DoubleBuffered = value;
         }
 
         #endregion

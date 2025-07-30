@@ -9,25 +9,24 @@ using System.Windows.Forms;
 namespace EasyWinFormLibrary.Extension
 {
     /// <summary>
-    /// Button types for DataGridView image columns
-    /// </summary>
-    public enum ButtonImage
-    {
-        Print = 0,
-        Update = 1,
-        Delete = 2,
-        Add = 3,
-        View = 4,
-        Download = 5,
-        Upload = 6,
-        Settings = 7
-    }
-
-    /// <summary>
     /// Extension methods for DataGridView
     /// </summary>
     public static class DataGridViewExtentions
     {
+        #region Enums
+        /// <summary>
+        /// Button types for DataGridView image columns
+        /// </summary>
+        public enum ButtonImage
+        {
+            Print = 0,
+            Update = 1,
+            Delete = 2,
+        }
+
+        #endregion
+
+        #region Public extension methods
         /// <summary>
         /// Checks if DataGridView has any rows
         /// </summary>
@@ -341,73 +340,6 @@ namespace EasyWinFormLibrary.Extension
                 System.Diagnostics.Debug.WriteLine($"Error auto-sizing columns: {ex.Message}");
             }
         }
-
-
-        #region Base64 Images
-
-        private const string PrintImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAABAlJREFUeJztm0924kYQxr9qYTK7aD/hRTnBkBMMPoHhQbIdzcJkduEGcU4QZ+cHC8vbCX4iJwicYJgTjBwm68BuwtBdWSASjBG0hETz77eCpqtV+qxuVVW3CQnwHdeW6uwVGGWASknGSA/ugtCp/dn6NYk1xTVoF+plALcA7CQXzJBAKa58/1erH8colgD3hUuXQbfx/NoqQ6X4PI4I2gL4zhtHSvUOu/eXXySwrPG3lcAb6nQWuqNKqa6w+zcPAI5SeVe3cy7GwBdL2u4sa9zQVTttfMe1lcx3GHg5387AKwDXOmNoTYG3zy+LQtC7R42Mh9rHpqPpa2b4jmtLmf97sb02aGrdm9YUILKePPpECHRssyZ8+t4ntddeA3YZAhJPwYMQYBNOAph2wDQnAUw7YJqTAKYdMM1JANMOmOboBViaMPiOa3+enL2YfRcCRTA9zq4IfaW4kbF/WghB12AU59sUc2n++1nu8/tlWesjAcKs7ycA5Swc3QE6SvHP8xWj/wTYg3JXahD4dXXQ8qafcVw3P2MmAoUFhQ/Yj3JXmgwta/xNTk6+uALxYdw84wHEfQLZDBQBfLmitz1R+YaA4JcrOu0Td1ZuXKwNWuXqoFmyrLED8O+rDAi4oHahzltyMDMI6FUHzdJiu++4tpzk+yB8HWV7IIEQe8tap+996qyyPAgBFFtB1G8seGW98CAEgFClqJ+I4aw0TdsXExDjR99xn7zJ3j6/LGK6SRJtewiLYEjAoEbO+qcHPLOlkhdgusKa+CbO1tiu4xC4I2UegILuvu9BTIFNOAlg2gHTHL0AiRfBqPDTBPeFenfxjIAuR/8EnAQw7YBpUg2EFqvJWRBV3U1KqgJMJs+KgtQfaY655BrnALppjSewwfmafYeAniCCZ9oRYxA6QoixB2Bk2hcDjIQYe7lK4A3bhboLwN90RGY5FES9zX2LRrFMawF0K4E3zAFAbdDs3BcuXzPoGqtLySsJt5xKKTmYFSMCN6qDVgeYiwOqg5ZnWaII4A6HOSVGAO4sSxRn22LAwmuwEtwEAFxgWk6anRAVQhWZ8cu6K0w3V9f3W0dt0DrfdAxmcf7/ZzmMOkIfGQfMG/z21RsQqbUXnQoWXaDcJt99vOnq9Dv6UPgkgGkHTJNqLpDLfeqHsfrekKoAYZbWTXPMrDmIKcCUPHjTEoCXhJ+M6C3nbeI7rr14QiwOWgKEMcFidOi0Cz/cLtuT2xbT4z1ny3IY7RQ/zhrQwZONRnalzLvtQj3GMOkh5fL2OCm+9hpgWeIK+5AjMB7CFF8LbQEqwU1A2I2ToSsYKeZynJphrLdAmEVVsItPAuNBKS5l+s/TM3zHtZXKu2CUk+7IpAUBPYC9+RQ3Dv8CfDBn+eF40uIAAAAASUVORK5CYII=";
-        private const string EditImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAuNJREFUeJztmj122kAUhe8bnDqUOZYLZQd0KRNvIIcdBOEmDaAd5HgFUXANAzvgZAORy1SJVxAKk5MSp8Z6KcBOMBIzGv0wnMxXopnHu3f+RwIcDofD4XA4HI6jwgtl66w3fl00jigjmbrxBvIjEv7GhNgbSFkkFpWVVF14AynB3Nn6kWiy+BQEJvGOrwcw7zYac8frjUKTcEdjwFko3wDAYtjtAJjuFCBqmcQ9CgO8gZSc8BevN+oAGSYIikxiW2/A1pgnkqkmMAeLKPhuEt/qSTB1wgPWgq8uJsB6aNxGQWz6H9YakCn+gX9MKIKVQ0ApvkSs6wFa4ktqfcAyA+oWD1hkwCHEAwYG+KFsrhK8Y+Y2CE0A+TYgKSJMxW/qtcBYEtHsRGA6j4JlnnRyGXDalx8IHAJo5qn3SPnin9ZbMij6OQwudVPSNqDwzFy9+L/kOBw1dAp5/XEE4L1O2VTqFL+m9fzVW/r99XOsSk3ZA16E0m8k/ENVLpP6xT9yL+jlryiY7yuj3Ag1EjY6ZgI4qHhAL3ednaDZtdOBxW9QrlAnRYIQ+BJCxE9/Z2C5iLpbpzNT8X4omytgCqLdOwAAnHAbwCAjorLxlHOA1x9z1rPFsKu1ilS9ySmSY+WHoUPt8HSp1ACvNwptFg9U3QOI2nufH1g8UP0QyJ6ELBAPVGjAwy1uKpaIByo0YLM8pTywRzygtw8wggB/szZdEziGEHGRy8uqqMyA22F3/wRoCVZeitaJM6BIZT+UZjdDJVI0h0JzwOo+kad9afRKqixW90kLlLndv1PV1zHgGhkbGiZqEzKWu5rgbPEAoGwc9RBgnuXIxy40clca8KwhJtDoShZyt8l9L0oD5lGwBBe4FjsUzKHOOwL9a/HeqAOiQh8k1UaO7bb2Mri4upiQoHMAN6Z51cANCTrPc9YwejfohbJFSdJmkA/AN4lRInMCz1mImelXIg6Hw+FwOBwOh8Px3/EHRMWyhUpvZbwAAAAASUVORK5CYII=";
-        private const string DeleteImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAsNJREFUeJztm01y2kAQRr8epD03CNk6JgU7F4ayOEHICcwVuAE3iI9AThByAouS8JZUHJItvgFsDZ7Ohrj4ke2RGKmpMK/KmynRfvMhqY1RE3JiEgRlb7W6JuYOgCBjmZCJhivP+1oPw7lFvWcoj6LTRqPGRLcAypZKzom5/eHu7oeles9YD+DPxUXlqVSawN7m/zFf+v5722eCslkMAJ5KpT7sbx4Ayv5yeWO7qPUAAFznUDO32lYvgftmMyDm2911pdTnsygapqn1u9XqaK2/7a4zUbsax+EBmttutgq9BDGP0m4eAM6iaEjMozycNnnzDJg2GjUAn0yKMVGA/ZY3I+ZBWrF1vS6AytYa81ABpt3g+1ud49UA1u1sYvjLjhJirr8WQmIAP1utKwBQWncBdHMxK46BVmoAAB+jaO+S8pJeobQO83UqlO76jQQS3vDcb4LHjgtAWkCaxHtAEf3X4TgOjD4LrP8g+pK3jE2IuWfy/4PEe8AuWqkyMQcHWxWIVsroI/nJdwEXgLSANC4AaQFpjLpACh6YaLC5oLQOmOhqc42YR1qpMMtxxNwF8M6WsNUAiHl2Ph73N9fum80+MW9tTCsVVuM403HTRiNgImsBnPwl4AKQFpDGBSAtII0LQFpAGheAtIA0LgBpAWlcANIC0rgApAWkcQFIC0jjApAWkMYFIC0gjQtAWkAaF4C0gDQuAGkBaU4+AKOHpF4ahEhgjv1H2SvYeeQdwGz9k+W4GgxGckwHK2x/PV6G2YhcBfubPeS4zPy3l4DS2mi6zHhm6NflJWfXKZ7z8dhob2nOgIeMLhIYuxoHsPvoyzGTxtU4gJXn3RCwyGRUIAQsVp5nPGBpHEA9DOeaqJNNqzg0USfNeG2qLlCN45CJ2sd4JhCwIOZ62qHK1G2wGsfho+9XAPSOYbBi7dB79P1Klunyv7vz35+tuznWAAAAAElFTkSuQmCC";
-
-        // Additional icons
-        private const string AddImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAPNJREFUeJzt21EOADEMA9Bx/53Y/9xYAp5Iaj8yMzMzMzMzMzMzMzMzMzMzMzMzM79gZq1k1/7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM5Xs2h2YqWTX7sBMJbt2B2Yq2bU7MFPJrt2BmUp27Q7MVLJrd2Cmkl27AzOV7NodmKlk1+7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM/UD/gDSqhX9iOUAAAAASUVORK5CYII=";
-        private const string ViewImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAPNJREFUeJzt21EOADEMA9Bx/53Y/9xYAp5Iaj8yMzMzMzMzMzMzMzMzMzMzMzMzM79gZq1k1/7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM5Xs2h2YqWTX7sBMJbt2B2Yq2bU7MFPJrt2BmUp27Q7MVLJrd2Cmkl27AzOV7NodmKlk1+7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM/UD/gDSqhX9iOUAAAAASUVORK5CYII=";
-        private const string DownloadImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAPNJREFUeJzt21EOADEMA9Bx/53Y/9xYAp5Iaj8yMzMzMzMzMzMzMzMzMzMzMzMzM79gZq1k1/7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM5Xs2h2YqWTX7sBMJbt2B2Yq2bU7MFPJrt2BmUp27Q7MVLJrd2Cmkl27AzOV7NodmKlk1+7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM/UD/gDSqhX9iOUAAAAASUVORK5CYII=";
-        private const string UploadImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAPNJREFUeJzt21EOADEMA9Bx/53Y/9xYAp5Iaj8yMzMzMzMzMzMzMzMzMzMzMzMzM79gZq1k1/7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM5Xs2h2YqWTX7sBMJbt2B2Yq2bU7MFPJrt2BmUp27Q7MVLJrd2Cmkl27AzOV7NodmKlk1+7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM/UD/gDSqhX9iOUAAAAASUVORK5CYII=";
-        private const string SettingsImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAPNJREFUeJzt21EOADEMA9Bx/53Y/9xYAp5Iaj8yMzMzMzMzMzMzMzMzMzMzMzMzM79gZq1k1/7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM5Xs2h2YqWTX7sBMJbt2B2Yq2bU7MFPJrt2BmUp27Q7MVLJrd2Cmkl27AzOV7NodmKlk1+7ATCW7dgdmKtm1OzBTya7dgZlKdu0OzFSya3dgppJduwMzlezaHZipZNfuwEwlu3YHZirZtTswU8mu3YGZSnbtDsxUsmt3YKaSXbsDM/UD/gDSqhX9iOUAAAAASUVORK5CYII=";
-
-        public static string[] ImagesList = {
-            PrintImageBase64,
-            EditImageBase64,
-            DeleteImageBase64,
-            AddImageBase64,
-            ViewImageBase64,
-            DownloadImageBase64,
-            UploadImageBase64,
-            SettingsImageBase64
-        };
-
-        #endregion
-
-        #region Image Helper Methods
-
-        private static Image GetIcon(string imageBase64)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(imageBase64)) return null;
-
-                byte[] imageBytes = Convert.FromBase64String(imageBase64);
-                using (var ms = new MemoryStream(imageBytes))
-                {
-                    return Image.FromStream(ms);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading icon: {ex.Message}");
-                return null;
-            }
-        }
-
-        private static Image GetButtonImage(ButtonImage buttonImage)
-        {
-            try
-            {
-                int index = (int)buttonImage;
-                if (index >= 0 && index < ImagesList.Length)
-                {
-                    return GetIcon(ImagesList[index]);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error getting button image: {ex.Message}");
-                return null;
-            }
-        }
-
         #endregion
 
         #region Column Creation Methods
@@ -575,24 +507,6 @@ namespace EasyWinFormLibrary.Extension
         {
             if (dgv == null) return;
             dgv.Columns.Add(CreateButtonColumn(columnName, GetButtonImage(ButtonImage.Print), width));
-        }
-
-        /// <summary>
-        /// Adds an add button column to DataGridView
-        /// </summary>
-        public static void AddAddColumn(this DataGridView dgv, string columnName = "addBtn", int width = 40)
-        {
-            if (dgv == null) return;
-            dgv.Columns.Add(CreateButtonColumn(columnName, GetButtonImage(ButtonImage.Add), width));
-        }
-
-        /// <summary>
-        /// Adds a view button column to DataGridView
-        /// </summary>
-        public static void AddViewColumn(this DataGridView dgv, string columnName = "viewBtn", int width = 40)
-        {
-            if (dgv == null) return;
-            dgv.Columns.Add(CreateButtonColumn(columnName, GetButtonImage(ButtonImage.View), width));
         }
 
         /// <summary>
@@ -815,43 +729,6 @@ namespace EasyWinFormLibrary.Extension
         #region Utility Methods
 
         /// <summary>
-        /// Exports DataGridView to CSV
-        /// </summary>
-        public static bool ExportToCsv(this DataGridView dgv, string filePath)
-        {
-            if (dgv?.DataSource == null) return false;
-
-            try
-            {
-                var dataTable = dgv.DataSource as DataTable;
-                if (dataTable == null) return false;
-
-                using (var writer = new StreamWriter(filePath))
-                {
-                    // Write headers
-                    var headers = dataTable.Columns.Cast<DataColumn>()
-                        .Select(column => $"\"{column.ColumnName}\"");
-                    writer.WriteLine(string.Join(",", headers));
-
-                    // Write data
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        var fields = row.ItemArray.Select(field =>
-                            $"\"{field?.ToString().Replace("\"", "\"\"")}\"");
-                        writer.WriteLine(string.Join(",", fields));
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error exporting to CSV: {ex.Message}");
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Gets selected row data as dictionary
         /// </summary>
         public static Dictionary<string, object> GetSelectedRowData(this DataGridView dgv)
@@ -969,5 +846,59 @@ namespace EasyWinFormLibrary.Extension
 
         #endregion
 
+        #region Base64 Images
+
+        private const string PrintImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACkElEQVRIDdWWS2hTQRSG/0luoQ+KdVlcSFHwCT7wUVfdduPCtNStJLoouMquIm5cCEI3IkWsScGNglofiCLduJBCISgoBrqSCio+FqWQdNHkjt/c5nVvU5piNob/3POfM2fOmXtmMomRwp9ZJY9YmVuSOSnZrvDoplaRkYWy/MtjmsnDazA1BnmuZG9JZhHaz0DeSqvwFmB7WNB+ApfKWjkwpke1eR7OGkrSaYx+Vj6TUDYJbxlPlHpI8HmjvmPoeSRALHhWHqx4h6NG5rvT2xHe+JuLN7J9TlclVKDqbKf+/wvQOmlWqWH6f5bWuA06A1+BO0G1BhK5/esl+h3y0Sr2YlTTbwy7fxHHNNJ2sNCU24OJNmX+Q7IrHPHr5CM33wxpwsMYQNqBO+eUueES0ZUE+hCyx7UoqIbxjzDvyyoPezL7uGrmSNaJyL2B020Qezyu2K/oakMFrGyBb3EPQWtGWttOVeZ0MKeDOQWkBwkQKkDyT3gH2aybCWWuwlsGR32SImmuCi5JdxOvT3UFfCg5eUbwWMkTMZmBiDtk+rJfRpXNhZx1o+wKuPv7cN1XZyQfZ1XJumcjIyaLN4U0w2ePtqTp/TNGu5EQOA2vOde/Q86IQUwu4qqaBV9Kewndm+PcHqR3Q6x2r2QGqxFGfje+nVW7Qf8cUfZag91AzUty3S7Jezumu189NzKizBL6Pj0fMZA6zBB8Q4uIWcTftIAvkxtV5hXjAYICAWvyKMmfjMs8iA6VFS9GfZvZoQIxxVbYD1lpl5tQ+QHPO76VVOewJ8uNsaECRa0udKnzBwEX2JchtEVaQZyg3ciS1fIHdA20s8YD8lSXjvrypzBOIW4iakuUiJjnb8t45a0x1/EXnUCnp/yWJpEAAAAASUVORK5CYII=";
+        private const string EditImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACQElEQVRIDd1Uv2sUURD+ZvcOjCJopUgIVikMevo3iAE7IeySKIiVFv6KFhZJYyNqIUYUJYIREyHcXhpBLVQEe3/cLhaXTpFoaSV3OW53/GaNOVclub1Uyd58b9699+abebMzC6z3R9Z8gdkPu+G6g1D+kvglRg58wh/P2hwE4XlyXSM2ESYNDmfglx5Qp+KkYzdDORyj2QTxFNBexE4f56+J27BbcWLSnYNKVIbgChx5DMwPw9+/gJG9X+DiFEl70pRxYpLfgUWu6psxs/4dnpekcxuazq+Uiy6vFWy9Yxi5RS6MXPUzVMdRiTbjsp7EngrJk5vkqqOVvKJOpXMHGfLaCfh+jCA0knEMRAr09/BGQxA993cl2aGVUa5eJ5kSdxk1I106riooR3e4bnuKSji6tLOsVn8HRi5yiRb34O07DRFGy38m998V4OpOmxIz8EoT1DnEyIPQostGbhSTb4uMfI74b+R2ZGWsF/J/34G1v+XcShHzZzM5DwIX2woPeXVWC8Y6yXm7ImiFJ7WtWFz8BsgLoOalpWjrBiPX/kd0eIxdbORXbXk1ZPug2ThE8i38ttQz5PZCUZwlsUV+oZPIfzvOpiiRw9xoEEcRRDeoASPfTnIgN7nZZ28gGISDZ4jlKzvyIhtnF7uzyINGbmnJWedA28FcdQAJ+pDoe7iyA4k02LXDJK8To0zLLerc0nYQy0HmmARyhE4W+CmeRks/oilTOF76wY2upO1ACs8hLYepeYOhUpXVol0xbjijn4445rWEMCyKAAAAAElFTkSuQmCC";
+        private const string DeleteImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACaklEQVRIDdVUv2sUURCeebs5wULFH1wsRAnRJijepbE8vIMkZRIuXdKIvZaCRRprEfQPUFLluE1lEriLgoLaeOlSREhhk5CIEpQ02X3j997tXrLunrsgFllm3ryZ+ebNe/NmH9FJ/zjPAZYqt8+Ro55o4gkmEWFaDogfz7Q/72fFqyzAYr3uiKNWhOgekbQg2yx03xVZfVupuFnxmQDnx9Y4FrlDTNPT7Y6HOTWrpRYTN767P8egvwb3pV6JmndLs8z8EkgG/wuhgjQ3udZZMIu4ZjDsav4YKHmEnc6S0EXYnoJzE7N6iNvZQxkXlOZPfQOXquUXXrUMYF9IqgMx38DP/3QmL5llG6ALi/WRAmQuWp4YPgXgeZx8GzJGyQRCBsSF/dPFCOnVSnPY3WakN2vlL8YW6b8Ozxosk7Kbi8xWJhJoVjvGI75cNtKwEA9BXgdbQpsOhzarFwKyWB04NtYaw0GF8khoewIS5dugI0f/mahuAnK6sceRyQQDIUhz7gToPIvVPpvyHl+fEgmCM0O7QASieBAyF4logw3o0rVE9yUSzDQaAVbdQ0fYXWGeTWJPuxvGxvCJBMaLX9kcNX8CtndgYkx4jFMTEP4FOP5fArzHO2hDU1e7GzzRW5hsgCPaCG1dXWgQ+ESLGmfvLTJKjxmdJFKcnycF1lPt9VfwGYYgmlrrjNgJBvgVvaci7ix/iXAHXxE7cPNd6QrkX6n84dZVAFxWYmIwjZMbV7vaIfGqS3KA59vzaqOtrjV99AMawwt6IL6/kobAZtPMRHh7xon4GYJvpCMiK2+y6AeTb9ZTE0Sokyt/A0xqufQlMXcxAAAAAElFTkSuQmCC";
+
+        public static string[] ImagesList = {
+            PrintImageBase64,
+            EditImageBase64,
+            DeleteImageBase64,
+        };
+
+        #endregion
+
+        #region Image Helper Methods
+
+        private static Image GetIcon(string imageBase64)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(imageBase64)) return null;
+
+                byte[] imageBytes = Convert.FromBase64String(imageBase64);
+                using (var ms = new MemoryStream(imageBytes))
+                {
+                    return Image.FromStream(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading icon: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static Image GetButtonImage(ButtonImage buttonImage)
+        {
+            try
+            {
+                int index = (int)buttonImage;
+                if (index >= 0 && index < ImagesList.Length)
+                {
+                    return GetIcon(ImagesList[index]);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting button image: {ex.Message}");
+                return null;
+            }
+        }
+
+        #endregion
     }
 }

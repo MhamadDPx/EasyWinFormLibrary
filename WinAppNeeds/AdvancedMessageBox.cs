@@ -8,10 +8,25 @@ namespace EasyWinFormLibrary.WinAppNeeds
 {
     public static class AdvancedMessageBox
     {
+        /// <summary>
+        /// Defines the type of message box to display.
+        /// </summary>
         public enum MessageBoxType
         {
             Information = 0, Warning = 1, YesNo = 2
         }
+
+        /// <summary>
+        /// Shows a message box with multilingual support for Kurdish, Arabic and English languages.
+        /// </summary>
+        /// <param name="messageKu">The message text in Kurdish</param>
+        /// <param name="messageAr">The message text in Arabic</param>
+        /// <param name="messageEn">The message text in English</param>
+        /// <param name="titleKu">The title text in Kurdish</param>
+        /// <param name="titleAr">The title text in Arabic</param>
+        /// <param name="titleEn">The title text in English</param>
+        /// <param name="messageBoxType">The type of message box to display</param>
+        /// <returns>Returns true if Yes was selected for YesNo type, otherwise false</returns>
         public static bool ShowMessageBox(string messageKu, string messageAr, string messageEn, string titleKu, string titleAr, string titleEn, MessageBoxType messageBoxType)
         {
             MessageBoxButtons messageBoxButton;
@@ -41,6 +56,15 @@ namespace EasyWinFormLibrary.WinAppNeeds
            ;
             return ShowMessage(messageText, captionText, messageBoxButton, messageBoxIcon) == DialogResult.Yes;
         }
+
+        /// <summary>
+        /// Internal helper method that creates and shows the actual message box form.
+        /// </summary>
+        /// <param name="message">The message text to display</param>
+        /// <param name="caption">The caption/title text to display</param>
+        /// <param name="button">The buttons to show on the message box</param>
+        /// <param name="icon">The icon to display in the message box</param>
+        /// <returns>The dialog result from the message box</returns>
         private static DialogResult ShowMessage(string message, string caption, MessageBoxButtons button, MessageBoxIcon icon)
         {
             using (AdvancedMessageBoxForm msgForm = new AdvancedMessageBoxForm())

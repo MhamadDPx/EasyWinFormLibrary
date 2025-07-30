@@ -39,6 +39,26 @@ namespace EasyWinFormLibrary.CustomControls
         Neon
     }
 
+    /// <summary>
+    /// Border sides enumeration with flags support
+    /// </summary>
+    [Flags]
+    public enum AdvancedPanelBorderSides
+    {
+        /// <summary>No borders</summary>
+        None = 0,
+        /// <summary>Top border</summary>
+        Top = 1,
+        /// <summary>Right border</summary>
+        Right = 2,
+        /// <summary>Bottom border</summary>
+        Bottom = 4,
+        /// <summary>Left border</summary>
+        Left = 8,
+        /// <summary>All borders</summary>
+        All = Top | Right | Bottom | Left
+    }
+
     #endregion
 
     /// <summary>
@@ -88,6 +108,7 @@ namespace EasyWinFormLibrary.CustomControls
         private BorderStyle3D _borderStyle = BorderStyle3D.None;
         private Color _highlightColor = Color.White;
         private Color _shadowBorderColor = Color.Gray;
+        private AdvancedPanelBorderSides _AdvancedPanelBorderSides = AdvancedPanelBorderSides.All;
 
         // Performance optimization fields
         private IntPtr _currentRegion = IntPtr.Zero;
@@ -383,6 +404,25 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets which sides of the border to draw
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Specifies which sides of the border to draw")]
+        [DefaultValue(AdvancedPanelBorderSides.All)]
+        public AdvancedPanelBorderSides AdvancedPanelBorderSides
+        {
+            get { return _AdvancedPanelBorderSides; }
+            set
+            {
+                if (_AdvancedPanelBorderSides != value)
+                {
+                    _AdvancedPanelBorderSides = value;
+                    Invalidate();
+                }
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -407,7 +447,7 @@ namespace EasyWinFormLibrary.CustomControls
         #region High-Performance Region Management
 
         /// <summary>
-        /// Updates the control's region using Windows API for better performance
+        /// IMPROVED: Updates the control's region using Windows API for better performance
         /// </summary>
         private void UpdateRegionIfNeeded()
         {
@@ -418,39 +458,47 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 CleanupCurrentRegion();
 
-                if (_borderRadius > 0)
+                if (_borderRadius > 0 && Width > 0 && Height > 0)
                 {
-                    // Try to get from cache first
-                    string cacheKey = $"{Width}x{Height}x{_borderRadius}";
+                    // Ensure we have a reasonable radius
+                    int effectiveRadius = Math.Min(_borderRadius, Math.Min(Width / 2, Height / 2));
 
-                    IntPtr hRgn = IntPtr.Zero;
-
-                    if (_regionCache.ContainsKey(cacheKey))
+                    if (effectiveRadius > 0)
                     {
-                        // Create a copy of cached region
-                        IntPtr cachedRgn = _regionCache[cacheKey];
-                        hRgn = CreateRectRgn(0, 0, 0, 0);
-                        CombineRgn(hRgn, cachedRgn, IntPtr.Zero, RGN_COPY);
-                    }
-                    else
-                    {
-                        // Create new rounded region using Windows API
-                        hRgn = CreateRoundRectRgn(0, 0, Width, Height, _borderRadius * 2, _borderRadius * 2);
+                        // Try to get from cache first
+                        string cacheKey = $"{Width}x{Height}x{effectiveRadius}";
 
-                        // Cache the region if cache isn't full
-                        if (_regionCache.Count < MAX_CACHE_SIZE && hRgn != IntPtr.Zero)
+                        IntPtr hRgn = IntPtr.Zero;
+
+                        if (_regionCache.ContainsKey(cacheKey))
                         {
-                            IntPtr cacheRgn = CreateRectRgn(0, 0, 0, 0);
-                            CombineRgn(cacheRgn, hRgn, IntPtr.Zero, RGN_COPY);
-                            _regionCache[cacheKey] = cacheRgn;
+                            // Create a copy of cached region
+                            IntPtr cachedRgn = _regionCache[cacheKey];
+                            hRgn = CreateRectRgn(0, 0, 0, 0);
+                            CombineRgn(hRgn, cachedRgn, IntPtr.Zero, RGN_COPY);
                         }
-                    }
+                        else
+                        {
+                            // Create new rounded region using Windows API
+                            // IMPROVED: Better ellipse sizing for cleaner corners
+                            int ellipseSize = effectiveRadius * 2;
+                            hRgn = CreateRoundRectRgn(0, 0, Width + 1, Height + 1, ellipseSize, ellipseSize);
 
-                    if (hRgn != IntPtr.Zero)
-                    {
-                        // Apply the region using Windows API
-                        SetWindowRgn(Handle, hRgn, true);
-                        _currentRegion = hRgn;
+                            // Cache the region if cache isn't full
+                            if (_regionCache.Count < MAX_CACHE_SIZE && hRgn != IntPtr.Zero)
+                            {
+                                IntPtr cacheRgn = CreateRectRgn(0, 0, 0, 0);
+                                CombineRgn(cacheRgn, hRgn, IntPtr.Zero, RGN_COPY);
+                                _regionCache[cacheKey] = cacheRgn;
+                            }
+                        }
+
+                        if (hRgn != IntPtr.Zero)
+                        {
+                            // Apply the region using Windows API
+                            SetWindowRgn(Handle, hRgn, true);
+                            _currentRegion = hRgn;
+                        }
                     }
                 }
                 else
@@ -546,13 +594,21 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Handle creation to ensure region is set
+        /// UPDATED: Handle creation to ensure region is set with better timing
         /// </summary>
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
             _regionUpdateRequired = true;
-            UpdateRegionIfNeeded();
+
+            // Use BeginInvoke to ensure the handle is fully created
+            if (IsHandleCreated)
+            {
+                BeginInvoke(new MethodInvoker(() => {
+                    UpdateRegionIfNeeded();
+                    Invalidate();
+                }));
+            }
         }
 
         /// <summary>
@@ -583,14 +639,21 @@ namespace EasyWinFormLibrary.CustomControls
                 rect.Height -= _shadowOffset + _shadowBlur;
             }
 
-            // Account for border thickness
+            // FIXED: Proper border thickness handling
             if (_borderThickness > 0)
             {
-                int borderOffset = _borderThickness / 2;
-                rect.X += borderOffset;
-                rect.Y += borderOffset;
-                rect.Width -= _borderThickness;
-                rect.Height -= _borderThickness;
+                // Ensure we have proper space for the border by using half thickness as inset
+                float halfBorder = _borderThickness / 2.0f;
+                int inset = (int)Math.Ceiling(halfBorder);
+
+                rect.X += inset;
+                rect.Y += inset;
+                rect.Width -= inset * 2;
+                rect.Height -= inset * 2;
+
+                // Ensure minimum size
+                if (rect.Width < 1) rect.Width = 1;
+                if (rect.Height < 1) rect.Height = 1;
             }
 
             return rect;
@@ -685,24 +748,229 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Optimized border drawing
+        /// FIXED: Optimized border drawing with proper pen alignment and custom sides support
         /// </summary>
         private void DrawBorderOptimized(Graphics graphics, Rectangle drawRect)
         {
-            if (_borderThickness <= 0) return;
+            if (_borderThickness <= 0 || _AdvancedPanelBorderSides == AdvancedPanelBorderSides.None) return;
 
+            // CRITICAL FIX: Set pen alignment to center to ensure even border thickness
             using (var borderPen = new Pen(_borderColor, _borderThickness))
             {
+                borderPen.Alignment = PenAlignment.Center; // This is the key fix!
+
                 if (_borderRadius > 0)
                 {
-                    using (var borderPath = CreateRoundedRectanglePath(drawRect, _borderRadius))
-                    {
-                        graphics.DrawPath(borderPen, borderPath);
-                    }
+                    // For rounded rectangles with custom sides
+                    DrawRoundedBorderWithSides(graphics, drawRect, borderPen);
                 }
                 else
                 {
-                    graphics.DrawRectangle(borderPen, drawRect);
+                    // For rectangular borders with custom sides
+                    DrawRectangularBorderWithSides(graphics, drawRect, borderPen);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws rounded border with specific sides
+        /// </summary>
+        private void DrawRoundedBorderWithSides(Graphics graphics, Rectangle drawRect, Pen borderPen)
+        {
+            Rectangle borderRect = drawRect;
+
+            // Expand the rectangle slightly to ensure the border is drawn properly
+            if (_borderThickness > 1)
+            {
+                float halfPen = _borderThickness / 2.0f;
+                int adjust = (int)Math.Floor(halfPen);
+                borderRect.X -= adjust;
+                borderRect.Y -= adjust;
+                borderRect.Width += adjust * 2;
+                borderRect.Height += adjust * 2;
+            }
+
+            if (_AdvancedPanelBorderSides == AdvancedPanelBorderSides.All)
+            {
+                // Draw complete rounded rectangle
+                using (var borderPath = CreateRoundedRectanglePath(borderRect, _borderRadius))
+                {
+                    graphics.DrawPath(borderPen, borderPath);
+                }
+            }
+            else
+            {
+                // Draw custom rounded border sides
+                DrawCustomRoundedAdvancedPanelBorderSides(graphics, borderRect, borderPen);
+            }
+        }
+
+        /// <summary>
+        /// Draws rectangular border with specific sides
+        /// </summary>
+        private void DrawRectangularBorderWithSides(Graphics graphics, Rectangle drawRect, Pen borderPen)
+        {
+            Rectangle borderRect = drawRect;
+
+            // Adjust for pen width to ensure even borders
+            if (_borderThickness > 1)
+            {
+                float halfPen = _borderThickness / 2.0f;
+                int adjust = (int)Math.Floor(halfPen);
+                borderRect.X -= adjust;
+                borderRect.Y -= adjust;
+                borderRect.Width += adjust * 2;
+                borderRect.Height += adjust * 2;
+            }
+
+            if (_AdvancedPanelBorderSides == AdvancedPanelBorderSides.All)
+            {
+                graphics.DrawRectangle(borderPen, borderRect);
+            }
+            else
+            {
+                // Draw individual sides
+                if (_AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Top))
+                {
+                    graphics.DrawLine(borderPen, borderRect.Left, borderRect.Top, borderRect.Right, borderRect.Top);
+                }
+                if (_AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Right))
+                {
+                    graphics.DrawLine(borderPen, borderRect.Right, borderRect.Top, borderRect.Right, borderRect.Bottom);
+                }
+                if (_AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Bottom))
+                {
+                    graphics.DrawLine(borderPen, borderRect.Left, borderRect.Bottom, borderRect.Right, borderRect.Bottom);
+                }
+                if (_AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Left))
+                {
+                    graphics.DrawLine(borderPen, borderRect.Left, borderRect.Top, borderRect.Left, borderRect.Bottom);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws custom rounded border sides using arcs and lines
+        /// </summary>
+        private void DrawCustomRoundedAdvancedPanelBorderSides(Graphics graphics, Rectangle rect, Pen borderPen)
+        {
+            if (rect.Width <= 0 || rect.Height <= 0) return;
+
+            int effectiveRadius = Math.Min(_borderRadius, Math.Min(rect.Width / 2, rect.Height / 2));
+            if (effectiveRadius <= 1)
+            {
+                // Fall back to rectangular drawing if radius is too small
+                DrawRectangularBorderWithSides(graphics, rect, borderPen);
+                return;
+            }
+
+            int diameter = effectiveRadius * 2;
+
+            // Define corner arc rectangles
+            Rectangle topLeftArc = new Rectangle(rect.X, rect.Y, diameter, diameter);
+            Rectangle topRightArc = new Rectangle(rect.Right - diameter, rect.Y, diameter, diameter);
+            Rectangle bottomRightArc = new Rectangle(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter);
+            Rectangle bottomLeftArc = new Rectangle(rect.X, rect.Bottom - diameter, diameter, diameter);
+
+            // Draw corners and sides based on AdvancedPanelBorderSides flags
+            bool drawTop = _AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Top);
+            bool drawRight = _AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Right);
+            bool drawBottom = _AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Bottom);
+            bool drawLeft = _AdvancedPanelBorderSides.HasFlag(AdvancedPanelBorderSides.Left);
+
+            // Top side and corners
+            if (drawTop)
+            {
+                // Top line
+                graphics.DrawLine(borderPen, rect.Left + effectiveRadius, rect.Top, rect.Right - effectiveRadius, rect.Top);
+
+                // Top-left corner arc (if left side is also drawn)
+                if (drawLeft)
+                {
+                    graphics.DrawArc(borderPen, topLeftArc, 180, 90);
+                }
+                else
+                {
+                    // Just the top part of the arc
+                    graphics.DrawArc(borderPen, topLeftArc, 180, 45);
+                }
+
+                // Top-right corner arc (if right side is also drawn)
+                if (drawRight)
+                {
+                    graphics.DrawArc(borderPen, topRightArc, 270, 90);
+                }
+                else
+                {
+                    // Just the top part of the arc
+                    graphics.DrawArc(borderPen, topRightArc, 315, 45);
+                }
+            }
+
+            // Right side
+            if (drawRight)
+            {
+                // Right line
+                graphics.DrawLine(borderPen, rect.Right, rect.Top + effectiveRadius, rect.Right, rect.Bottom - effectiveRadius);
+
+                // Top-right corner arc (if not already drawn)
+                if (!drawTop)
+                {
+                    graphics.DrawArc(borderPen, topRightArc, 270, 45);
+                }
+
+                // Bottom-right corner arc (if bottom side is also drawn)
+                if (drawBottom)
+                {
+                    graphics.DrawArc(borderPen, bottomRightArc, 0, 90);
+                }
+                else
+                {
+                    // Just the right part of the arc
+                    graphics.DrawArc(borderPen, bottomRightArc, 315, 45);
+                }
+            }
+
+            // Bottom side
+            if (drawBottom)
+            {
+                // Bottom line
+                graphics.DrawLine(borderPen, rect.Left + effectiveRadius, rect.Bottom, rect.Right - effectiveRadius, rect.Bottom);
+
+                // Bottom-right corner arc (if not already drawn)
+                if (!drawRight)
+                {
+                    graphics.DrawArc(borderPen, bottomRightArc, 0, 45);
+                }
+
+                // Bottom-left corner arc (if left side is also drawn)
+                if (drawLeft)
+                {
+                    graphics.DrawArc(borderPen, bottomLeftArc, 90, 90);
+                }
+                else
+                {
+                    // Just the bottom part of the arc
+                    graphics.DrawArc(borderPen, bottomLeftArc, 90, 45);
+                }
+            }
+
+            // Left side
+            if (drawLeft)
+            {
+                // Left line
+                graphics.DrawLine(borderPen, rect.Left, rect.Top + effectiveRadius, rect.Left, rect.Bottom - effectiveRadius);
+
+                // Top-left corner arc (if not already drawn)
+                if (!drawTop)
+                {
+                    graphics.DrawArc(borderPen, topLeftArc, 225, 45);
+                }
+
+                // Bottom-left corner arc (if not already drawn)
+                if (!drawBottom)
+                {
+                    graphics.DrawArc(borderPen, bottomLeftArc, 135, 45);
                 }
             }
         }
@@ -798,7 +1066,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Creates a graphics path for a rounded rectangle
+        /// IMPROVED: Creates a graphics path for a rounded rectangle with better precision
         /// </summary>
         /// <param name="rect">Rectangle to create path for</param>
         /// <param name="radius">Corner radius</param>
@@ -807,20 +1075,30 @@ namespace EasyWinFormLibrary.CustomControls
         {
             var path = new GraphicsPath();
 
-            if (radius <= 0)
+            if (radius <= 0 || rect.Width <= 0 || rect.Height <= 0)
             {
                 path.AddRectangle(rect);
                 return path;
             }
 
-            int diameter = radius * 2;
-            Size size = new Size(diameter, diameter);
-            Rectangle arc = new Rectangle(rect.Location, size);
+            // Ensure radius doesn't exceed rectangle dimensions
+            int effectiveRadius = Math.Min(radius, Math.Min(rect.Width / 2, rect.Height / 2));
+
+            if (effectiveRadius <= 1)
+            {
+                path.AddRectangle(rect);
+                return path;
+            }
+
+            int diameter = effectiveRadius * 2;
+
+            // IMPROVED: More precise arc calculations
+            Rectangle arc = new Rectangle(rect.X, rect.Y, diameter, diameter);
 
             // Top left arc
             path.AddArc(arc, 180, 90);
 
-            // Top right arc
+            // Top right arc  
             arc.X = rect.Right - diameter;
             path.AddArc(arc, 270, 90);
 
@@ -861,13 +1139,15 @@ namespace EasyWinFormLibrary.CustomControls
         /// <param name="radius">Border radius</param>
         /// <param name="thickness">Border thickness</param>
         /// <param name="color">Border color</param>
-        public void SetBorder(int radius, int thickness, Color color)
+        /// <param name="sides">Which sides to draw (optional, defaults to All)</param>
+        public void SetBorder(int radius, int thickness, Color color, AdvancedPanelBorderSides sides = AdvancedPanelBorderSides.All)
         {
             bool radiusChanged = _borderRadius != Math.Max(0, radius);
 
             _borderRadius = Math.Max(0, radius);
             _borderThickness = Math.Max(0, thickness);
             _borderColor = color;
+            _AdvancedPanelBorderSides = sides;
 
             if (radiusChanged)
             {
@@ -876,6 +1156,19 @@ namespace EasyWinFormLibrary.CustomControls
             }
 
             Invalidate();
+        }
+
+        /// <summary>
+        /// Sets which sides of the border to draw
+        /// </summary>
+        /// <param name="sides">Border sides to draw</param>
+        public void SetAdvancedPanelBorderSides(AdvancedPanelBorderSides sides)
+        {
+            if (_AdvancedPanelBorderSides != sides)
+            {
+                _AdvancedPanelBorderSides = sides;
+                Invalidate();
+            }
         }
 
         /// <summary>
