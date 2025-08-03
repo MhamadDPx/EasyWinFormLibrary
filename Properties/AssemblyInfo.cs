@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("EasyWinFormLibrary")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Easy Windows Form library to simplify development: includes custom controls, SQL Server helpers, and useful extensions.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("AP Soft")]
 [assembly: AssemblyProduct("EasyWinFormLibrary")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]

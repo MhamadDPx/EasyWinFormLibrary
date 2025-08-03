@@ -89,14 +89,14 @@ namespace EasyWinFormLibrary.Data
         }
 
         /// <summary>
-        /// Tests the database connection and verifies the server's datetime year matches the local system.
+        /// Tests the server connection and verifies the server's datetime year matches the local system.
         /// </summary>
         /// <returns>
         /// A tuple containing:
         /// - IsConnected: Whether the connection was successful
         /// - ErrorMessage: Any error message if the connection failed
         /// </returns>
-        public async Task<(bool IsConnected, string ErrorMessage)> CheckDatabaseConnectionAsync()
+        public async Task<(bool IsConnected, string ErrorMessage)> CheckServerConnectionAsync()
         {
             try
             {
@@ -117,6 +117,29 @@ namespace EasyWinFormLibrary.Data
 
                         return (true, null);
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Connection to server failed: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Tests the database connection
+        /// </summary>
+        /// <returns>
+        /// A tuple containing:
+        /// - IsConnected: Whether the connection was successful
+        /// - ErrorMessage: Any error message if the connection failed
+        /// </returns>
+        public async Task<(bool IsConnected, string ErrorMessage)> CheckDatabaseConnectionAsync()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(GetConnectionString(true)))
+                {
+                    await connection.OpenAsync();
+                    return (true, null);
                 }
             }
             catch (Exception ex)

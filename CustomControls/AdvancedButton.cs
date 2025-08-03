@@ -76,6 +76,7 @@ namespace EasyWinFormLibrary.CustomControls
         private Color hoverBorderColor = DEFAULT_HOVER_BORDER_COLOR;
         private Color pressedBackColor = DEFAULT_PRESSED_BACKGROUND_COLOR;
         private bool isPressed = false;
+        private bool _isInitialized = false;
         #endregion
 
         #region Public Properties
@@ -86,8 +87,17 @@ namespace EasyWinFormLibrary.CustomControls
             get { return borderSize; }
             set
             {
-                borderSize = value;
-                this.Invalidate();
+                if (value < 0) value = 0;
+                if (value > 20) value = 20;
+
+                if (borderSize != value)
+                {
+                    borderSize = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -97,8 +107,18 @@ namespace EasyWinFormLibrary.CustomControls
             get { return borderRadius; }
             set
             {
-                borderRadius = value <= this.Height ? value : this.Height;
-                this.Invalidate();
+                if (value < 0) value = 0;
+                if (Width > 0 && Height > 0 && value > Math.Min(Width, Height) / 2)
+                    value = Math.Min(Width, Height) / 2;
+
+                if (borderRadius != value)
+                {
+                    borderRadius = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -108,8 +128,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return borderColor; }
             set
             {
-                borderColor = value;
-                this.Invalidate();
+                if (borderColor != value)
+                {
+                    borderColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -119,8 +145,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return backgroundColor; }
             set
             {
-                backgroundColor = value;
-                this.Invalidate();
+                if (backgroundColor != value)
+                {
+                    backgroundColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -130,8 +162,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return textColor; }
             set
             {
-                textColor = value;
-                this.Invalidate();
+                if (textColor != value)
+                {
+                    textColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -141,8 +179,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return buttonImage; }
             set
             {
-                buttonImage = value;
-                this.Invalidate();
+                if (buttonImage != value)
+                {
+                    buttonImage = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -152,8 +196,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return imageLayout; }
             set
             {
-                imageLayout = value;
-                this.Invalidate();
+                if (imageLayout != value)
+                {
+                    imageLayout = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -163,8 +213,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return imageAlign; }
             set
             {
-                imageAlign = value;
-                this.Invalidate();
+                if (imageAlign != value)
+                {
+                    imageAlign = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -174,8 +230,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return imageSize; }
             set
             {
-                imageSize = value;
-                this.Invalidate();
+                if (imageSize != value)
+                {
+                    imageSize = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -185,8 +247,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return imageTextSpacing; }
             set
             {
-                imageTextSpacing = value;
-                this.Invalidate();
+                if (imageTextSpacing != value)
+                {
+                    imageTextSpacing = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -196,8 +264,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return hoverBackColor; }
             set
             {
-                hoverBackColor = value;
-                this.Invalidate();
+                if (hoverBackColor != value)
+                {
+                    hoverBackColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -207,8 +281,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return hoverBorderColor; }
             set
             {
-                hoverBorderColor = value;
-                this.Invalidate();
+                if (hoverBorderColor != value)
+                {
+                    hoverBorderColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
 
@@ -218,8 +298,14 @@ namespace EasyWinFormLibrary.CustomControls
             get { return pressedBackColor; }
             set
             {
-                pressedBackColor = value;
-                this.Invalidate();
+                if (pressedBackColor != value)
+                {
+                    pressedBackColor = value;
+                    if (_isInitialized)
+                    {
+                        this.Invalidate();
+                    }
+                }
             }
         }
         #endregion
@@ -227,23 +313,171 @@ namespace EasyWinFormLibrary.CustomControls
         #region Constructor
         public AdvancedButton()
         {
+            InitializeComponent();
+            SetDefaultProperties();
+            _isInitialized = true;
+        }
+
+        /// <summary>
+        /// Initialize component with optimal rendering settings
+        /// </summary>
+        private void InitializeComponent()
+        {
+            // Enable double buffering and optimized rendering (from AdvancedActionButton)
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
+                     ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer |
+                     ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
+        }
+
+        /// <summary>
+        /// Set default properties for the button
+        /// </summary>
+        private void SetDefaultProperties()
+        {
             this.FlatStyle = FlatStyle.Flat;
+            this.FlatAppearance.BorderSize = 0; // Important for custom border rendering
             this.Size = new Size(150, 40);
-            this.BackColor = Color.Transparent;
+            this.BackColor = Color.Transparent; // Let custom drawing handle background
             this.ForeColor = textColor;
             this.Resize += new EventHandler(Button_Resize);
-            this.SetStyle(ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.DoubleBuffer |
-                ControlStyles.ResizeRedraw |
-                ControlStyles.SupportsTransparentBackColor, true);
         }
         #endregion
 
-        #region Private Methods
+        #region Drawing Methods (from AdvancedActionButton)
 
         /// <summary>
-        /// Creates a graphics path for a rounded rectangle (improved version from AdvancedActionButton)
+        /// Draws the custom border and shape of the button (from AdvancedActionButton)
+        /// </summary>
+        /// <param name="graphics">Graphics object for drawing</param>
+        private void DrawCustomBorder(Graphics graphics)
+        {
+            Rectangle rectSurface = ClientRectangle;
+            Rectangle rectBorder = Rectangle.Inflate(rectSurface, -borderSize, -borderSize);
+            int smoothSize = Math.Max(2, borderSize);
+
+            try
+            {
+                if (borderRadius > 2) // Rounded button
+                {
+                    DrawRoundedBorder(graphics, rectSurface, rectBorder, smoothSize);
+                }
+                else // Normal rectangular button
+                {
+                    DrawRectangularBorder(graphics, rectSurface, smoothSize);
+                }
+            }
+            catch
+            {
+                DrawSimpleBorder(graphics, rectSurface);
+            }
+        }
+
+        /// <summary>
+        /// Draws a rounded border for the button (from AdvancedActionButton)
+        /// </summary>
+        /// <param name="graphics">Graphics object</param>
+        /// <param name="rectSurface">Surface rectangle</param>
+        /// <param name="rectBorder">Border rectangle</param>
+        /// <param name="smoothSize">Smoothing size</param>
+        private void DrawRoundedBorder(Graphics graphics, Rectangle rectSurface, Rectangle rectBorder, int smoothSize)
+        {
+            using (GraphicsPath pathSurface = CreateRoundedRectanglePath(rectSurface, borderRadius))
+            using (GraphicsPath pathBorder = CreateRoundedRectanglePath(rectBorder, Math.Max(0, borderRadius - borderSize)))
+            using (Pen penSurface = new Pen(Parent?.BackColor ?? SystemColors.Control, smoothSize))
+            using (Pen penBorder = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
+            {
+                // Set button region
+                Region = new Region(pathSurface);
+
+                // Draw surface border for smooth result
+                graphics.DrawPath(penSurface, pathSurface);
+
+                // Button background
+                Color currentBackColor = backgroundColor;
+                if (isPressed)
+                    currentBackColor = pressedBackColor;
+                else if (onHover)
+                    currentBackColor = hoverBackColor;
+
+                using (SolidBrush brushSurface = new SolidBrush(currentBackColor))
+                {
+                    graphics.FillPath(brushSurface, pathSurface);
+                }
+
+                // Draw control border
+                if (borderSize >= 1)
+                {
+                    graphics.DrawPath(penBorder, pathBorder);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws a rectangular border for the button (from AdvancedActionButton)
+        /// </summary>
+        /// <param name="graphics">Graphics object</param>
+        /// <param name="rectSurface">Surface rectangle</param>
+        /// <param name="smoothSize">Smoothing size</param>
+        private void DrawRectangularBorder(Graphics graphics, Rectangle rectSurface, int smoothSize)
+        {
+            graphics.SmoothingMode = SmoothingMode.None;
+
+            // Set button region
+            Region = new Region(rectSurface);
+
+            // Button background
+            Color currentBackColor = backgroundColor;
+            if (isPressed)
+                currentBackColor = pressedBackColor;
+            else if (onHover)
+                currentBackColor = hoverBackColor;
+
+            using (SolidBrush brushSurface = new SolidBrush(currentBackColor))
+            {
+                graphics.FillRectangle(brushSurface, rectSurface);
+            }
+
+            // Draw border
+            if (borderSize >= 1)
+            {
+                using (Pen penBorder = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
+                {
+                    penBorder.Alignment = PenAlignment.Inset;
+                    graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws a simple border as fallback (from AdvancedActionButton)
+        /// </summary>
+        /// <param name="graphics">Graphics object</param>
+        /// <param name="rect">Rectangle to draw</param>
+        private void DrawSimpleBorder(Graphics graphics, Rectangle rect)
+        {
+            // Button background
+            Color currentBackColor = backgroundColor;
+            if (isPressed)
+                currentBackColor = pressedBackColor;
+            else if (onHover)
+                currentBackColor = hoverBackColor;
+
+            using (SolidBrush brush = new SolidBrush(currentBackColor))
+            {
+                graphics.FillRectangle(brush, rect);
+            }
+
+            if (borderSize >= 1)
+            {
+                using (Pen pen = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
+                {
+                    graphics.DrawRectangle(pen, rect);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a graphics path for a rounded rectangle (from AdvancedActionButton)
         /// </summary>
         /// <param name="rect">Rectangle bounds</param>
         /// <param name="radius">Corner radius</param>
@@ -278,137 +512,9 @@ namespace EasyWinFormLibrary.CustomControls
             return path;
         }
 
-        /// <summary>
-        /// Draws the custom border and shape of the button (improved version from AdvancedActionButton)
-        /// </summary>
-        /// <param name="graphics">Graphics object for drawing</param>
-        private void DrawCustomBorder(Graphics graphics)
-        {
-            Rectangle rectSurface = ClientRectangle;
-            Rectangle rectBorder = Rectangle.Inflate(rectSurface, -borderSize, -borderSize);
-            int smoothSize = Math.Max(2, borderSize);
+        #endregion
 
-            try
-            {
-                if (borderRadius > 2) // Rounded button
-                {
-                    DrawRoundedBorder(graphics, rectSurface, rectBorder, smoothSize);
-                }
-                else // Normal rectangular button
-                {
-                    DrawRectangularBorder(graphics, rectSurface, smoothSize);
-                }
-            }
-            catch
-            {
-                DrawSimpleBorder(graphics, rectSurface);
-            }
-        }
-
-        /// <summary>
-        /// Draws a rounded border for the button (improved version from AdvancedActionButton)
-        /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="rectSurface">Surface rectangle</param>
-        /// <param name="rectBorder">Border rectangle</param>
-        /// <param name="smoothSize">Smoothing size</param>
-        private void DrawRoundedBorder(Graphics graphics, Rectangle rectSurface, Rectangle rectBorder, int smoothSize)
-        {
-            using (GraphicsPath pathSurface = CreateRoundedRectanglePath(rectSurface, borderRadius))
-            using (GraphicsPath pathBorder = CreateRoundedRectanglePath(rectBorder, Math.Max(0, borderRadius - borderSize)))
-            using (Pen penSurface = new Pen(Parent?.BackColor ?? SystemColors.Control, smoothSize))
-            using (Pen penBorder = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
-            {
-                // Set button region
-                Region = new Region(pathSurface);
-
-                // Draw surface border for smooth result
-                graphics.DrawPath(penSurface, pathSurface);
-
-                // Button background
-                Color currentBackColor = backgroundColor;
-                if (isPressed)
-                    currentBackColor = pressedBackColor;
-                else if (onHover)
-                    currentBackColor = hoverBackColor;
-
-                using (SolidBrush brushSurface = new SolidBrush(currentBackColor))
-                {
-                    graphics.FillPath(brushSurface, pathBorder);
-                }
-
-                // Draw control border
-                if (borderSize >= 1)
-                {
-                    graphics.DrawPath(penBorder, pathBorder);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Draws a rectangular border for the button (improved version from AdvancedActionButton)
-        /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="rectSurface">Surface rectangle</param>
-        /// <param name="smoothSize">Smoothing size</param>
-        private void DrawRectangularBorder(Graphics graphics, Rectangle rectSurface, int smoothSize)
-        {
-            graphics.SmoothingMode = SmoothingMode.None;
-
-            // Set button region
-            Region = new Region(rectSurface);
-
-            Rectangle rectBorder = Rectangle.Inflate(rectSurface, -borderSize, -borderSize);
-
-            // Button background
-            Color currentBackColor = backgroundColor;
-            if (isPressed)
-                currentBackColor = pressedBackColor;
-            else if (onHover)
-                currentBackColor = hoverBackColor;
-
-            using (SolidBrush brushSurface = new SolidBrush(currentBackColor))
-            {
-                graphics.FillRectangle(brushSurface, rectBorder);
-            }
-
-            // Draw border
-            if (borderSize >= 1)
-            {
-                using (Pen penBorder = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
-                {
-                    penBorder.Alignment = PenAlignment.Inset;
-                    graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Draws a simple border as fallback (improved version from AdvancedActionButton)
-        /// </summary>
-        /// <param name="graphics">Graphics object</param>
-        /// <param name="rect">Rectangle to draw</param>
-        private void DrawSimpleBorder(Graphics graphics, Rectangle rect)
-        {
-            Color currentBackColor = backgroundColor;
-            if (isPressed)
-                currentBackColor = pressedBackColor;
-            else if (onHover)
-                currentBackColor = hoverBackColor;
-
-            using (SolidBrush brush = new SolidBrush(currentBackColor))
-            {
-                graphics.FillRectangle(brush, rect);
-            }
-
-            if (borderSize >= 1)
-            {
-                using (Pen pen = new Pen(onHover ? hoverBorderColor : borderColor, borderSize))
-                {
-                    graphics.DrawRectangle(pen, rect);
-                }
-            }
-        }
+        #region Image and Text Drawing Methods
 
         private Rectangle GetImageRectangle()
         {
@@ -495,13 +601,49 @@ namespace EasyWinFormLibrary.CustomControls
 
             return textRect;
         }
+
         #endregion
 
         #region Override Methods
 
+        /// <summary>
+        /// Handle creation event - safe initialization
+        /// </summary>
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            try
+            {
+                base.OnHandleCreated(e);
+
+                // Ensure all required objects are initialized
+                if (!_isInitialized)
+                {
+                    _isInitialized = true;
+                }
+
+                // Safe parent event subscription
+                if (this.Parent != null)
+                {
+                    this.Parent.BackColorChanged += new EventHandler(Container_BackColorChanged);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnHandleCreated: {ex.Message}");
+                // Don't throw, continue with safe defaults
+            }
+        }
+
+        /// <summary>
+        /// Handles the paint event to draw custom appearance (updated with AdvancedActionButton style)
+        /// </summary>
+        /// <param name="pevent">Paint event arguments</param>
         protected override void OnPaint(PaintEventArgs pevent)
         {
             base.OnPaint(pevent);
+
+            if (!_isInitialized)
+                return;
 
             try
             {
@@ -509,7 +651,7 @@ namespace EasyWinFormLibrary.CustomControls
                 pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 pevent.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                // Draw custom border and shape using improved method
+                // Draw custom border and shape using AdvancedActionButton method
                 DrawCustomBorder(pevent.Graphics);
 
                 // Draw image
@@ -539,17 +681,14 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            this.Parent.BackColorChanged += new EventHandler(Container_BackColorChanged);
-        }
-
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
             onHover = true;
-            this.Invalidate();
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -557,53 +696,108 @@ namespace EasyWinFormLibrary.CustomControls
             base.OnMouseLeave(e);
             onHover = false;
             isPressed = false;
-            this.Invalidate();
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs mevent)
         {
             base.OnMouseDown(mevent);
             isPressed = true;
-            this.Invalidate();
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs mevent)
         {
             base.OnMouseUp(mevent);
             isPressed = false;
-            this.Invalidate();
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
         }
 
         /// <summary>
-        /// Handles the resize event to update border radius constraints
+        /// Handles the resize event to update border radius constraints (from AdvancedActionButton)
         /// </summary>
         /// <param name="e">Event arguments</param>
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
 
-            // Ensure border radius doesn't exceed button dimensions
+            // Ensure border radius doesn't exceed button dimensions (from AdvancedActionButton)
             int maxRadius = Math.Min(Width, Height) / 2;
             if (borderRadius > maxRadius)
             {
                 borderRadius = maxRadius;
             }
 
-            Invalidate();
+            if (_isInitialized)
+            {
+                Invalidate();
+            }
         }
         #endregion
 
         #region Event Handlers
         private void Container_BackColorChanged(object sender, EventArgs e)
         {
-            this.Invalidate();
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
         }
 
         private void Button_Resize(object sender, EventArgs e)
         {
-            if (borderRadius > this.Height)
+            if (Width > 0 && Height > 0 && borderRadius > this.Height)
+            {
                 borderRadius = this.Height;
+            }
         }
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Sets border properties in one method call (from AdvancedActionButton)
+        /// </summary>
+        /// <param name="radius">Border radius</param>
+        /// <param name="size">Border size</param>
+        /// <param name="color">Border color</param>
+        public void SetBorder(int radius, int size, Color color)
+        {
+            borderRadius = Math.Max(0, radius);
+            borderSize = Math.Max(0, size);
+            borderColor = color;
+
+            if (_isInitialized)
+            {
+                Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Sets hover colors in one method call
+        /// </summary>
+        /// <param name="backColor">Hover background color</param>
+        /// <param name="borderColor">Hover border color</param>
+        public void SetHoverColors(Color backColor, Color borderColor)
+        {
+            hoverBackColor = backColor;
+            hoverBorderColor = borderColor;
+
+            if (_isInitialized)
+            {
+                Invalidate();
+            }
+        }
+
         #endregion
     }
 }
