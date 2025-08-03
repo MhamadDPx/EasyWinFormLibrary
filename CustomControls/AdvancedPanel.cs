@@ -28,18 +28,6 @@ namespace EasyWinFormLibrary.CustomControls
     }
 
     /// <summary>
-    /// Preset style options
-    /// </summary>
-    public enum PresetStyle
-    {
-        Modern,
-        Classic,
-        Flat,
-        Card,
-        Neon
-    }
-
-    /// <summary>
     /// Border sides enumeration with flags support
     /// </summary>
     [Flags]
@@ -1197,31 +1185,6 @@ namespace EasyWinFormLibrary.CustomControls
             Invalidate();
         }
 
-        /// <summary>
-        /// Applies a preset style to the panel
-        /// </summary>
-        /// <param name="style">Preset style to apply</param>
-        public void ApplyPresetStyle(PresetStyle style)
-        {
-            switch (style)
-            {
-                case PresetStyle.Modern:
-                    ApplyModernStyle();
-                    break;
-                case PresetStyle.Classic:
-                    ApplyClassicStyle();
-                    break;
-                case PresetStyle.Flat:
-                    ApplyFlatStyle();
-                    break;
-                case PresetStyle.Card:
-                    ApplyCardStyle();
-                    break;
-                case PresetStyle.Neon:
-                    ApplyNeonStyle();
-                    break;
-            }
-        }
 
         #endregion
 
@@ -1255,75 +1218,6 @@ namespace EasyWinFormLibrary.CustomControls
         public static string GetRegionCacheInfo()
         {
             return $"Region Cache: {_regionCache.Count}/{MAX_CACHE_SIZE}";
-        }
-
-        #endregion
-
-        #region Preset Styles
-
-        /// <summary>
-        /// Applies modern style preset
-        /// </summary>
-        private void ApplyModernStyle()
-        {
-            SetBorder(12, 1, Color.FromArgb(200, 200, 200));
-            SetGradient(Color.FromArgb(250, 250, 250), Color.FromArgb(240, 240, 240), LinearGradientMode.Vertical);
-            SetShadow(true, Color.FromArgb(30, 0, 0, 0), 3, 6);
-            _borderStyle = BorderStyle3D.None;
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Applies classic style preset
-        /// </summary>
-        private void ApplyClassicStyle()
-        {
-            SetBorder(0, 2, Color.Gray);
-            _useGradient = false;
-            BackColor = SystemColors.Control;
-            _enableShadow = false;
-            _borderStyle = BorderStyle3D.Raised;
-            _highlightColor = Color.White;
-            _shadowBorderColor = Color.Gray;
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Applies flat style preset
-        /// </summary>
-        private void ApplyFlatStyle()
-        {
-            SetBorder(0, 1, Color.FromArgb(180, 180, 180));
-            _useGradient = false;
-            BackColor = Color.White;
-            _enableShadow = false;
-            _borderStyle = BorderStyle3D.None;
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Applies card style preset
-        /// </summary>
-        private void ApplyCardStyle()
-        {
-            SetBorder(10, 0, Color.Transparent);
-            _useGradient = false;
-            BackColor = Color.White;
-            SetShadow(true, Color.FromArgb(25, 0, 0, 0), 4, 10);
-            _borderStyle = BorderStyle3D.None;
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Applies neon style preset
-        /// </summary>
-        private void ApplyNeonStyle()
-        {
-            SetBorder(18, 3, Color.FromArgb(0, 255, 255));
-            SetGradient(Color.FromArgb(20, 20, 40), Color.FromArgb(40, 40, 80), LinearGradientMode.Vertical);
-            SetShadow(true, Color.FromArgb(120, 0, 255, 255), 0, 12);
-            _borderStyle = BorderStyle3D.None;
-            Invalidate();
         }
 
         #endregion

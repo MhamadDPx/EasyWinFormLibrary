@@ -36,15 +36,15 @@ namespace EasyWinFormLibrary.Data
         {
             /// <summary>Equal to (=)</summary>
             Equal,
-            /// <summary>Not equal to (<>)</summary>
+            /// <summary>Not equal to (&lt;&gt;)</summary>
             NotEqual,
-            /// <summary>Greater than (>)</summary>
+            /// <summary>Greater than (&gt;)</summary>
             GreaterThan,
-            /// <summary>Greater than or equal to (>=)</summary>
+            /// <summary>Greater than or equal to (&gt;=)</summary>
             GreaterThanOrEqual,
-            /// <summary>Less than (<)</summary>
+            /// <summary>Less than (&lt;)</summary>
             LessThan,
-            /// <summary>Less than or equal to (<=)</summary>
+            /// <summary>Less than or equal to (&lt;=)</summary>
             LessThanOrEqual,
             /// <summary>Like (LIKE)</summary>
             Like,

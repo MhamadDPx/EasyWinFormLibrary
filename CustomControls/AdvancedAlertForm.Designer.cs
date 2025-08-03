@@ -107,6 +107,6 @@ namespace EasyWinFormLibrary.CustomControls
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.PictureBox LblClose;
         private System.Windows.Forms.PictureBox pictureBox;
-        public System.Windows.Forms.TextBox lblMessage;
+        private System.Windows.Forms.TextBox lblMessage;
     }
 }

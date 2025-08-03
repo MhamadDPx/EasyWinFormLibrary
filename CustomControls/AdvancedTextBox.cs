@@ -523,7 +523,7 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Gets or sets the placeholder text hint
         /// </summary>
         [Category("Appearance")]
@@ -1998,7 +1998,7 @@ namespace EasyWinFormLibrary.CustomControls
 
         #region Helper Methods
 
-        // <summary>
+        /// <summary>
         /// Updates the placeholder display based on current text state
         /// </summary>
         private void UpdatePlaceholder()

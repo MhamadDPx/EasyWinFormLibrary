@@ -66,6 +66,14 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        ///<summary>
+        /// Set Message TextBox Background Color
+        /// </summary>
+        public Color MessageTextBoxBackColor
+        {
+            set { lblMessage.BackColor = value; }
+        }
+
         /// <summary>
         /// Gets or sets the countdown duration in seconds before the alert automatically closes
         /// </summary>

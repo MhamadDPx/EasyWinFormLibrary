@@ -61,26 +61,94 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Private Fields
+
+        /// <summary>
+        /// Current border size of the button.
+        /// </summary>
         private int borderSize = DEFAULT_BORDER_SIZE;
+
+        /// <summary>
+        /// Current border radius of the button corners.
+        /// </summary>
         private int borderRadius = DEFAULT_BORDER_RADIUS;
+
+        /// <summary>
+        /// Current border color of the button.
+        /// </summary>
         private Color borderColor = DEFAULT_BORDER_COLOR;
+
+        /// <summary>
+        /// Current background color of the button.
+        /// </summary>
         private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
+
+        /// <summary>
+        /// Current text color of the button.
+        /// </summary>
         private Color textColor = DEFAULT_TEXT_COLOR;
+
+        /// <summary>
+        /// Image to display on the button.
+        /// </summary>
         private Image buttonImage = null;
+
+        /// <summary>
+        /// Layout style for the button image.
+        /// </summary>
         private ImageLayout imageLayout = ImageLayout.Zoom;
+
+        /// <summary>
+        /// Alignment position for the button image.
+        /// </summary>
         private ContentAlignment imageAlign = ContentAlignment.MiddleLeft;
+
+        /// <summary>
+        /// Size of the button image.
+        /// </summary>
         private Size imageSize = new Size(25, 25);
+
+        /// <summary>
+        /// Spacing between image and text in pixels.
+        /// </summary>
         private int imageTextSpacing = 5;
+
+        /// <summary>
+        /// Indicates whether the mouse is hovering over the button.
+        /// </summary>
         private bool onHover = false;
+
+        /// <summary>
+        /// Background color when the button is in hover state.
+        /// </summary>
         private Color hoverBackColor = DEFAULT_HOVER_BACKGROUND_COLOR;
+
+        /// <summary>
+        /// Border color when the button is in hover state.
+        /// </summary>
         private Color hoverBorderColor = DEFAULT_HOVER_BORDER_COLOR;
+
+        /// <summary>
+        /// Background color when the button is pressed.
+        /// </summary>
         private Color pressedBackColor = DEFAULT_PRESSED_BACKGROUND_COLOR;
+
+        /// <summary>
+        /// Indicates whether the button is currently pressed.
+        /// </summary>
         private bool isPressed = false;
+
+        /// <summary>
+        /// Indicates whether the control has been fully initialized.
+        /// </summary>
         private bool _isInitialized = false;
+
         #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the border size of the button. Valid range is 0-20 pixels.
+        /// </summary>
         [Category("Advanced Appearance")]
         public int BorderSize
         {
@@ -101,6 +169,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the border radius for rounded corners. Must not exceed half of the smallest dimension.
+        /// </summary>
         [Category("Advanced Appearance")]
         public int BorderRadius
         {
@@ -122,6 +193,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the border color of the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color BorderColor
         {
@@ -139,6 +213,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the background color of the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color BackgroundColor
         {
@@ -156,6 +233,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text color of the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color TextColor
         {
@@ -173,6 +253,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the image displayed on the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Image ButtonImage
         {
@@ -190,6 +273,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the layout style for the button image.
+        /// </summary>
         [Category("Advanced Appearance")]
         public ImageLayout ButtonImageLayout
         {
@@ -207,6 +293,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the alignment position of the image on the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public new ContentAlignment ImageAlign
         {
@@ -224,6 +313,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the size of the image displayed on the button.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Size ImageSize
         {
@@ -241,6 +333,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the spacing between the image and text in pixels.
+        /// </summary>
         [Category("Advanced Appearance")]
         public int ImageTextSpacing
         {
@@ -258,6 +353,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the background color when the button is in hover state.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color HoverBackColor
         {
@@ -275,6 +373,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the border color when the button is in hover state.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color HoverBorderColor
         {
@@ -292,6 +393,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the background color when the button is pressed.
+        /// </summary>
         [Category("Advanced Appearance")]
         public Color PressedBackColor
         {
@@ -311,6 +415,10 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the AdvancedButton class with default properties.
+        /// </summary>
         public AdvancedButton()
         {
             InitializeComponent();
@@ -516,6 +624,10 @@ namespace EasyWinFormLibrary.CustomControls
 
         #region Image and Text Drawing Methods
 
+        /// <summary>
+        /// Calculates and returns the rectangle bounds for the button image based on alignment settings.
+        /// </summary>
+        /// <returns>Rectangle defining the image position and size.</returns>
         private Rectangle GetImageRectangle()
         {
             Rectangle imageRect = new Rectangle();
@@ -561,6 +673,10 @@ namespace EasyWinFormLibrary.CustomControls
             return imageRect;
         }
 
+        /// <summary>
+        /// Calculates and returns the rectangle bounds for the button text based on image position and spacing.
+        /// </summary>
+        /// <returns>Rectangle defining the text position and size.</returns>
         private Rectangle GetTextRectangle()
         {
             Rectangle textRect = new Rectangle();
@@ -609,6 +725,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Handle creation event - safe initialization
         /// </summary>
+        /// <param name="e">Event arguments</param>
         protected override void OnHandleCreated(EventArgs e)
         {
             try
@@ -681,6 +798,10 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the mouse enter event to trigger hover state.
+        /// </summary>
+        /// <param name="e">Event arguments</param>
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
@@ -691,6 +812,10 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the mouse leave event to reset hover and pressed states.
+        /// </summary>
+        /// <param name="e">Event arguments</param>
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
@@ -702,6 +827,10 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the mouse down event to trigger pressed state.
+        /// </summary>
+        /// <param name="mevent">Mouse event arguments</param>
         protected override void OnMouseDown(MouseEventArgs mevent)
         {
             base.OnMouseDown(mevent);
@@ -712,6 +841,10 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the mouse up event to reset pressed state.
+        /// </summary>
+        /// <param name="mevent">Mouse event arguments</param>
         protected override void OnMouseUp(MouseEventArgs mevent)
         {
             base.OnMouseUp(mevent);
@@ -745,6 +878,12 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// Handles parent container background color changes to ensure proper rendering.
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="e">Event arguments</param>
         private void Container_BackColorChanged(object sender, EventArgs e)
         {
             if (_isInitialized)
@@ -753,6 +892,11 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles button resize events to maintain border radius constraints.
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="e">Event arguments</param>
         private void Button_Resize(object sender, EventArgs e)
         {
             if (Width > 0 && Height > 0 && borderRadius > this.Height)

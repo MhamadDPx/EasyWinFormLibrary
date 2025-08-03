@@ -19,8 +19,13 @@ namespace EasyWinFormLibrary.Extension
         /// </summary>
         public enum ButtonImage
         {
+            /// <summary>Print button for printing records or reports</summary>
             Print = 0,
+
+            /// <summary>Update button for editing or modifying existing records</summary>
             Update = 1,
+
+            /// <summary>Delete button for removing records from the data source</summary>
             Delete = 2,
         }
 
@@ -852,6 +857,9 @@ namespace EasyWinFormLibrary.Extension
         private const string EditImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACQElEQVRIDd1Uv2sUURD+ZvcOjCJopUgIVikMevo3iAE7IeySKIiVFv6KFhZJYyNqIUYUJYIREyHcXhpBLVQEe3/cLhaXTpFoaSV3OW53/GaNOVclub1Uyd58b9699+abebMzC6z3R9Z8gdkPu+G6g1D+kvglRg58wh/P2hwE4XlyXSM2ESYNDmfglx5Qp+KkYzdDORyj2QTxFNBexE4f56+J27BbcWLSnYNKVIbgChx5DMwPw9+/gJG9X+DiFEl70pRxYpLfgUWu6psxs/4dnpekcxuazq+Uiy6vFWy9Yxi5RS6MXPUzVMdRiTbjsp7EngrJk5vkqqOVvKJOpXMHGfLaCfh+jCA0knEMRAr09/BGQxA993cl2aGVUa5eJ5kSdxk1I106riooR3e4bnuKSji6tLOsVn8HRi5yiRb34O07DRFGy38m998V4OpOmxIz8EoT1DnEyIPQostGbhSTb4uMfI74b+R2ZGWsF/J/34G1v+XcShHzZzM5DwIX2woPeXVWC8Y6yXm7ImiFJ7WtWFz8BsgLoOalpWjrBiPX/kd0eIxdbORXbXk1ZPug2ThE8i38ttQz5PZCUZwlsUV+oZPIfzvOpiiRw9xoEEcRRDeoASPfTnIgN7nZZ28gGISDZ4jlKzvyIhtnF7uzyINGbmnJWedA28FcdQAJ+pDoe7iyA4k02LXDJK8To0zLLerc0nYQy0HmmARyhE4W+CmeRks/oilTOF76wY2upO1ACs8hLYepeYOhUpXVol0xbjijn4445rWEMCyKAAAAAElFTkSuQmCC";
         private const string DeleteImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACaklEQVRIDdVUv2sUURCeebs5wULFH1wsRAnRJijepbE8vIMkZRIuXdKIvZaCRRprEfQPUFLluE1lEriLgoLaeOlSREhhk5CIEpQ02X3j997tXrLunrsgFllm3ryZ+ebNe/NmH9FJ/zjPAZYqt8+Ro55o4gkmEWFaDogfz7Q/72fFqyzAYr3uiKNWhOgekbQg2yx03xVZfVupuFnxmQDnx9Y4FrlDTNPT7Y6HOTWrpRYTN767P8egvwb3pV6JmndLs8z8EkgG/wuhgjQ3udZZMIu4ZjDsav4YKHmEnc6S0EXYnoJzE7N6iNvZQxkXlOZPfQOXquUXXrUMYF9IqgMx38DP/3QmL5llG6ALi/WRAmQuWp4YPgXgeZx8GzJGyQRCBsSF/dPFCOnVSnPY3WakN2vlL8YW6b8Ozxosk7Kbi8xWJhJoVjvGI75cNtKwEA9BXgdbQpsOhzarFwKyWB04NtYaw0GF8khoewIS5dugI0f/mahuAnK6sceRyQQDIUhz7gToPIvVPpvyHl+fEgmCM0O7QASieBAyF4logw3o0rVE9yUSzDQaAVbdQ0fYXWGeTWJPuxvGxvCJBMaLX9kcNX8CtndgYkx4jFMTEP4FOP5fArzHO2hDU1e7GzzRW5hsgCPaCG1dXWgQ+ESLGmfvLTJKjxmdJFKcnycF1lPt9VfwGYYgmlrrjNgJBvgVvaci7ix/iXAHXxE7cPNd6QrkX6n84dZVAFxWYmIwjZMbV7vaIfGqS3KA59vzaqOtrjV99AMawwt6IL6/kobAZtPMRHh7xon4GYJvpCMiK2+y6AeTb9ZTE0Sokyt/A0xqufQlMXcxAAAAAElFTkSuQmCC";
 
+        /// <summary>
+        /// List of base64 encoded images for buttons
+        /// </summary>
         public static string[] ImagesList = {
             PrintImageBase64,
             EditImageBase64,

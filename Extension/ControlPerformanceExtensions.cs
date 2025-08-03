@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.Extension
 {
-    // <summary>
+    /// <summary>
     /// Extension methods for control performance optimization
     /// </summary>
     public static class ControlPerformanceExtensions

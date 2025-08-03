@@ -6,16 +6,38 @@ using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.WinAppNeeds
 {
+    /// <summary>
+    /// Provides advanced alert functionality with multi-language support and customizable appearance.
+    /// This static class offers an easy way to display alert messages with predefined styles and automatic localization.
+    /// </summary>
     public static class AdvancedAlert
     {
         /// <summary>
         /// Shows an alert message with multi-language support and customizable appearance.
+        /// The alert automatically closes after the specified duration and displays appropriate colors and icons based on the alert type.
         /// </summary>
-        /// <param name="messageKu">The message text in Kurdish</param>
-        /// <param name="messageAr">The message text in Arabic</param>
-        /// <param name="messageEn">The message text in English</param>
-        /// <param name="alertType">The type of alert to display (Success, Info, Error, Warning)</param>
-        /// <param name="visableSeconds">Number of seconds to display the alert before auto-closing (default: 3)</param>
+        /// <param name="messageKu">The message text in Kurdish language</param>
+        /// <param name="messageAr">The message text in Arabic language</param>
+        /// <param name="messageEn">The message text in English language</param>
+        /// <param name="alertType">The type of alert to display (Success, Info, Error, Warning) which determines the color scheme and icon</param>
+        /// <param name="visableSeconds">Number of seconds to display the alert before auto-closing (default: 3 seconds)</param>
+        /// <remarks>
+        /// The method automatically selects the appropriate message language based on the current LanguageManager.SelectedLanguage setting.
+        /// The alert form's RightToLeft property is set based on the selected language (RTL for Arabic/Kurdish, LTR for English).
+        /// Each alert type has a predefined color scheme and icon for consistent user experience.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// // Show a success message for 5 seconds
+        /// AdvancedAlert.ShowAlert(
+        ///     "ئەنجامدا", 
+        ///     "نجح", 
+        ///     "Success", 
+        ///     AdvancedAlert.AlertType.Success, 
+        ///     5
+        /// );
+        /// </code>
+        /// </example>
         public static void ShowAlert(string messageKu, string messageAr, string messageEn, AlertType alertType, int visableSeconds = 3)
         {
             AdvancedAlertForm frm = new AdvancedAlertForm();
@@ -25,16 +47,16 @@ namespace EasyWinFormLibrary.WinAppNeeds
             switch (alertType)
             {
                 case AlertType.Success:
-                    frm.BackColor = frm.lblMessage.BackColor = Color.MediumSeaGreen;
+                    frm.BackColor = frm.MessageTextBoxBackColor = Color.MediumSeaGreen;
                     break;
                 case AlertType.Info:
-                    frm.BackColor = frm.lblMessage.BackColor = Color.FromArgb(0, 122, 204);
+                    frm.BackColor = frm.MessageTextBoxBackColor = Color.FromArgb(0, 122, 204);
                     break;
                 case AlertType.Error:
-                    frm.BackColor = frm.lblMessage.BackColor = Color.FromArgb(190, 75, 72);
+                    frm.BackColor = frm.MessageTextBoxBackColor = Color.FromArgb(190, 75, 72);
                     break;
                 case AlertType.Warning:
-                    frm.BackColor = frm.lblMessage.BackColor = Color.FromArgb(255, 139, 45);
+                    frm.BackColor = frm.MessageTextBoxBackColor = Color.FromArgb(255, 139, 45);
                     break;
             }
             switch (LanguageManager.SelectedLanguage)
@@ -55,17 +77,33 @@ namespace EasyWinFormLibrary.WinAppNeeds
 
         /// <summary>
         /// Defines the available types of alerts that can be displayed.
+        /// Each alert type has a specific color scheme and icon associated with it.
         /// </summary>
-        public enum AlertType 
-        { 
-            /// <summary>Success alert type with green color scheme</summary>
+        public enum AlertType
+        {
+            /// <summary>
+            /// Success alert type with green color scheme (MediumSeaGreen).
+            /// Used to indicate successful operations or positive feedback.
+            /// </summary>
             Success = 0,
-            /// <summary>Information alert type with blue color scheme</summary>
-            Info = 1, 
-            /// <summary>Error alert type with red color scheme</summary>
+
+            /// <summary>
+            /// Information alert type with blue color scheme (RGB: 0, 122, 204).
+            /// Used to display general information or neutral messages.
+            /// </summary>
+            Info = 1,
+
+            /// <summary>
+            /// Error alert type with red color scheme (RGB: 190, 75, 72).
+            /// Used to indicate errors, failures, or critical issues.
+            /// </summary>
             Error = 2,
-            /// <summary>Warning alert type with orange color scheme</summary>
-            Warning = 3 
+
+            /// <summary>
+            /// Warning alert type with orange color scheme (RGB: 255, 139, 45).
+            /// Used to display warnings, cautions, or important notices.
+            /// </summary>
+            Warning = 3
         }
 
         #region Base64 Images
@@ -75,6 +113,9 @@ namespace EasyWinFormLibrary.WinAppNeeds
         private const string ErrorImageBase64 = "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";
         private const string WarningImageBase64 = "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";
 
+        /// <summary>
+        /// List of base64 encoded images for different alert types.
+        /// </summary>
         public static string[] ImagesList = {
             SuccessImageBase64,
             InfoImageBase64,

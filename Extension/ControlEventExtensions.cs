@@ -4,8 +4,8 @@ using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.Extension
 {
-    // <summary>
-    /// Extension methods for programmatically triggering control events
+    /// <summary>
+    /// Extension methods for programmatically triggering control events.
     /// </summary>
     public static class ControlEventExtensions
     {

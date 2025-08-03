@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace EasyWinFormLibrary.Data
 {
@@ -79,9 +81,7 @@ namespace EasyWinFormLibrary.Data
             /// <summary>Permission to modify/update existing records</summary>
             Update,
             /// <summary>Permission to remove/delete records</summary>
-            Delete,
-            /// <summary>Permission to view/read records</summary>
-            View
+            Delete
         }
 
         #endregion
@@ -147,7 +147,7 @@ namespace EasyWinFormLibrary.Data
             // Build permission strings for each role
             foreach (DataRow row in RolesListDataTable.Rows)
             {
-                UserPermissions.Add($"{(row["btn_insert"].ToString() == "True" ? "1" : "0")}{(row["btn_update"].ToString() == "True" ? "1" : "0")}{(row["btn_delete"].ToString() == "True" ? "1" : "0")}{(row["btn_view"].ToString() == "True" ? "1" : "0")}");
+                UserPermissions.Add($"{(row["btn_insert"].ToString() == "True" ? "1" : "0")}{(row["btn_update"].ToString() == "True" ? "1" : "0")}{(row["btn_delete"].ToString() == "True" ? "1" : "0")}");
             }
         }
 
@@ -245,9 +245,6 @@ namespace EasyWinFormLibrary.Data
                 case PermissionType.Delete:
                     Check = UserPermissions[roleIndex][2] == '1' ? true : false;
                     break;
-                case PermissionType.View:
-                    Check = UserPermissions[roleIndex][3] == '1' ? true : false;
-                    break;
             }
 
             // Show error message if permission denied and messages are enabled
@@ -261,35 +258,43 @@ namespace EasyWinFormLibrary.Data
         /// Registers a user by loading their actions and roles from the database and creating a login session.
         /// This method should be called during the login process to initialize user permissions.
         /// </summary>
-        /// <param name="UserID">The unique identifier of the user to register</param>
+        /// <param name="userID">The unique identifier of the user to register</param>
+        /// <param name="userName"> The User name of the user to register</param>
+        /// <param name="fullName"> The full name of the user to register</param>
         /// <remarks>
         /// This method performs the following operations:
         /// 1. Loads user actions from view_user_actions_by_group
         /// 2. Loads user roles and permissions from view_user_roles_by_group  
         /// 3. Generates a new login count ID for session tracking
-        /// 4. Records the login session in tbl_check_user for security monitoring
+        /// 4. Records the login session in tbl_user_check for security monitoring
         /// 
         /// The login count ID helps track multiple concurrent sessions and provides
         /// audit trail for user activities.
         /// </remarks>
-        public static async void Register(string UserID)
+        public static async Task Register(string userID, string userName, string fullName)
         {
             // Load user actions from database
-            SetUserActions((await SqlDatabaseActions.GetDataAsync($"SELECT action_name FROM view_user_actions_by_group WHERE user_id={UserID}")).Data);
+            SetUserActions((await SqlDatabaseActions.GetDataAsync($"SELECT action_name FROM view_user_actions_by_group WHERE user_id={userID}")).Data);
 
             // Load user roles and permissions from database
-            SetUserRolesList((await SqlDatabaseActions.GetDataAsync($"SELECT role_name, btn_insert, btn_update, btn_delete FROM view_user_roles_by_group WHERE user_id={UserID}")).Data);
+            SetUserRolesList((await SqlDatabaseActions.GetDataAsync($"SELECT role_name, btn_insert, btn_update, btn_delete FROM view_user_roles_by_group WHERE user_id={userID}")).Data);
 
             // Generate new login count ID for session tracking
-            LoginCountID = ((await SqlDatabaseActions.GetSingleValueAsync($"SELECT ISNULL(MAX(count_id),0) FROM tbl_check_user WHERE user_id_fk={UserID}")).Value.TextToInt() + 1).ToString();
+            LoginCountID = ((await SqlDatabaseActions.GetSingleValueAsync($"SELECT ISNULL(MAX(count_id),0) FROM tbl_user_check WHERE user_id_fk={userID}")).Value.TextToInt() + 1).ToString();
 
             // Record login session in database for security monitoring
-            await SqlDatabaseActions.ExecuteCommandAsync("INSERT INTO tbl_check_user VALUES (@maxUserID, @userIdFk, @countId)",
+            await SqlDatabaseActions.ExecuteCommandAsync("INSERT INTO tbl_user_check VALUES (@maxUserID, @userIdFk, @countId)",
                 new SqlParameter[] {
-                new SqlParameter("@maxUserID", (await SqlDatabaseActions.GetMaxNumberAsync("tbl_check_user", "id")).MaxNumber),
-                new SqlParameter("@userIdFk", UserID),
+                new SqlParameter("@maxUserID", (await SqlDatabaseActions.GetMaxNumberAsync("tbl_user_check", "id")).MaxNumber),
+                new SqlParameter("@userIdFk", userID),
                 new SqlParameter("@countId", LoginCountID)
             });
+
+            UserID = userID;
+            Username = userName;
+            Fullname = fullName;
+
+            SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.AuthUserId = userID;
         }
 
         /// <summary>
@@ -302,7 +307,7 @@ namespace EasyWinFormLibrary.Data
         /// </param>
         /// <remarks>
         /// This method performs cleanup operations:
-        /// 1. Removes login session records from tbl_check_user
+        /// 1. Removes login session records from tbl_user_check
         /// 2. Clears all cached user actions, roles, and permissions
         /// 3. Resets admin flags to false
         /// 
@@ -312,7 +317,7 @@ namespace EasyWinFormLibrary.Data
         public static async void RemoveUser(bool isDoubleUser)
         {
             // Remove login session(s) from database
-            await SqlDatabaseActions.ExecuteCommandAsync($"DELETE FROM tbl_check_user WHERE user_id_fk=@userIdFk {(isDoubleUser ? "AND count_id=@countID" : "")}",
+            await SqlDatabaseActions.ExecuteCommandAsync($"DELETE FROM tbl_user_check WHERE user_id_fk=@userIdFk {(isDoubleUser ? "AND count_id=@countID" : "")}",
                 new SqlParameter[] {
                     new SqlParameter("@userIdFk", UserID),
                     new SqlParameter("@countID", LoginCountID)

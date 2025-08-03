@@ -16,11 +16,20 @@ namespace EasyWinFormLibrary.Extension
         /// </summary>
         public enum ControlType
         {
-            Text,       // Default text controls
-            Number,     // Numeric input controls  
-            Check,      // Checkbox controls
-            DateTime,   // DateTime picker controls
-            Date        // Date-only picker controls
+            /// <summary>Default text controls for string input</summary>
+            Text,
+
+            /// <summary>Numeric input controls for integer and decimal values</summary>
+            Number,
+
+            /// <summary>Checkbox controls for boolean values</summary>
+            Check,
+
+            /// <summary>DateTime picker controls for date and time selection</summary>
+            DateTime,
+
+            /// <summary>Date-only picker controls for date selection without time</summary>
+            Date
         }
         #endregion
 

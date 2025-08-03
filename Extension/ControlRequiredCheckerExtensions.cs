@@ -10,8 +10,17 @@ namespace EasyWinFormLibrary.Extension
     /// </summary>
     public class ValidationResult
     {
+        /// <summary>
+        /// Checks if the validation passed
+        /// </summary>
         public bool IsValid { get; set; }
+        /// <summary>
+        /// Gets or sets the list of invalid controls
+        /// </summary>
         public List<Control> InvalidControls { get; set; } = new List<Control>();
+        /// <summary>
+        /// Gets or sets the list of error messages for invalid controls
+        /// </summary>
         public List<string> ErrorMessages { get; set; } = new List<string>();
     }
 

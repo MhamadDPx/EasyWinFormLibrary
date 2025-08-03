@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.WinAppNeeds
 {
+    /// <summary>
+    /// A custom message box that supports multilingual messages in Kurdish, Arabic, and English.
+    /// </summary>
     public static class AdvancedMessageBox
     {
         /// <summary>
@@ -13,7 +16,18 @@ namespace EasyWinFormLibrary.WinAppNeeds
         /// </summary>
         public enum MessageBoxType
         {
-            Information = 0, Warning = 1, YesNo = 2
+            /// <summary>
+            /// Represents an informational message box.
+            /// </summary>
+            Information = 0,
+            /// <summary>
+            /// Represents a warning message box.
+            /// </summary>
+            Warning = 1,
+            /// <summary>
+            /// Represents a message box with Yes and No options.
+            /// </summary>
+            YesNo = 2
         }
 
         /// <summary>
@@ -95,6 +109,9 @@ namespace EasyWinFormLibrary.WinAppNeeds
         private const string WarningImageBase64 = "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";
         private const string QuestionImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAHJAAAByQFhD1RcAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAcVQTFRF////AKqqGrPMK7/VJrPQIbXWJrfVJbnTJLfVJLbTJrjUJbjTJLbUJbbTJbfTJrfSJbfTJrfUJLjUJrfTJbfTJLfTJbfTJbfTJbfSJbfTJbfTJbfTJbfTJbfTJbfTJrfTJ7jTKLjUKbjUK7nULbrVLrrVL7rVMLvVMbvVNLzWN73XOb3XO77XPL/YPb/YPr/YP7/YQ8HZRMHZRcHZSsPaS8PbTMTbTcTbT8XbUMXcUcXcUsbcVMfcWMjdWcjeWsneW8neXMneXcneXcreXsrfX8rfYMrfYcvfY8zgZ83gac3has7ha87hbs/icNDicdDic9HjddHjddLjdtLje9TkfNTlfdTlftTlgNXlhdfmidjni9nojNnojdnokdvpldzql93qnt/sn9/soeDsouDspuLtqeLuquPuq+PurOTur+XvseXvsubvuOjxvuryv+rywerywevzw+vzx+z0x+30y+70ze71z+/10fD20vD21PH21/L32PL32vP42/P43PP43fT44/b55Pb55Pb65vf66fj76vj77Pn77fn77/r88Pr88vv89Pv99fz99/z9+P3++f3++v3++/7+/P7+/f7//v//////L+Q+dAAAAB50Uk5TAAMKDBsfPExOYmRocHSKjqSwtr7Ay9XY5ery+Pn+bfME6gAAAvZJREFUWMOtV+dfE0EQvRDSKykEkrBEEsWo2AsWLNgVLICKYgMLFuyoUVA0VkBQiLm/1+Ru97ybLXf5Je9bZt+b7M3OzM5KEgd2tz8YjiaSyUQ0HPS77VJNaPZFUsiAVMTXbFXdFIh3IAY64oEmC3Kbtw1x0ea1meldrUiIVpdQ7oghU8QcfL2zHVlAu5On96SRJaQ97OiFkGWEGLG0taAa0EJ7YP1/bsfR4avnDm3rYuyB+n6KsnZouiyrWHx0OguXQRycMH65iSVZj58XYCQNZ+GA59f7SYZ4sQWcpj4fYP4Mrcg0Pm8EGaXLX6A/siqz8L7bSNOy2gbyf/sCkfwqTN19/kXzMAnqgpylF2zgGRE8zCu/L/7Av1c3G4leXP+gfvcQ/RixbCIexkF1q/0hADbwGLOnM5rpJDZ9BNSA4iAOrEXM3q2zfVNNy51Galzpf6B/Zf+q5NessPSALlftkz6wgR7MHdQb32IjSAXkqziIwCz/rlAL+t2uL6n6UgZwI5X+n4IOzlS/oXxAb7qFN/AOclN2yU2Xat/L4uRBveEYDot8meK6Jb959zhBCvNDjlrzS0FT/XlSGcs76cWgFDbTj5K2Il9irIalqIn+mlZK46zlqJQQ629q+hvM9YSUFOrHiLw0wiYkxQ52kc70ZwDxHIg+IVPA+qV+HiUhDOIw0fdxKVHhMd5T9eVTfEpYmEhvVAcPBJSgMJUXVQf7BRQ/q5gINuCLLSNw4GaUs4Y16iE+Eegr5Uw3lP94qoSwV+AgwmhpOmydleXfE6JM8zGaquEjDg90i/RKU6Xaeg2IMy8WAzqFDgLMq02nHplZKd5Zx9Xjq426XDXcV45xNstb93Kud4J+XEvXOXrteqcGDIzb2MErjgMXf8QxFKM8w9bHREOWgivYwRRTbxiy6DGvivxXdS7Zx9KnnWaDZgV75yr6+UHmBjxWRl3UdXz0bJ6pDzV+2K573K//wdGAJ0/9j676n30NeHjW//RtwOO7tuf/PxInRcIOjW3pAAAAAElFTkSuQmCC";
 
+        /// <summary>
+        /// List of base64 encoded images for message box icons.
+        /// </summary>
         public static string[] ImagesList = {
             InformationImageBase64,
             WarningImageBase64,

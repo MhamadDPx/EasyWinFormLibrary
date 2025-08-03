@@ -17,6 +17,14 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>EasyWinFormLibrary</PackageId>
+    <PackageVersion>1.1.2</PackageVersion>
+    <Authors>Mhamad Tahir</Authors>
+    <Description>Easy Windows Form library to simplify development: includes custom controls, SQL Server helpers, and useful extensions.</Description>
+    <PackageProjectUrl>https://github.com/MhamadDPx/EasyWinFormLibrary</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>C# .NET CustomControl WinForms Modern Drag Drop Forms</PackageTags>
+    <PackageReleaseNotes>Added FormDragDropComponent and improved AdvancedButton with better border rendering. Enhanced documentation throughout the library.</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

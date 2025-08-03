@@ -7,11 +7,26 @@ using System.Collections.Generic;
 
 namespace EasyWinFormLibrary.CustomControls
 {
+    /// <summary>
+    /// High-performance rounded corners component using Windows API.
+    /// Provides efficient rounded corner effects for Windows Forms controls with caching and advanced corner styling options.
+    /// </summary>
     [ToolboxItem(true)]
     [Description("High-performance rounded corners using Windows API")]
     public class AdvancedElipse : Component
     {
         #region Windows API Declarations
+
+        /// <summary>
+        /// Creates a rounded rectangular region.
+        /// </summary>
+        /// <param name="nLeftRect">x-coordinate of upper-left corner</param>
+        /// <param name="nTopRect">y-coordinate of upper-left corner</param>
+        /// <param name="nRightRect">x-coordinate of lower-right corner</param>
+        /// <param name="nBottomRect">y-coordinate of lower-right corner</param>
+        /// <param name="nWidthEllipse">width of ellipse</param>
+        /// <param name="nHeightEllipse">height of ellipse</param>
+        /// <returns>Handle to the created region</returns>
         [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(
             int nLeftRect,      // x-coordinate of upper-left corner
@@ -22,59 +37,194 @@ namespace EasyWinFormLibrary.CustomControls
             int nHeightEllipse  // height of ellipse
         );
 
+        /// <summary>
+        /// Deletes a logical pen, brush, font, bitmap, region, or palette.
+        /// </summary>
+        /// <param name="hObject">Handle to the object to delete</param>
+        /// <returns>True if the function succeeds</returns>
         [DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
 
+        /// <summary>
+        /// Sets the window region of a window.
+        /// </summary>
+        /// <param name="hWnd">Handle to the window</param>
+        /// <param name="hRgn">Handle to the region</param>
+        /// <param name="bRedraw">Specifies whether the window is redrawn</param>
+        /// <returns>Nonzero if the function succeeds</returns>
         [DllImport("user32.dll")]
         private static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool bRedraw);
 
+        /// <summary>
+        /// Creates a rectangular region.
+        /// </summary>
+        /// <param name="nLeftRect">x-coordinate of upper-left corner</param>
+        /// <param name="nTopRect">y-coordinate of upper-left corner</param>
+        /// <param name="nRightRect">x-coordinate of lower-right corner</param>
+        /// <param name="nBottomRect">y-coordinate of lower-right corner</param>
+        /// <returns>Handle to the created region</returns>
         [DllImport("gdi32.dll")]
         private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
+        /// <summary>
+        /// Combines two regions and stores the result in one of them.
+        /// </summary>
+        /// <param name="hrgnDest">Handle to the destination region</param>
+        /// <param name="hrgnSrc1">Handle to the first source region</param>
+        /// <param name="hrgnSrc2">Handle to the second source region</param>
+        /// <param name="fnCombineMode">Specifies how the regions are combined</param>
+        /// <returns>The type of the resulting region</returns>
         [DllImport("gdi32.dll")]
         private static extern int CombineRgn(IntPtr hrgnDest, IntPtr hrgnSrc1, IntPtr hrgnSrc2, int fnCombineMode);
 
-        // Region combine modes
+        /// <summary>
+        /// Region combine mode: Intersection of the two regions.
+        /// </summary>
         private const int RGN_AND = 1;
+
+        /// <summary>
+        /// Region combine mode: Union of the two regions.
+        /// </summary>
         private const int RGN_OR = 2;
+
+        /// <summary>
+        /// Region combine mode: Exclusive OR of the two regions.
+        /// </summary>
         private const int RGN_XOR = 3;
+
+        /// <summary>
+        /// Region combine mode: Difference of the two regions.
+        /// </summary>
         private const int RGN_DIFF = 4;
+
+        /// <summary>
+        /// Region combine mode: Copy the first region to the destination.
+        /// </summary>
         private const int RGN_COPY = 5;
         #endregion
 
         #region Fields
+
+        /// <summary>
+        /// The control to apply rounded corners to.
+        /// </summary>
         private Control _targetControl;
+
+        /// <summary>
+        /// The radius of the rounded corners in pixels.
+        /// </summary>
         private int _radius = 10;
+
+        /// <summary>
+        /// Indicates whether the rounded corners effect is enabled.
+        /// </summary>
         private bool _enabled = true;
+
+        /// <summary>
+        /// Handle to the current region applied to the control.
+        /// </summary>
         private IntPtr _currentRegion = IntPtr.Zero;
+
+        /// <summary>
+        /// The last known size of the target control for optimization.
+        /// </summary>
         private Size _lastSize = Size.Empty;
+
+        /// <summary>
+        /// Indicates whether advanced corner styling is being used.
+        /// </summary>
         private bool _useAdvancedCorners = false;
+
+        /// <summary>
+        /// The current corner style configuration.
+        /// </summary>
         private CornerStyle _cornerStyle = CornerStyle.All;
+
+        /// <summary>
+        /// Indicates whether corner style changes are enabled.
+        /// </summary>
         private bool _cornerChangeEnabled = true;
 
-        // Cache for better performance
+        /// <summary>
+        /// Cache for storing frequently used regions to improve performance.
+        /// </summary>
         private static readonly Dictionary<string, IntPtr> _regionCache = new Dictionary<string, IntPtr>();
+
+        /// <summary>
+        /// Maximum number of regions to cache.
+        /// </summary>
         private const int MAX_CACHE_SIZE = 50;
         #endregion
 
         #region Enums
+
+        /// <summary>
+        /// Defines which corners of the control should be rounded.
+        /// </summary>
         public enum CornerStyle
         {
+            /// <summary>
+            /// All corners are rounded.
+            /// </summary>
             All,
+
+            /// <summary>
+            /// Only the top-left corner is rounded.
+            /// </summary>
             TopLeft,
+
+            /// <summary>
+            /// Only the top-right corner is rounded.
+            /// </summary>
             TopRight,
+
+            /// <summary>
+            /// Only the bottom-left corner is rounded.
+            /// </summary>
             BottomLeft,
+
+            /// <summary>
+            /// Only the bottom-right corner is rounded.
+            /// </summary>
             BottomRight,
+
+            /// <summary>
+            /// Both top corners are rounded.
+            /// </summary>
             Top,
+
+            /// <summary>
+            /// Both bottom corners are rounded.
+            /// </summary>
             Bottom,
+
+            /// <summary>
+            /// Both left corners are rounded.
+            /// </summary>
             Left,
+
+            /// <summary>
+            /// Both right corners are rounded.
+            /// </summary>
             Right,
+
+            /// <summary>
+            /// Top-left and bottom-right corners are rounded.
+            /// </summary>
             TopLeftBottomRight,
+
+            /// <summary>
+            /// Top-right and bottom-left corners are rounded.
+            /// </summary>
             TopRightBottomLeft
         }
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the control to apply rounded corners to.
+        /// </summary>
         [Category("Advanced Appearance")]
         [Description("The control to apply rounded corners to")]
         public Control TargetControl
@@ -98,6 +248,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the radius of the rounded corners in pixels.
+        /// </summary>
         [Category("Advanced Appearance")]
         [Description("The radius of the rounded corners")]
         [DefaultValue(10)]
@@ -119,6 +272,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether the rounded corners effect is enabled.
+        /// </summary>
         [Category("Behavior")]
         [Description("Enable or disable the rounded corners effect")]
         [DefaultValue(true)]
@@ -138,6 +294,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets which corners should be rounded.
+        /// </summary>
         [Category("Advanced Appearance")]
         [Description("Which corners to round")]
         [DefaultValue(CornerStyle.All)]
@@ -160,6 +319,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether corner style changes are enabled.
+        /// </summary>
         [Category("Behavior")]
         [Description("Enable or disable corner style changes")]
         [DefaultValue(true)]
@@ -174,6 +336,10 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the AdvancedElipse class with default settings.
+        /// </summary>
         public AdvancedElipse()
         {
             _radius = 10;
@@ -181,6 +347,11 @@ namespace EasyWinFormLibrary.CustomControls
             _cornerStyle = CornerStyle.All;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AdvancedElipse class with specified target control and radius.
+        /// </summary>
+        /// <param name="targetControl">The control to apply rounded corners to</param>
+        /// <param name="radius">The radius of the rounded corners (default: 10)</param>
         public AdvancedElipse(Control targetControl, int radius = 10)
         {
             _radius = radius;
@@ -189,6 +360,12 @@ namespace EasyWinFormLibrary.CustomControls
             TargetControl = targetControl;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AdvancedElipse class with specified target control, radius, and corner style.
+        /// </summary>
+        /// <param name="targetControl">The control to apply rounded corners to</param>
+        /// <param name="radius">The radius of the rounded corners</param>
+        /// <param name="cornerStyle">Which corners to round</param>
         public AdvancedElipse(Control targetControl, int radius, CornerStyle cornerStyle)
         {
             _radius = radius;
@@ -200,6 +377,10 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Event Management
+
+        /// <summary>
+        /// Subscribes to necessary events from the target control.
+        /// </summary>
         private void SubscribeEvents()
         {
             if (_targetControl != null)
@@ -210,6 +391,9 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Unsubscribes from events of the target control.
+        /// </summary>
         private void UnsubscribeEvents()
         {
             if (_targetControl != null)
@@ -220,6 +404,11 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the resize event of the target control.
+        /// </summary>
+        /// <param name="sender">The source of the event</param>
+        /// <param name="e">Event arguments</param>
         private void TargetControl_Resize(object sender, EventArgs e)
         {
             if (_enabled && _targetControl.IsHandleCreated)
@@ -228,6 +417,11 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the handle created event of the target control.
+        /// </summary>
+        /// <param name="sender">The source of the event</param>
+        /// <param name="e">Event arguments</param>
         private void TargetControl_HandleCreated(object sender, EventArgs e)
         {
             if (_enabled)
@@ -236,6 +430,11 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Handles the handle destroyed event of the target control.
+        /// </summary>
+        /// <param name="sender">The source of the event</param>
+        /// <param name="e">Event arguments</param>
         private void TargetControl_HandleDestroyed(object sender, EventArgs e)
         {
             CleanupRegion();
@@ -243,6 +442,10 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Core Methods
+
+        /// <summary>
+        /// Applies rounded corners to the target control using Windows API regions.
+        /// </summary>
         private void ApplyRoundedCorners()
         {
             if (_targetControl == null || !_enabled || !_targetControl.IsHandleCreated)
@@ -313,6 +516,10 @@ namespace EasyWinFormLibrary.CustomControls
             }
         }
 
+        /// <summary>
+        /// Creates a simple rounded rectangle region with all corners rounded.
+        /// </summary>
+        /// <returns>Handle to the created region</returns>
         private IntPtr CreateSimpleRoundedRegion()
         {
             return CreateRoundRectRgn(
@@ -324,6 +531,10 @@ namespace EasyWinFormLibrary.CustomControls
             );
         }
 
+        /// <summary>
+        /// Creates an advanced region with selective corner rounding based on the corner style.
+        /// </summary>
+        /// <returns>Handle to the created region</returns>
         private IntPtr CreateAdvancedRegion()
         {
             int width = _targetControl.Width;
@@ -380,6 +591,18 @@ namespace EasyWinFormLibrary.CustomControls
             return resultRgn;
         }
 
+        /// <summary>
+        /// Applies selective corner rounding to a region by combining square and rounded regions.
+        /// </summary>
+        /// <param name="baseRgn">The base region to modify</param>
+        /// <param name="x">X coordinate of the rectangle</param>
+        /// <param name="y">Y coordinate of the rectangle</param>
+        /// <param name="width">Width of the rectangle</param>
+        /// <param name="height">Height of the rectangle</param>
+        /// <param name="topLeft">Whether to round the top-left corner</param>
+        /// <param name="topRight">Whether to round the top-right corner</param>
+        /// <param name="bottomLeft">Whether to round the bottom-left corner</param>
+        /// <param name="bottomRight">Whether to round the bottom-right corner</param>
         private void ApplyRoundedCorner(IntPtr baseRgn, int x, int y, int width, int height,
             bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
         {
@@ -450,6 +673,9 @@ namespace EasyWinFormLibrary.CustomControls
             DeleteObject(tempRgn);
         }
 
+        /// <summary>
+        /// Removes rounded corners from the target control, restoring its original shape.
+        /// </summary>
         private void RemoveRoundedCorners()
         {
             if (_targetControl != null && _targetControl.IsHandleCreated)
@@ -460,6 +686,9 @@ namespace EasyWinFormLibrary.CustomControls
             CleanupRegion();
         }
 
+        /// <summary>
+        /// Cleans up the current region handle to prevent memory leaks.
+        /// </summary>
         private void CleanupRegion()
         {
             if (_currentRegion != IntPtr.Zero)
@@ -475,8 +704,9 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Public Methods
+
         /// <summary>
-        /// Applies rounded corners to the target control
+        /// Applies rounded corners to the target control.
         /// </summary>
         public void Apply()
         {
@@ -484,7 +714,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Removes rounded corners from the target control
+        /// Removes rounded corners from the target control.
         /// </summary>
         public void Remove()
         {
@@ -492,7 +722,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Forces a refresh of the rounded corners effect
+        /// Forces a refresh of the rounded corners effect by clearing the cache and reapplying.
         /// </summary>
         public void Refresh()
         {
@@ -501,7 +731,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Sets the corner style and applies changes
+        /// Sets the corner style and applies changes immediately.
         /// </summary>
         /// <param name="cornerStyle">The corner style to apply</param>
         public void SetCornerStyle(CornerStyle cornerStyle)
@@ -510,9 +740,9 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Sets the radius and applies changes immediately
+        /// Sets the radius and applies changes immediately.
         /// </summary>
-        /// <param name="radius">The radius value</param>
+        /// <param name="radius">The radius value in pixels</param>
         public void SetRadius(int radius)
         {
             if (radius >= 0 && radius != _radius)
@@ -529,8 +759,10 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Static Cache Management
+
         /// <summary>
-        /// Clears the region cache to free memory
+        /// Clears the region cache to free memory.
+        /// This method should be called periodically or when memory usage needs to be reduced.
         /// </summary>
         public static void ClearCache()
         {
@@ -542,7 +774,7 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Gets the current cache size
+        /// Gets the current number of cached regions.
         /// </summary>
         /// <returns>Number of cached regions</returns>
         public static int GetCacheSize()
@@ -551,9 +783,9 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Gets cache statistics
+        /// Gets cache statistics for monitoring and debugging purposes.
         /// </summary>
-        /// <returns>Cache information</returns>
+        /// <returns>String containing cache information</returns>
         public static string GetCacheInfo()
         {
             return $"Cache Size: {_regionCache.Count}/{MAX_CACHE_SIZE}";
@@ -561,6 +793,11 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Dispose
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the AdvancedElipse and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -574,6 +811,9 @@ namespace EasyWinFormLibrary.CustomControls
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Finalizer to ensure regions are cleaned up if Dispose is not called.
+        /// </summary>
         ~AdvancedElipse()
         {
             CleanupRegion();

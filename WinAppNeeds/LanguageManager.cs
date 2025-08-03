@@ -8,8 +8,13 @@ namespace EasyWinFormLibrary.WinAppNeeds
     /// </summary>
     public enum FormLanguage
     {
+        /// <summary>English language - Left-to-right (LTR) text direction</summary>
         English,
+
+        /// <summary>Kurdish language - Right-to-left (RTL) text direction</summary>
         Kurdish,
+
+        /// <summary>Arabic language - Right-to-left (RTL) text direction</summary>
         Arabic
     }
 
