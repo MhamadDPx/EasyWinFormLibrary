@@ -1,61 +1,51 @@
 # EasyWinFormLibrary
 
-Easy Windows Form library to simplify development: includes custom controls, SQL Server helpers, and useful extensions.
+A comprehensive, ready-to-use .NET Framework 4.8 class library designed to **simplify Windows Forms application development** with **custom UI controls**, **database helpers**, and **productivity-focused extensions**.
 
-## Features
+---
 
-- **Custom Controls**: Modern, customizable Windows Forms controls
-- **SQL Server Helpers**: Simplified database operations and connection management
-- **Useful Extensions**: Extension methods for common WinForms tasks
-- **Built-in Logging**: Integrated Sentry and Serilog support
+## ? Features
 
-## Installation
+### ?? Custom Controls (`CustomControls`)
+Modern, reusable Windows Forms controls with enhanced behavior and appearance:
+- `AdvancedButton`, `AdvancedActionButton` – stylized buttons
+- `AdvancedComboBox`, `AdvancedTextBox` – improved input controls
+- `AdvancedDataGridView` – extended DataGridView with features
+- `AdvancedDashboardCard` – card-style dashboard components
+- `AdvancedAlertForm`, `AdvancedMessageBoxForm` – custom modal dialogs
+- `AdvancedFormTopMenuBar` – top-aligned form menu bar
+- `AdvancedPanel` – UI containers with visual tweaks
+- `AdvancedAddDialogForm` – consistent data input dialogs
+- `AdvancedUserMetaLog` – structured user log display
 
-Install via NuGet Package Manager:
+### ??? Data Access Helpers (`Data`)
+Simplify SQL Server integration:
+- `SqlDatabaseConnectionConfigBuilder` – fluent config builder
+- `SqlDatabaseActions` – CRUD operations
+- `SqlQueryBuilder` – dynamic query builder
+- `AuthUserInfo` – structure to store authenticated user metadata
 
-```
+### ?? Extensions (`Extension`)
+Productivity extensions for WinForms controls and common types:
+- `ControlCleanerExtensions` – reset/clear form controls
+- `ControlRequiredCheckerExtensions` – validate required fields
+- `ControlPerformanceExtensions`, `ControlEventExtensions` – better control handling
+- `FormExtensions`, `DataGridViewExtensions`, `DataTableExtensions`
+- `StringExtensions`, `DataRowCollectionExtensions`
+
+### ?? Utility Tools (`WinAppNeeds`)
+Handy modules and utilities:
+- `AdvancedAlert`, `AdvancedMessageBox` – easy-to-use global alert APIs
+- `BarcodeGenerator`, `ImageUtils`, `NumberToWordsConverter`
+- `LanguageManager` – basic multilingual support
+- `HardwareIdentifier` – machine-specific ID generation
+- `TaskDelayUtils`, `NumberInputUtils` – form automation helpers
+
+---
+
+## ?? Installation
+
+Install via NuGet:
+
+```bash
 Install-Package EasyWinFormLibrary
-```
-
-Or via .NET CLI:
-
-```
-dotnet add package EasyWinFormLibrary
-```
-
-## Quick Start
-
-```csharp
-using EasyWinFormLibrary;
-using EasyWinFormLibrary.CustomControls;
-
-// Use custom controls
-var advancedButton = new AdvancedButton();
-var advancedTextBox = new AdvancedTextBox();
-
-// Use SQL helpers
-var connectionConfig = new SqlDatabaseConnectionConfig
-{
-    Server = "your-server",
-    Database = "your-database"
-};
-
-var dbActions = new SqlDatabaseActions(connectionConfig);
-```
-
-## Requirements
-
-- .NET Framework 4.8
-- Windows Forms Application
-
-## Documentation
-
-For detailed documentation and examples, visit our [GitHub repository](https://github.com/MhamadDPx/EasyWinFormLibrary).
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues and feature requests, please visit our [GitHub Issues](https://github.com/MhamadDPx/EasyWinFormLibrary/issues) page.
