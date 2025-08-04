@@ -1,0 +1,1 @@
+nuget pack EasyWinFormLibrary.csproj -Build -Properties Configuration=Release

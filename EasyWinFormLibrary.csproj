@@ -165,6 +165,9 @@
     <Compile Include="CustomControls\AdvancedButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\AdvancedTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\AdvancedTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
