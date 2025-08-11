@@ -47,6 +47,10 @@ namespace EasyWinFormLibrary.WinAppNeeds
         /// </summary>
         public static string LanguageCultureName = "en-US";
 
+        public static bool IsKurdishLanguage => _selectedLanguage == FormLanguage.Kurdish;
+        public static bool IsArabicLanguage => _selectedLanguage == FormLanguage.Arabic;
+        public static bool IsEnglishLanguage => _selectedLanguage == FormLanguage.English;
+
         /// <summary>
         /// Changes the application's language and culture settings based on the selected language.
         /// Updates both the current thread's culture and UI culture, and sets date format patterns.

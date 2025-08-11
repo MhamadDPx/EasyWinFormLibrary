@@ -212,6 +212,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             this.RightToLeft = LanguageManager.SelectedLanguage == FormLanguage.English ? RightToLeft.No : RightToLeft.Yes;
             this.RightToLeftLayout = LanguageManager.SelectedLanguage != FormLanguage.English;
+            txt.TextAlign = LanguageManager.SelectedLanguage == FormLanguage.English ? HorizontalAlignment.Right : HorizontalAlignment.Left;
         }
 
         /// <summary>
@@ -251,7 +252,7 @@ namespace EasyWinFormLibrary.CustomControls
                 {
                     { _textColumn, txt.Text.Trim() },
                     { "archived", 0 }
-                }, false);
+                }, false, false);
 
             if (insertResult.Success)
             {
@@ -282,7 +283,7 @@ namespace EasyWinFormLibrary.CustomControls
             // Update existing record
             var updateResult = await SqlDatabaseActions.UpdateDataAsync(_tableName,
                 new Dictionary<string, object>() { { _textColumn, txt.Text.Trim() } },
-                new Dictionary<string, object>() { { _primaryKeyColumn, _primaryID } }, false);
+                new Dictionary<string, object>() { { _primaryKeyColumn, _primaryID } }, false, false);
 
             if (updateResult.Success)
             {
@@ -310,7 +311,7 @@ namespace EasyWinFormLibrary.CustomControls
             // Mark record as archived (soft delete)
             await SqlDatabaseActions.UpdateDataAsync(_tableName,
                 new Dictionary<string, object>() { { "archived", 1 } },
-                new Dictionary<string, object>() { { _primaryKeyColumn, _primaryID } }, false);
+                new Dictionary<string, object>() { { _primaryKeyColumn, _primaryID } }, false, false);
 
             ResetFormState();
         }
@@ -433,7 +434,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         private void ShowUpdateSuccessAlert()
         {
-            AdvancedAlert.ShowAlert("سەرکەوتوو بوو", "تم التحديث بنجاح", "Updated successfully",
+            AdvancedAlert.ShowAlert("بەسەرکەوتووی نوێکرایەوە", "تم التحديث بنجاح", "Updated successfully",
                 AdvancedAlert.AlertType.Success, 3);
         }
 

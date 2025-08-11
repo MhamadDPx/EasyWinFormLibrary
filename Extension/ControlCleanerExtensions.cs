@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyWinFormLibrary.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -171,6 +172,11 @@ namespace EasyWinFormLibrary.Extension
                 case ComboBox cmb:
                     ResetComboBox(cmb, controlType);
                     SetControlBackColor(cmb, Color.White);
+                    break;
+                // ComboBox variants
+                case AdvancedTextBox txt:
+                    ResetTextControl(txt, controlType);
+                    SetControlBackColor(txt, Color.White);
                     break;
 
                 // TextBox variants  

@@ -524,6 +524,7 @@ namespace EasyWinFormLibrary.Data
         /// <param name="tableName">The name of the target table</param>
         /// <param name="columnValues">Dictionary of column names and their corresponding values to insert</param>
         /// <param name="hasEntryDate">If true, automatically adds e_date (current date) and e_by (current user) columns (default: true)</param>
+        /// <param name="showSuccessMessage">If true, show a usefull message (default: true)</param>
         /// <returns>
         /// A tuple containing:
         /// - Success: True if the record was inserted successfully
@@ -555,7 +556,7 @@ namespace EasyWinFormLibrary.Data
         /// }
         /// </code>
         /// </example>
-        public static async Task<(bool Success, string ErrorMessage)> InsertDataAsync(string tableName, Dictionary<string, object> columnValues, bool hasEntryDate = true)
+        public static async Task<(bool Success, string ErrorMessage)> InsertDataAsync(string tableName, Dictionary<string, object> columnValues, bool hasEntryDate = true, bool showSuccessMessage = true)
         {
             if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
@@ -573,7 +574,6 @@ namespace EasyWinFormLibrary.Data
                 }
 
                 string query = $"INSERT INTO {tableName} ({string.Join(",", columns)}) VALUES ({string.Join(",", paramNames)})";
-
                 var parameterList = new List<SqlParameter>();
                 foreach (var kvp in columnValues)
                 {
@@ -585,7 +585,11 @@ namespace EasyWinFormLibrary.Data
                     parameterList.Add(new SqlParameter("@userId", SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.AuthUserId));
                 }
 
-                return await ExecuteCommandAsync(query, parameterList.ToArray());
+                var result = await ExecuteCommandAsync(query, parameterList.ToArray());
+
+                if (result.Success && showSuccessMessage)
+                    AdvancedAlert.ShowAlert($"بە سەرکەوتووی زیادکرا", $"تمت الإضافة بنجاح", $"Inserted Successfully", AdvancedAlert.AlertType.Success, 3);
+                return result;
             }
             catch (Exception ex)
             {
@@ -606,6 +610,7 @@ namespace EasyWinFormLibrary.Data
         /// <param name="columnValues">Dictionary of column names and their new values to update</param>
         /// <param name="whereClause">Dictionary of column names and values for the WHERE condition (all conditions are ANDed)</param>
         /// <param name="hasUpdateDate">If true, automatically adds u_date (current date) and u_by (current user) columns (default: true)</param>
+        /// <param name="showSuccessMessage">If true, show a usefull message (default: true)</param>
         /// <returns>
         /// A tuple containing:
         /// - Success: True if the update operation completed successfully
@@ -637,7 +642,7 @@ namespace EasyWinFormLibrary.Data
         /// var (success, error) = await SqlDatabaseActions.UpdateDataAsync("Users", updates, conditions);
         /// </code>
         /// </example>
-        public static async Task<(bool Success, string ErrorMessage)> UpdateDataAsync(string tableName, Dictionary<string, object> columnValues, Dictionary<string, object> whereClause, bool hasUpdateDate = true)
+        public static async Task<(bool Success, string ErrorMessage)> UpdateDataAsync(string tableName, Dictionary<string, object> columnValues, Dictionary<string, object> whereClause, bool hasUpdateDate = true, bool showSuccessMessage = true)
         {
             if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
@@ -671,7 +676,11 @@ namespace EasyWinFormLibrary.Data
 
                 string query = $"UPDATE {tableName} SET {string.Join(",", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
 
-                return await ExecuteCommandAsync(query, parameterList.ToArray());
+                var result = await ExecuteCommandAsync(query, parameterList.ToArray());
+
+                if (result.Success && showSuccessMessage)
+                    AdvancedAlert.ShowAlert($"بە سەرکەوتووی نوێکرایەوە", $"تمت التحدیث بنجاح", $"Updated Successfully", AdvancedAlert.AlertType.Success, 3);
+                return result;
             }
             catch (Exception ex)
             {
@@ -689,6 +698,7 @@ namespace EasyWinFormLibrary.Data
         /// </summary>
         /// <param name="tableName">The name of the target table from which to delete records</param>
         /// <param name="whereClause">Dictionary of column names and values for the WHERE condition (all conditions are ANDed together)</param>
+        /// <param name="showSuccessMessage">If true, show a usefull message (default: true)</param>
         /// <returns>
         /// A tuple containing:
         /// - Success: True if the delete operation completed successfully
@@ -725,7 +735,7 @@ namespace EasyWinFormLibrary.Data
         /// <exception cref="System.InvalidOperationException">
         /// Thrown when SQL actions are locked via SqlDatabaseConnectionConfigBuilder configuration.
         /// </exception>
-        public static async Task<(bool Success, string ErrorMessage)> DeleteDataAsync(string tableName, Dictionary<string, object> whereClause)
+        public static async Task<(bool Success, string ErrorMessage)> DeleteDataAsync(string tableName, Dictionary<string, object> whereClause, bool showSuccessMessage = false)
         {
             if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, "SQL actions are currently locked");
@@ -744,7 +754,11 @@ namespace EasyWinFormLibrary.Data
 
                 string query = $"DELETE FROM {tableName} WHERE {string.Join(" AND ", whereClauses)}";
 
-                return await ExecuteCommandAsync(query, parameterList.ToArray());
+                var result = await ExecuteCommandAsync(query, parameterList.ToArray());
+
+                if (result.Success && showSuccessMessage)
+                    AdvancedAlert.ShowAlert($"بە سەرکەوتووی سڕایەوە", $"تمت الحذف بنجاح", $"Deleted Successfully", AdvancedAlert.AlertType.Success, 3);
+                return result;
             }
             catch (Exception ex)
             {
@@ -764,6 +778,7 @@ namespace EasyWinFormLibrary.Data
         /// <param name="tableName">The name of the target table where records will be inserted</param>
         /// <param name="records">List of dictionaries, each representing a record to insert with column names and their corresponding values</param>
         /// <param name="hasEntryDate">If true, automatically adds e_date (current date) and e_by (current user) columns for audit trail purposes (default: true)</param>
+        /// <param name="showSuccessMessage">If true, show a usefull message (default: true)</param>
         /// <returns>
         /// A tuple containing:
         /// - Success: True if all records were inserted successfully, false if any errors occurred
@@ -824,7 +839,7 @@ namespace EasyWinFormLibrary.Data
         /// <exception cref="System.InvalidOperationException">
         /// Thrown when SQL actions are locked via SqlDatabaseConnectionConfigBuilder configuration.
         /// </exception>
-        public static async Task<(bool Success, int InsertedCount, List<string> Errors)> BulkInsertAsync(string tableName, List<Dictionary<string, object>> records, bool hasEntryDate = true)
+        public static async Task<(bool Success, int InsertedCount, List<string> Errors)> BulkInsertAsync(string tableName, List<Dictionary<string, object>> records, bool hasEntryDate = true, bool showSuccessMessage = true)
         {
             if (SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig.SqlActionsLocked)
                 return (false, 0, new List<string> { "SQL actions are currently locked" });
@@ -847,6 +862,10 @@ namespace EasyWinFormLibrary.Data
                     }
                 }
 
+                if (insertedCount > 0 && showSuccessMessage)
+                {
+                    AdvancedAlert.ShowAlert($"بە سەرکەوتووی زیادکرا {insertedCount} تۆمار", $"تمت الإضافة بنجاح {insertedCount} سجل", $"Inserted Successfully {insertedCount} records", AdvancedAlert.AlertType.Success, 3);
+                }
                 return (errors.Count == 0, insertedCount, errors);
             }
             catch (Exception ex)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace EasyWinFormLibrary.Extension
@@ -27,6 +26,12 @@ namespace EasyWinFormLibrary.Extension
 
             /// <summary>Delete button for removing records from the data source</summary>
             Delete = 2,
+
+            /// <summary>Increment button for increasing a value in the record</summary>
+            Increment = 3,
+
+            /// <summary>Decrement button for decreasing a value in the record</summary>
+            Decrement = 4
         }
 
         #endregion
@@ -401,7 +406,7 @@ namespace EasyWinFormLibrary.Extension
                 Image = backImage,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
                 Width = width,
-                ImageLayout = DataGridViewImageCellLayout.Zoom
+                ImageLayout = DataGridViewImageCellLayout.Normal
             };
 
             // Add padding to the cell style for spacing
@@ -515,6 +520,24 @@ namespace EasyWinFormLibrary.Extension
         }
 
         /// <summary>
+        /// Adds a increment button column to DataGridView
+        /// </summary>
+        public static void AddIncerementColumn(this DataGridView dgv, string columnName = "incrementBtn", int width = 40)
+        {
+            if (dgv == null) return;
+            dgv.Columns.Add(CreateButtonColumn(columnName, GetButtonImage(ButtonImage.Print), width));
+        }
+
+        /// <summary>
+        /// Adds a decrement button column to DataGridView
+        /// </summary>
+        public static void AddDecrementColumn(this DataGridView dgv, string columnName = "decrementBtn", int width = 40)
+        {
+            if (dgv == null) return;
+            dgv.Columns.Add(CreateButtonColumn(columnName, GetButtonImage(ButtonImage.Print), width));
+        }
+
+        /// <summary>
         /// Adds multiple action buttons at once
         /// </summary>
         public static void AddActionColumns(this DataGridView dgv, params ButtonImage[] buttons)
@@ -541,7 +564,7 @@ namespace EasyWinFormLibrary.Extension
 
             int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"n{digits}";
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         /// <summary>
@@ -553,7 +576,7 @@ namespace EasyWinFormLibrary.Extension
 
             int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"p{digits}";
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         /// <summary>
@@ -565,7 +588,7 @@ namespace EasyWinFormLibrary.Extension
 
             int digits = roundNumber ?? LibrarySettings.NumberDefaultRound;
             dgv.Columns[columnName].DefaultCellStyle.Format = $"c{digits}";
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         /// <summary>
@@ -856,6 +879,8 @@ namespace EasyWinFormLibrary.Extension
         private const string PrintImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACkElEQVRIDdWWS2hTQRSG/0luoQ+KdVlcSFHwCT7wUVfdduPCtNStJLoouMquIm5cCEI3IkWsScGNglofiCLduJBCISgoBrqSCio+FqWQdNHkjt/c5nVvU5piNob/3POfM2fOmXtmMomRwp9ZJY9YmVuSOSnZrvDoplaRkYWy/MtjmsnDazA1BnmuZG9JZhHaz0DeSqvwFmB7WNB+ApfKWjkwpke1eR7OGkrSaYx+Vj6TUDYJbxlPlHpI8HmjvmPoeSRALHhWHqx4h6NG5rvT2xHe+JuLN7J9TlclVKDqbKf+/wvQOmlWqWH6f5bWuA06A1+BO0G1BhK5/esl+h3y0Sr2YlTTbwy7fxHHNNJ2sNCU24OJNmX+Q7IrHPHr5CM33wxpwsMYQNqBO+eUueES0ZUE+hCyx7UoqIbxjzDvyyoPezL7uGrmSNaJyL2B020Qezyu2K/oakMFrGyBb3EPQWtGWttOVeZ0MKeDOQWkBwkQKkDyT3gH2aybCWWuwlsGR32SImmuCi5JdxOvT3UFfCg5eUbwWMkTMZmBiDtk+rJfRpXNhZx1o+wKuPv7cN1XZyQfZ1XJumcjIyaLN4U0w2ePtqTp/TNGu5EQOA2vOde/Q86IQUwu4qqaBV9Kewndm+PcHqR3Q6x2r2QGqxFGfje+nVW7Qf8cUfZag91AzUty3S7Jezumu189NzKizBL6Pj0fMZA6zBB8Q4uIWcTftIAvkxtV5hXjAYICAWvyKMmfjMs8iA6VFS9GfZvZoQIxxVbYD1lpl5tQ+QHPO76VVOewJ8uNsaECRa0udKnzBwEX2JchtEVaQZyg3ciS1fIHdA20s8YD8lSXjvrypzBOIW4iakuUiJjnb8t45a0x1/EXnUCnp/yWJpEAAAAASUVORK5CYII=";
         private const string EditImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACQElEQVRIDd1Uv2sUURD+ZvcOjCJopUgIVikMevo3iAE7IeySKIiVFv6KFhZJYyNqIUYUJYIREyHcXhpBLVQEe3/cLhaXTpFoaSV3OW53/GaNOVclub1Uyd58b9699+abebMzC6z3R9Z8gdkPu+G6g1D+kvglRg58wh/P2hwE4XlyXSM2ESYNDmfglx5Qp+KkYzdDORyj2QTxFNBexE4f56+J27BbcWLSnYNKVIbgChx5DMwPw9+/gJG9X+DiFEl70pRxYpLfgUWu6psxs/4dnpekcxuazq+Uiy6vFWy9Yxi5RS6MXPUzVMdRiTbjsp7EngrJk5vkqqOVvKJOpXMHGfLaCfh+jCA0knEMRAr09/BGQxA993cl2aGVUa5eJ5kSdxk1I106riooR3e4bnuKSji6tLOsVn8HRi5yiRb34O07DRFGy38m998V4OpOmxIz8EoT1DnEyIPQostGbhSTb4uMfI74b+R2ZGWsF/J/34G1v+XcShHzZzM5DwIX2woPeXVWC8Y6yXm7ImiFJ7WtWFz8BsgLoOalpWjrBiPX/kd0eIxdbORXbXk1ZPug2ThE8i38ttQz5PZCUZwlsUV+oZPIfzvOpiiRw9xoEEcRRDeoASPfTnIgN7nZZ28gGISDZ4jlKzvyIhtnF7uzyINGbmnJWedA28FcdQAJ+pDoe7iyA4k02LXDJK8To0zLLerc0nYQy0HmmARyhE4W+CmeRks/oilTOF76wY2upO1ACs8hLYepeYOhUpXVol0xbjijn4445rWEMCyKAAAAAElFTkSuQmCC";
         private const string DeleteImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAACaklEQVRIDdVUv2sUURCeebs5wULFH1wsRAnRJijepbE8vIMkZRIuXdKIvZaCRRprEfQPUFLluE1lEriLgoLaeOlSREhhk5CIEpQ02X3j997tXrLunrsgFllm3ryZ+ebNe/NmH9FJ/zjPAZYqt8+Ro55o4gkmEWFaDogfz7Q/72fFqyzAYr3uiKNWhOgekbQg2yx03xVZfVupuFnxmQDnx9Y4FrlDTNPT7Y6HOTWrpRYTN767P8egvwb3pV6JmndLs8z8EkgG/wuhgjQ3udZZMIu4ZjDsav4YKHmEnc6S0EXYnoJzE7N6iNvZQxkXlOZPfQOXquUXXrUMYF9IqgMx38DP/3QmL5llG6ALi/WRAmQuWp4YPgXgeZx8GzJGyQRCBsSF/dPFCOnVSnPY3WakN2vlL8YW6b8Ozxosk7Kbi8xWJhJoVjvGI75cNtKwEA9BXgdbQpsOhzarFwKyWB04NtYaw0GF8khoewIS5dugI0f/mahuAnK6sceRyQQDIUhz7gToPIvVPpvyHl+fEgmCM0O7QASieBAyF4logw3o0rVE9yUSzDQaAVbdQ0fYXWGeTWJPuxvGxvCJBMaLX9kcNX8CtndgYkx4jFMTEP4FOP5fArzHO2hDU1e7GzzRW5hsgCPaCG1dXWgQ+ESLGmfvLTJKjxmdJFKcnycF1lPt9VfwGYYgmlrrjNgJBvgVvaci7ix/iXAHXxE7cPNd6QrkX6n84dZVAFxWYmIwjZMbV7vaIfGqS3KA59vzaqOtrjV99AMawwt6IL6/kobAZtPMRHh7xon4GYJvpCMiK2+y6AeTb9ZTE0Sokyt/A0xqufQlMXcxAAAAAElFTkSuQmCC";
+        private const string IncrementImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABTklEQVRIDe1VO07EMBB9ToCl5wK0u0lDwQ1o+ZaAhDgBfZIt9wKcgE+DFk5BAUIgIaGVOAAdV4D18BJtdo3ljY2EBEWsGXvefKOxNQH+0+pmkvb6svaTb4pCnZNcNiOFJ6XxkBayFxoXVCApZIsJb8gd8qIIhkkm+5S95C3Qy2UbgmtmWiLXFEPhgraDWjHvbCzQLWRHAUMGm8kJK4ppO08zOazQnI0+bkuay64AV7S6klM9pTGTHI8G6nKqMQTaDDQRy5fCy7wn7JBD6EMDG68DdWs7L9iKEsefWNYKL+xzVGJe6opSWMX39Ub4TgbvSNMxrmRrUxZ2Qj7RIxrOYCwGnrAtp4bKKbKwU/9ryraAt5Vti9oWeTvgdQh7RcJpY6XirBJL5YRBBaIYz4wek2sSDsDHGjSdnFlN5pkt6cs6NKofPoNGHHR3M+sfSl/0jEmnpsiyJAAAAABJRU5ErkJggg==";
+        private const string DecrementImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIDe1UPUsDQRCd2QhikUr8Bzb5KlIEJKilIAiaf3AaW/9RkvsVfhUWggQLwcKc/goLUUhC9MY34oXj2NwuGLs73mNndt6+Yee4I/rnh339Jai1yMgusWGKacjhaOhz1quBBI0GmfgRhiVQIcjb3Hu51ySPJq84r5m4iTgxR0i4Bbc0cNGvAcMw6yQYVXbPkvs1sBz03SoaOCdVjKgYkXMCToH1ZyenlS36Mj38INZ+HcpYN8A0XpG8gYopsZxx//lGkzRX0sk8jkufOLCJfBVchHUUlFhoRsJTDbK0fgc8GD0Qx3sQf4AuTIjkkAfRnU1oHVEilKC6Q4bPkZdBGyYYY4f70ZWtqHu5DVQgJ7VtrBdgtsmYhDocRteoLYR1RGn1z9WZ9rH3DiYYE/GRy1zFzhuoSCnH9TZe/CViQ2IOOHy6RbxcSLdSl261uVzXP7p9A02wSis5DEoPAAAAAElFTkSuQmCC";
 
         /// <summary>
         /// List of base64 encoded images for buttons
@@ -864,6 +889,8 @@ namespace EasyWinFormLibrary.Extension
             PrintImageBase64,
             EditImageBase64,
             DeleteImageBase64,
+            IncrementImageBase64,
+            DecrementImageBase64
         };
 
         #endregion

@@ -253,6 +253,27 @@ namespace EasyWinFormLibrary.CustomControls
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets the text associated with this control.
+        /// For AdvancedTabControl, this property is not used but is inherited from Control.
+        /// Use the Text property of individual tab pages to set tab header text.
+        /// </summary>
+        /// <value>
+        /// The text associated with this control. This property is typically not used for tab controls.
+        /// </value>
+        /// <remarks>
+        /// This property exists for compatibility with the base Control class but has no visual effect
+        /// on the AdvancedTabControl. To change the text displayed on tab headers, modify the Text
+        /// property of individual AdvancedTabPage objects in the TabPages collection.
+        /// </remarks>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
+        }
         #endregion
 
         #region Events
@@ -398,7 +419,6 @@ namespace EasyWinFormLibrary.CustomControls
             SelectedIndexChanged?.Invoke(this, e);
         }
 
-        /// <inheritdoc/>
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -415,7 +435,7 @@ namespace EasyWinFormLibrary.CustomControls
                 DrawTabHeaders(e.Graphics);
             }
         }
-        /// <inheritdoc/>
+
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
@@ -429,7 +449,7 @@ namespace EasyWinFormLibrary.CustomControls
                 }
             }
         }
-        /// <inheritdoc/>
+
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -654,7 +674,7 @@ namespace EasyWinFormLibrary.CustomControls
             _owner = owner;
             _list = new ArrayList();
         }
-        /// <inheritdoc/>
+
         public AdvancedTabPage this[int index]
         {
             get { return (AdvancedTabPage)_list[index]; }
@@ -664,22 +684,19 @@ namespace EasyWinFormLibrary.CustomControls
                 _owner.Invalidate();
             }
         }
-        /// <inheritdoc/>
+
         public int Count => _list.Count;
-        /// <inheritdoc/>
         public bool IsReadOnly => false;
-        /// <inheritdoc/>
         public bool IsSynchronized => false;
-        /// <inheritdoc/>
         public object SyncRoot => this;
-        /// <inheritdoc/>
+
         public int Add(AdvancedTabPage value)
         {
             int result = _list.Add(value);
             _owner.AddTabPage(value);
             return result;
         }
-        /// <inheritdoc/>
+
         public void Clear()
         {
             while (_list.Count > 0)
@@ -687,78 +704,111 @@ namespace EasyWinFormLibrary.CustomControls
                 RemoveAt(0);
             }
         }
-        /// <inheritdoc/>
+
         public bool Contains(AdvancedTabPage value)
         {
             return _list.Contains(value);
         }
-        /// <inheritdoc/>
+
         public int IndexOf(AdvancedTabPage value)
         {
             return _list.IndexOf(value);
         }
-        /// <inheritdoc/>
+
         public void Insert(int index, AdvancedTabPage value)
         {
             _list.Insert(index, value);
             _owner.AddTabPage(value);
         }
-        /// <inheritdoc/>
+
         public void Remove(AdvancedTabPage value)
         {
             _list.Remove(value);
             _owner.RemoveTabPage(value);
         }
-        /// <inheritdoc/>
+
         public void RemoveAt(int index)
         {
             AdvancedTabPage tabPage = this[index];
             _list.RemoveAt(index);
             _owner.RemoveTabPage(tabPage);
         }
-        /// <inheritdoc/>
+
         public void CopyTo(Array array, int index)
         {
             _list.CopyTo(array, index);
         }
-        /// <inheritdoc/>
+
         public IEnumerator GetEnumerator()
         {
             return _list.GetEnumerator();
         }
 
         // IList implementation
+        /// <summary>
+        /// Gets or sets the element at the specified index. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns>The element at the specified index.</returns>
         object IList.this[int index]
         {
             get { return this[index]; }
             set { this[index] = (AdvancedTabPage)value; }
         }
 
+        /// <summary>
+        /// Adds an object to the end of the collection. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="value">The object to be added to the end of the collection.</param>
+        /// <returns>The index at which the value has been added.</returns>
         int IList.Add(object value)
         {
             return Add((AdvancedTabPage)value);
         }
 
+        /// <summary>
+        /// Determines whether the collection contains a specific value. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="value">The object to locate in the collection.</param>
+        /// <returns>true if the object is found in the collection; otherwise, false.</returns>
         bool IList.Contains(object value)
         {
             return Contains((AdvancedTabPage)value);
         }
 
+        /// <summary>
+        /// Determines the index of a specific item in the collection. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="value">The object to locate in the collection.</param>
+        /// <returns>The index of value if found in the list; otherwise, -1.</returns>
         int IList.IndexOf(object value)
         {
             return IndexOf((AdvancedTabPage)value);
         }
 
+        /// <summary>
+        /// Inserts an item to the collection at the specified index. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="index">The zero-based index at which value should be inserted.</param>
+        /// <param name="value">The object to insert into the collection.</param>
         void IList.Insert(int index, object value)
         {
             Insert(index, (AdvancedTabPage)value);
         }
 
+        /// <summary>
+        /// Removes the first occurrence of a specific object from the collection. This is the explicit implementation of IList.
+        /// </summary>
+        /// <param name="value">The object to remove from the collection.</param>
         void IList.Remove(object value)
         {
             Remove((AdvancedTabPage)value);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the collection has a fixed size. This is the explicit implementation of IList.
+        /// </summary>
+        /// <value>Always returns false for this collection.</value>
         bool IList.IsFixedSize => false;
     }
 
@@ -768,7 +818,7 @@ namespace EasyWinFormLibrary.CustomControls
     public class AdvancedTabControlDesigner : ParentControlDesigner
     {
         private DesignerVerbCollection _verbs;
-        /// <inheritdoc/>
+
         public override DesignerVerbCollection Verbs
         {
             get
@@ -782,7 +832,7 @@ namespace EasyWinFormLibrary.CustomControls
                 return _verbs;
             }
         }
-        /// <inheritdoc/>
+
         public override bool CanParent(Control control)
         {
             return control is AdvancedTabPage;
@@ -858,7 +908,7 @@ namespace EasyWinFormLibrary.CustomControls
                 }
             }
         }
-        /// <inheritdoc/>
+
         protected override bool GetHitTest(Point point)
         {
             var tabControl = (AdvancedTabControl)Control;
@@ -872,7 +922,7 @@ namespace EasyWinFormLibrary.CustomControls
 
             return base.GetHitTest(point);
         }
-        /// <inheritdoc/>
+
         public override void Initialize(IComponent component)
         {
             base.Initialize(component);
@@ -888,14 +938,13 @@ namespace EasyWinFormLibrary.CustomControls
     /// </summary>
     public class TabPageCollectionEditor : CollectionEditor
     {
-        /// <inheritdoc/>
         public TabPageCollectionEditor(Type type) : base(type) { }
-        /// <inheritdoc/>
+
         protected override Type CreateCollectionItemType()
         {
             return typeof(AdvancedTabPage);
         }
-        /// <inheritdoc/>
+
         protected override object CreateInstance(Type itemType)
         {
             var tabPage = (AdvancedTabPage)base.CreateInstance(itemType);
@@ -922,7 +971,6 @@ namespace EasyWinFormLibrary.CustomControls
             return tabPage;
         }
 
-        /// <inheritdoc/>
         protected override string GetDisplayText(object value)
         {
             if (value is AdvancedTabPage tabPage && !string.IsNullOrEmpty(tabPage.Text))

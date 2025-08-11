@@ -398,6 +398,7 @@ namespace EasyWinFormLibrary.CustomControls
             this.Name = "AdvancedComboBox";
             //SqlActions = new SqlDatabaseActions(SqlDatabaseConnectionConfigBuilder.SelectedDatabaseConfig);
             this.ResumeLayout(true);
+            this.FlatStyle = FlatStyle.Flat;
         }
 
         /// <summary>
@@ -420,7 +421,6 @@ namespace EasyWinFormLibrary.CustomControls
         {
             this.DropDownHeight = DEFAULT_DROPDOWN_HEIGHT;
             this.DrawMode = DrawMode.Normal;
-            this.FlatStyle = FlatStyle.Flat;
             this.DoubleBuffered(true);
         }
 

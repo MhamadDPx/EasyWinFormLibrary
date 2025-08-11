@@ -123,6 +123,22 @@ namespace EasyWinFormLibrary.Extension
             }
         }
 
+        public static string TextToPassword(this string value)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(value);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+                return sb.ToString();
+            }
+        }
+
         /// <summary>
         /// Converts a string to a boolean value with a fallback default.
         /// </summary>

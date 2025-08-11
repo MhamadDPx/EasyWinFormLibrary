@@ -490,18 +490,25 @@ namespace EasyWinFormLibrary.Data
             if (string.IsNullOrWhiteSpace(identifier))
                 return identifier;
 
-            // Remove or replace dangerous characters
-            var sanitized = Regex.Replace(identifier, @"[^\w\s,.*]", "");
+            // Step 1: Remove dangerous SQL injection characters
+            var sanitized = Regex.Replace(identifier, @"(--|/\*|\*/|;|'|""|\\|\[|\])", "");
 
-            // Handle comma-separated identifiers
+            // Step 2: Clean up whitespace
+            sanitized = Regex.Replace(sanitized, @"\s+", " ").Trim();
+
+            // Step 3: Handle comma-separated identifiers
             if (sanitized.Contains(","))
             {
-                var parts = sanitized.Split(',').Select(p => p.Trim()).Where(p => !string.IsNullOrEmpty(p));
+                var parts = sanitized
+                    .Split(',')
+                    .Select(p => p.Trim())
+                    .Where(p => !string.IsNullOrEmpty(p));
                 return string.Join(", ", parts);
             }
 
-            return sanitized.Trim();
+            return sanitized;
         }
+
 
         /// <summary>
         /// Sanitizes parameter names for SQL parameters.

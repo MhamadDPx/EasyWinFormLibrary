@@ -19,7 +19,7 @@ namespace EasyWinFormLibrary.CustomControls
         #region Constants
         private readonly static Color DEFAULT_BORDER_COLOR = Color.FromArgb(213, 218, 223);
         private readonly static Color DEFAULT_TITLE_BAR_COLOR = Color.FromArgb(213, 218, 223);
-        private readonly static Color DEFAULT_TITLE_FORE_COLOR = Color.FromArgb(40,40,40);
+        private readonly static Color DEFAULT_TITLE_FORE_COLOR = Color.FromArgb(40, 40, 40);
         #endregion
 
         #region Private Fields
@@ -32,6 +32,7 @@ namespace EasyWinFormLibrary.CustomControls
         private int _titleBarHeight = 30;
         private Padding _titlePadding = new Padding(8, 6, 8, 6);
         private StringAlignment _titleAlignment = StringAlignment.Near;
+        private bool _showTitleBar = true; // New field for title bar visibility
         #endregion
 
         #region Constructor
@@ -55,6 +56,23 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets whether the title bar is visible. When false, the control displays with uniform border width on all sides.
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Determines whether the title bar is visible")]
+        [DefaultValue(true)]
+        public bool ShowTitleBar
+        {
+            get { return _showTitleBar; }
+            set
+            {
+                _showTitleBar = value;
+                UpdateContentPadding();
+                Invalidate();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the color of the control border.
@@ -143,6 +161,7 @@ namespace EasyWinFormLibrary.CustomControls
             set
             {
                 _borderWidth = Math.Max(1, value);
+                UpdateContentPadding();
                 Invalidate();
             }
         }
@@ -202,34 +221,6 @@ namespace EasyWinFormLibrary.CustomControls
         /// Handles the paint event to render the custom GroupBox with title bar, content area, and border.
         /// </summary>
         /// <param name="e">Paint event arguments containing the graphics context and clipping information</param>
-        /// <remarks>
-        /// This method performs custom rendering in a specific order to ensure proper visual layering:
-        /// 
-        /// 1. **Graphics Setup**: Configures high-quality rendering with anti-aliasing and ClearType text
-        /// 2. **Title Bar**: Draws the title bar background extending to control edges
-        /// 3. **Content Area**: Renders the main content background with proper padding
-        /// 4. **Border**: Draws the outer border on top of other elements
-        /// 5. **Title Text**: Renders the title text last to ensure it appears above all backgrounds
-        /// 
-        /// The rendering uses high-quality graphics settings:
-        /// - SmoothingMode.AntiAlias for smooth edges and curves
-        /// - TextRenderingHint.ClearTypeGridFit for crisp, readable text
-        /// - CompositingQuality.HighQuality for optimal color blending
-        /// 
-        /// Rectangle calculations ensure proper spacing and alignment based on border width and title bar height.
-        /// The title bar extends to the full width to prevent visual gaps or white lines at the edges.
-        /// </remarks>
-        /// <example>
-        /// This method is automatically called by the Windows Forms framework when the control needs repainting.
-        /// Manual calls can be triggered using:
-        /// <code>
-        /// // Force a repaint of the entire control
-        /// this.Invalidate();
-        /// 
-        /// // Force immediate repaint
-        /// this.Refresh();
-        /// </code>
-        /// </example>
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -238,38 +229,52 @@ namespace EasyWinFormLibrary.CustomControls
             g.CompositingQuality = CompositingQuality.HighQuality;
             Rectangle clientRect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
 
-            // Draw title bar first (extends to edges to avoid white line)
-            Rectangle titleBarRect = new Rectangle(
-                0,
-                0,
-                this.Width,
-                _titleBarHeight + _borderWidth
-            );
-            DrawTitleBar(g, titleBarRect);
-
-            // Draw content area
-            Rectangle contentRect = new Rectangle(
-                _borderWidth,
-                _titleBarHeight + _borderWidth,
-                this.Width - (_borderWidth * 2),
-                this.Height - _titleBarHeight - (_borderWidth * 2)
-            );
-            DrawContentArea(g, contentRect);
-
-            // Draw outer border on top
-            DrawBorder(g, clientRect);
-
-            // Draw title text
-            if (!string.IsNullOrEmpty(this.Text))
+            if (_showTitleBar)
             {
-                Rectangle textAreaRect = new Rectangle(
+                // Draw title bar first (extends to edges to avoid white line)
+                Rectangle titleBarRect = new Rectangle(
+                    0,
+                    0,
+                    this.Width,
+                    _titleBarHeight + _borderWidth
+                );
+                DrawTitleBar(g, titleBarRect);
+
+                // Draw content area below title bar
+                Rectangle contentRect = new Rectangle(
+                    _borderWidth,
+                    _titleBarHeight + _borderWidth,
+                    this.Width - (_borderWidth * 2),
+                    this.Height - _titleBarHeight - (_borderWidth * 2)
+                );
+                DrawContentArea(g, contentRect);
+
+                // Draw title text
+                if (!string.IsNullOrEmpty(this.Text))
+                {
+                    Rectangle textAreaRect = new Rectangle(
+                        _borderWidth,
+                        _borderWidth,
+                        this.Width - (_borderWidth * 2),
+                        _titleBarHeight
+                    );
+                    DrawTitleText(g, textAreaRect);
+                }
+            }
+            else
+            {
+                // Draw content area filling the entire control (minus border)
+                Rectangle contentRect = new Rectangle(
                     _borderWidth,
                     _borderWidth,
                     this.Width - (_borderWidth * 2),
-                    _titleBarHeight
+                    this.Height - (_borderWidth * 2)
                 );
-                DrawTitleText(g, textAreaRect);
+                DrawContentArea(g, contentRect);
             }
+
+            // Draw outer border on top
+            DrawBorder(g, clientRect);
         }
 
         private void DrawBorder(Graphics g, Rectangle rect)
@@ -323,23 +328,33 @@ namespace EasyWinFormLibrary.CustomControls
 
         private void UpdateContentPadding()
         {
-            // Update the padding to account for title bar and borders
-            this.Padding = new Padding(
-                _borderWidth + 1,
-                _titleBarHeight + _borderWidth + 1,
-                _borderWidth + 1,
-                _borderWidth + 1
-            );
+            // Update the padding based on whether title bar is shown
+            if (_showTitleBar)
+            {
+                // Title bar visible: different top padding
+                this.Padding = new Padding(
+                    _borderWidth + 1,
+                    _titleBarHeight + _borderWidth + 1,
+                    _borderWidth + 1,
+                    _borderWidth + 1
+                );
+            }
+            else
+            {
+                // Title bar hidden: uniform padding on all sides
+                this.Padding = new Padding(
+                    _borderWidth + 1,
+                    _borderWidth + 1,
+                    _borderWidth + 1,
+                    _borderWidth + 1
+                );
+            }
         }
+
         /// <summary>
         /// Handles the text changed event to refresh the control's visual appearance.
         /// </summary>
         /// <param name="e">Event arguments containing information about the text change</param>
-        /// <remarks>
-        /// This override ensures that when the control's text property changes, the visual representation
-        /// is immediately updated by calling Invalidate(). This is particularly important for custom-drawn
-        /// controls where text changes need to trigger a repaint to display the new text content.
-        /// </remarks>
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
@@ -350,12 +365,6 @@ namespace EasyWinFormLibrary.CustomControls
         /// Handles the font changed event to refresh the control when using default font settings.
         /// </summary>
         /// <param name="e">Event arguments containing information about the font change</param>
-        /// <remarks>
-        /// This override checks if a custom title font is being used (_titleFont). If no custom title font
-        /// is set (null), it invalidates the control to ensure proper repainting with the new font.
-        /// When a custom title font is specified, the control doesn't need to be invalidated as the
-        /// custom font takes precedence over the inherited font changes.
-        /// </remarks>
         protected override void OnFontChanged(EventArgs e)
         {
             base.OnFontChanged(e);
@@ -369,12 +378,6 @@ namespace EasyWinFormLibrary.CustomControls
         /// Handles the resize event to update content padding and maintain proper layout.
         /// </summary>
         /// <param name="e">Event arguments containing information about the resize operation</param>
-        /// <remarks>
-        /// This override ensures that when the control is resized, the internal content padding
-        /// is recalculated to maintain proper spacing and alignment. This is essential for
-        /// custom controls that need to adjust their internal layout based on the available space.
-        /// The UpdateContentPadding() method handles the recalculation of margins and spacing.
-        /// </remarks>
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -389,14 +392,6 @@ namespace EasyWinFormLibrary.CustomControls
         /// <param name="width">The new width of the control</param>
         /// <param name="height">The new height of the control</param>
         /// <param name="specified">A bitwise combination of BoundsSpecified values indicating which bounds are being set</param>
-        /// <remarks>
-        /// This low-level override captures all bounds changes including those that might not trigger OnResize,
-        /// such as programmatic size changes or specific bound modifications. It ensures that content padding
-        /// is always properly updated regardless of how the control's bounds are modified.
-        /// 
-        /// This method is called by the Windows Forms framework whenever the control's bounds are being set,
-        /// providing a comprehensive way to handle layout updates for any dimension or position changes.
-        /// </remarks>
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             base.SetBoundsCore(x, y, width, height, specified);
@@ -490,5 +485,4 @@ namespace EasyWinFormLibrary.CustomControls
             Dark
         }
     }
-
 }

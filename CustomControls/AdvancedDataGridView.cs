@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using EasyWinFormLibrary.WinAppNeeds;
 using Microsoft.Office.Interop.Excel;
 using XlBorderWeight = Microsoft.Office.Interop.Excel.XlBorderWeight;
 using XlLineStyle = Microsoft.Office.Interop.Excel.XlLineStyle;
@@ -1250,19 +1251,15 @@ namespace EasyWinFormLibrary.CustomControls
 
             _columnsMenuStrip.DropDownItems.Clear();
 
-            // Add "All" item
             var allItem = new ToolStripMenuItem
             {
                 Name = "All",
-                Text = "All",
+                Text = LanguageManager.IsKurdishLanguage ? "دیاریکردی هەمووی" : LanguageManager.IsArabicLanguage ? "کل" : "All",
                 Checked = false,
                 CheckOnClick = true
             };
             allItem.Click += AllItem_Click;
             _columnsMenuStrip.DropDownItems.Add(allItem);
-
-            // Add separator
-            _columnsMenuStrip.DropDownItems.Add(new ToolStripSeparator());
 
             // Add individual column items
             var newColumnsType = new Dictionary<string, string>();
@@ -1416,16 +1413,11 @@ namespace EasyWinFormLibrary.CustomControls
                 this.DataSource = data;
                 this.ClearSelection();
 
-                if (_isDataSourceEmpty && data != null && data.Rows.Count > 0)
-                {
-                    _isDataSourceEmpty = false;
-                    resizeHeaderCallback?.Invoke();
-                    addCaptionCallback?.Invoke();
-                }
-                else if (data == null || data.Rows.Count == 0)
-                {
-                    _isDataSourceEmpty = true;
-                }
+                if (!IsDataSourceEmpty) return;
+
+                _isDataSourceEmpty = false;
+                resizeHeaderCallback?.Invoke();
+                addCaptionCallback?.Invoke();
             }
             catch (Exception ex)
             {

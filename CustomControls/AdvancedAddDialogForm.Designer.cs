@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedAddDialogForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedAddDialogForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.dgvBackPanel = new EasyWinFormLibrary.CustomControls.AdvancedPanel();
             this.DGV = new EasyWinFormLibrary.CustomControls.AdvancedDataGridView();
@@ -66,9 +66,9 @@
             this.dgvBackPanel.BorderRadius = 10;
             this.dgvBackPanel.BorderThickness = 0;
             this.dgvBackPanel.Controls.Add(this.DGV);
-            this.dgvBackPanel.Location = new System.Drawing.Point(11, 142);
+            this.dgvBackPanel.Location = new System.Drawing.Point(11, 168);
             this.dgvBackPanel.Name = "dgvBackPanel";
-            this.dgvBackPanel.Size = new System.Drawing.Size(484, 460);
+            this.dgvBackPanel.Size = new System.Drawing.Size(484, 434);
             this.dgvBackPanel.TabIndex = 1;
             // 
             // DGV
@@ -78,7 +78,6 @@
             this.DGV.AllowUserToDeleteRows = false;
             this.DGV.AllowUserToOrderColumns = true;
             this.DGV.AllowUserToResizeRows = false;
-            this.DGV.AlternatingRowColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.DGV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -88,7 +87,7 @@
             this.DGV.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -98,10 +97,9 @@
             this.DGV.ColumnsHeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.DGV.ColumnsMenuStrip = null;
             this.DGV.ColumnsToSkip = new string[0];
-            this.DGV.ColumnsType = ((System.Collections.Generic.Dictionary<string, string>)(resources.GetObject("DGV.ColumnsType")));
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.WhiteSmoke;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
@@ -121,7 +119,7 @@
             this.DGV.RowHeadersWidth = 51;
             this.DGV.RowTemplate.Height = 40;
             this.DGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.DGV.Size = new System.Drawing.Size(478, 454);
+            this.DGV.Size = new System.Drawing.Size(478, 428);
             this.DGV.TabIndex = 0;
             this.DGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCellClick);
             // 
@@ -138,17 +136,18 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 84);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 110);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // lbl
             // 
             this.lbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl.AutoSize = true;
+            this.lbl.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             this.lbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lbl.Location = new System.Drawing.Point(3, 13);
+            this.lbl.Location = new System.Drawing.Point(3, 22);
             this.lbl.Name = "lbl";
-            this.lbl.Size = new System.Drawing.Size(31, 29);
+            this.lbl.Size = new System.Drawing.Size(36, 33);
             this.lbl.TabIndex = 0;
             this.lbl.Text = "lbl";
             // 
@@ -158,15 +157,18 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txt.BackColor = System.Drawing.Color.White;
-            this.txt.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(218)))), ((int)(((byte)(223)))));
-            this.txt.BorderFocusColor = System.Drawing.Color.ForestGreen;
+            this.txt.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(195)))), ((int)(((byte)(204)))));
+            this.txt.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(142)))), ((int)(((byte)(240)))));
+            this.txt.BorderRadius = 0;
+            this.txt.BorderSize = 2;
+            this.txt.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             this.txt.ForeColor = System.Drawing.Color.Black;
-            this.txt.Location = new System.Drawing.Point(3, 45);
+            this.txt.Location = new System.Drawing.Point(3, 58);
             this.txt.Name = "txt";
             this.txt.SelectedText = "";
             this.txt.SelectionLength = 0;
             this.txt.SelectionStart = 0;
-            this.txt.Size = new System.Drawing.Size(334, 36);
+            this.txt.Size = new System.Drawing.Size(334, 49);
             this.txt.TabIndex = 1;
             this.txt.TextPadding = new System.Windows.Forms.Padding(4);
             this.txt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txt_KeyUp);
@@ -177,17 +179,17 @@
             this.btnSave.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(218)))), ((int)(((byte)(223)))));
             this.btnSave.BorderRadius = 5;
             this.btnSave.BorderSize = 2;
-            this.btnSave.ButtonImageSize = 20;
+            this.btnSave.ButtonImageSize = 25;
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(81)))), ((int)(((byte)(80)))), ((int)(((byte)(93)))));
             this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnSave.Location = new System.Drawing.Point(343, 45);
+            this.btnSave.Location = new System.Drawing.Point(343, 58);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.btnSave.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.btnSave.Size = new System.Drawing.Size(138, 36);
+            this.btnSave.Size = new System.Drawing.Size(138, 49);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "زیادکردن";
             this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -197,7 +199,6 @@
             // formTopMenuBar1
             // 
             this.formTopMenuBar1.BackColor = System.Drawing.Color.White;
-            this.formTopMenuBar1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.formTopMenuBar1.Dock = System.Windows.Forms.DockStyle.Top;
             this.formTopMenuBar1.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.formTopMenuBar1.FormTitlArabic = "ملاحضة";
@@ -224,7 +225,7 @@
             this.Controls.Add(this.formTopMenuBar1);
             this.Controls.Add(this.panel1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "AdvancedAddDialogForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

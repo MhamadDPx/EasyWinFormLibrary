@@ -677,6 +677,10 @@ namespace EasyWinFormLibrary.CustomControls
         /// Calculates and returns the rectangle bounds for the button text based on image position and spacing.
         /// </summary>
         /// <returns>Rectangle defining the text position and size.</returns>
+        /// <summary>
+        /// Calculates and returns the rectangle bounds for the button text based on image position and spacing.
+        /// </summary>
+        /// <returns>Rectangle defining the text position and size.</returns>
         private Rectangle GetTextRectangle()
         {
             Rectangle textRect = new Rectangle();
@@ -684,38 +688,116 @@ namespace EasyWinFormLibrary.CustomControls
 
             if (buttonImage == null)
             {
-                textRect = new Rectangle(borderSize, borderSize,
-                    this.Width - (borderSize * 2), this.Height - (borderSize * 2));
+                // No image, use full button area minus borders
+                textRect = new Rectangle(borderSize + 2, borderSize + 2,
+                    this.Width - (borderSize * 2) - 4, this.Height - (borderSize * 2) - 4);
             }
             else
             {
                 // Adjust text position based on image position
                 switch (imageAlign)
                 {
-                    case ContentAlignment.MiddleLeft:
-                        textRect = new Rectangle(imageRect.Right + imageTextSpacing, borderSize,
-                            this.Width - imageRect.Right - imageTextSpacing - borderSize, this.Height - (borderSize * 2));
-                        break;
-                    case ContentAlignment.MiddleRight:
-                        textRect = new Rectangle(borderSize, borderSize,
-                            imageRect.Left - imageTextSpacing - borderSize, this.Height - (borderSize * 2));
-                        break;
+                    case ContentAlignment.TopLeft:
                     case ContentAlignment.TopCenter:
-                        textRect = new Rectangle(borderSize, imageRect.Bottom + imageTextSpacing,
-                            this.Width - (borderSize * 2), this.Height - imageRect.Bottom - imageTextSpacing - borderSize);
+                    case ContentAlignment.TopRight:
+                        // Image at top, text below
+                        textRect = new Rectangle(borderSize + 2, imageRect.Bottom + imageTextSpacing,
+                            this.Width - (borderSize * 2) - 4,
+                            this.Height - imageRect.Bottom - imageTextSpacing - borderSize - 2);
                         break;
+
+                    case ContentAlignment.BottomLeft:
                     case ContentAlignment.BottomCenter:
-                        textRect = new Rectangle(borderSize, borderSize,
-                            this.Width - (borderSize * 2), imageRect.Top - imageTextSpacing - borderSize);
+                    case ContentAlignment.BottomRight:
+                        // Image at bottom, text above
+                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
+                            this.Width - (borderSize * 2) - 4,
+                            imageRect.Top - imageTextSpacing - borderSize - 2);
                         break;
+
+                    case ContentAlignment.MiddleLeft:
+                        // Image on left, text on right
+                        textRect = new Rectangle(imageRect.Right + imageTextSpacing, borderSize + 2,
+                            this.Width - imageRect.Right - imageTextSpacing - borderSize - 2,
+                            this.Height - (borderSize * 2) - 4);
+                        break;
+
+                    case ContentAlignment.MiddleRight:
+                        // Image on right, text on left
+                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
+                            imageRect.Left - imageTextSpacing - borderSize - 2,
+                            this.Height - (borderSize * 2) - 4);
+                        break;
+
+                    case ContentAlignment.MiddleCenter:
+                        // Image in center, text around it (you might want to handle this differently)
+                        // For now, we'll put text below the image
+                        textRect = new Rectangle(borderSize + 2, imageRect.Bottom + imageTextSpacing,
+                            this.Width - (borderSize * 2) - 4,
+                            this.Height - imageRect.Bottom - imageTextSpacing - borderSize - 2);
+                        break;
+
                     default:
-                        textRect = new Rectangle(borderSize, borderSize,
-                            this.Width - (borderSize * 2), this.Height - (borderSize * 2));
+                        // Fallback to full area
+                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
+                            this.Width - (borderSize * 2) - 4, this.Height - (borderSize * 2) - 4);
                         break;
                 }
             }
 
             return textRect;
+        }
+
+        /// <summary>
+        /// Converts ContentAlignment to appropriate StringFormat settings
+        /// </summary>
+        /// <param name="alignment">ContentAlignment value</param>
+        /// <returns>StringFormat with appropriate alignment settings</returns>
+        private StringFormat GetStringFormat(ContentAlignment alignment)
+        {
+            StringFormat format = new StringFormat();
+
+            // Set horizontal alignment
+            switch (alignment)
+            {
+                case ContentAlignment.TopLeft:
+                case ContentAlignment.MiddleLeft:
+                case ContentAlignment.BottomLeft:
+                    format.Alignment = StringAlignment.Near;
+                    break;
+                case ContentAlignment.TopCenter:
+                case ContentAlignment.MiddleCenter:
+                case ContentAlignment.BottomCenter:
+                    format.Alignment = StringAlignment.Center;
+                    break;
+                case ContentAlignment.TopRight:
+                case ContentAlignment.MiddleRight:
+                case ContentAlignment.BottomRight:
+                    format.Alignment = StringAlignment.Far;
+                    break;
+            }
+
+            // Set vertical alignment
+            switch (alignment)
+            {
+                case ContentAlignment.TopLeft:
+                case ContentAlignment.TopCenter:
+                case ContentAlignment.TopRight:
+                    format.LineAlignment = StringAlignment.Near;
+                    break;
+                case ContentAlignment.MiddleLeft:
+                case ContentAlignment.MiddleCenter:
+                case ContentAlignment.MiddleRight:
+                    format.LineAlignment = StringAlignment.Center;
+                    break;
+                case ContentAlignment.BottomLeft:
+                case ContentAlignment.BottomCenter:
+                case ContentAlignment.BottomRight:
+                    format.LineAlignment = StringAlignment.Far;
+                    break;
+            }
+
+            return format;
         }
 
         #endregion
@@ -764,11 +846,11 @@ namespace EasyWinFormLibrary.CustomControls
 
             try
             {
-                // Set high-quality rendering (from AdvancedActionButton)
+                // Set high-quality rendering
                 pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 pevent.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                // Draw custom border and shape using AdvancedActionButton method
+                // Draw custom border and shape
                 DrawCustomBorder(pevent.Graphics);
 
                 // Draw image
@@ -778,16 +860,38 @@ namespace EasyWinFormLibrary.CustomControls
                     pevent.Graphics.DrawImage(buttonImage, imageRect);
                 }
 
-                // Draw text
+                // Draw text with proper alignment
                 if (!string.IsNullOrEmpty(this.Text))
                 {
                     Rectangle textRect = GetTextRectangle();
                     using (SolidBrush brushText = new SolidBrush(textColor))
                     {
-                        StringFormat stringFormat = new StringFormat();
-                        stringFormat.Alignment = StringAlignment.Center;
-                        stringFormat.LineAlignment = StringAlignment.Center;
-                        pevent.Graphics.DrawString(this.Text, this.Font, brushText, textRect, stringFormat);
+                        // Use the TextAlign property for text alignment, but if image is present,
+                        // adjust alignment to work well with image position
+                        ContentAlignment effectiveTextAlign = TextAlign;
+
+                        // If image is present and TextAlign is center, adjust for better layout
+                        if (buttonImage != null && TextAlign == ContentAlignment.MiddleCenter)
+                        {
+                            switch (imageAlign)
+                            {
+                                case ContentAlignment.MiddleLeft:
+                                    effectiveTextAlign = ContentAlignment.MiddleCenter; // Keep center for right side text
+                                    break;
+                                case ContentAlignment.MiddleRight:
+                                    effectiveTextAlign = ContentAlignment.MiddleCenter; // Keep center for left side text
+                                    break;
+                                case ContentAlignment.TopCenter:
+                                case ContentAlignment.BottomCenter:
+                                    effectiveTextAlign = ContentAlignment.MiddleCenter; // Keep center
+                                    break;
+                            }
+                        }
+
+                        using (StringFormat stringFormat = GetStringFormat(effectiveTextAlign))
+                        {
+                            pevent.Graphics.DrawString(this.Text, this.Font, brushText, textRect, stringFormat);
+                        }
                     }
                 }
             }
@@ -941,6 +1045,16 @@ namespace EasyWinFormLibrary.CustomControls
                 Invalidate();
             }
         }
+
+        #endregion
+
+        #region Additional Properties for Text Alignment
+
+        /// <summary>
+        /// Gets or sets the alignment of the text on the button.
+        /// </summary>
+        [Category("Advanced Appearance")]
+        public ContentAlignment TextAlign { get; set; } = ContentAlignment.MiddleCenter;
 
         #endregion
     }

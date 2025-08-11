@@ -22,7 +22,7 @@
             // 
             // TopMenuPanel
             // 
-            this.TopMenuPanel.BackColor = System.Drawing.Color.Transparent;
+            this.TopMenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.TopMenuPanel.BorderThickness = 0;
             this.TopMenuPanel.Controls.Add(this.tblpForm);
             this.TopMenuPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -33,7 +33,6 @@
             this.TopMenuPanel.Name = "TopMenuPanel";
             this.TopMenuPanel.Size = new System.Drawing.Size(864, 47);
             this.TopMenuPanel.TabIndex = 0;
-            this.TopMenuPanel.UseGradient = true;
             // 
             // tblpForm
             // 
@@ -74,7 +73,7 @@
             // btnClose
             // 
             this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(124)))), ((int)(((byte)(169)))));
-            this.btnClose.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(124)))), ((int)(((byte)(169)))));
+            this.btnClose.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.btnClose.BorderColor = System.Drawing.Color.Gray;
             this.btnClose.BorderRadius = 0;
             this.btnClose.BorderSize = 0;
@@ -84,7 +83,6 @@
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.HoverBackColor = System.Drawing.Color.RosyBrown;
             this.btnClose.HoverBorderColor = System.Drawing.Color.RosyBrown;
-            this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnClose.ImageSize = new System.Drawing.Size(25, 25);
             this.btnClose.ImageTextSpacing = 5;
             this.btnClose.Location = new System.Drawing.Point(817, 3);
@@ -94,11 +92,12 @@
             this.btnClose.TabIndex = 5;
             this.btnClose.TextColor = System.Drawing.Color.White;
             this.btnClose.UseVisualStyleBackColor = false;
+            this.btnClose.Click += new System.EventHandler(this.btnCloseForm_Click);
             // 
             // btnMinimize
             // 
             this.btnMinimize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(124)))), ((int)(((byte)(169)))));
-            this.btnMinimize.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(124)))), ((int)(((byte)(169)))));
+            this.btnMinimize.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.btnMinimize.BorderColor = System.Drawing.Color.Gray;
             this.btnMinimize.BorderRadius = 0;
             this.btnMinimize.BorderSize = 0;
@@ -106,9 +105,8 @@
             this.btnMinimize.ButtonImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMinimize.ForeColor = System.Drawing.Color.White;
-            this.btnMinimize.HoverBackColor = System.Drawing.Color.SlateBlue;
-            this.btnMinimize.HoverBorderColor = System.Drawing.Color.MediumSlateBlue;
-            this.btnMinimize.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMinimize.HoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.btnMinimize.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.btnMinimize.ImageSize = new System.Drawing.Size(25, 25);
             this.btnMinimize.ImageTextSpacing = 5;
             this.btnMinimize.Location = new System.Drawing.Point(767, 3);
@@ -118,12 +116,13 @@
             this.btnMinimize.TabIndex = 5;
             this.btnMinimize.TextColor = System.Drawing.Color.White;
             this.btnMinimize.UseVisualStyleBackColor = false;
+            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
             // 
             // AdvancedFormTopMenuBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.Controls.Add(this.TopMenuPanel);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

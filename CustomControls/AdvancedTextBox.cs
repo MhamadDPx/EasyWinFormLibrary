@@ -1705,6 +1705,8 @@ namespace EasyWinFormLibrary.CustomControls
                 Form parentForm = FindForm();
                 if (parentForm == null)
                     return;
+                if (Multiline)
+                    return;
 
                 Control nextControl = parentForm.GetNextControl(this, true);
 
