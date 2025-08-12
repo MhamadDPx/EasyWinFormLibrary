@@ -345,6 +345,7 @@ namespace EasyWinFormLibrary.Extension
                     dtp.Value = DateTime.Now.Date;
                     break;
             }
+            dtp.Checked = false; // Uncheck the control by default
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyWinFormLibrary.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -352,6 +353,12 @@ namespace EasyWinFormLibrary.Data
                 return ProcessComboBoxCondition(comboBox, sanitizedColumn, tag, reverseSearch, useParameterized);
             }
 
+            // Process TextBox controls
+            if (control is AdvancedTextBox advTextBox)
+            {
+                return ProcessAdvancedTextBoxCondition(advTextBox, sanitizedColumn, tag, reverseSearch, useParameterized);
+            }
+
             return string.Empty;
         }
 
@@ -383,7 +390,18 @@ namespace EasyWinFormLibrary.Data
 
             return GenerateConditionByTag(columnName, tag, value, reverseSearch, useParameterized);
         }
+        /// <summary>
+        /// Processes AdvancedTextBox control for SQL condition generation.
+        /// </summary>
+        private static string ProcessAdvancedTextBoxCondition(AdvancedTextBox textBox, string columnName, string tag,
+            bool reverseSearch, bool useParameterized)
+        {
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+                return string.Empty;
 
+            var value = textBox.Text.Trim();
+            return GenerateConditionByTag(columnName, tag, value, reverseSearch, useParameterized);
+        }
 
         /// <summary>
         /// Generates SQL condition based on control tag.
