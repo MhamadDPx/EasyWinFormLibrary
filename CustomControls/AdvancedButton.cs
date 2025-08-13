@@ -297,6 +297,9 @@ namespace EasyWinFormLibrary.CustomControls
         /// Gets or sets the alignment position of the image on the button.
         /// </summary>
         [Category("Advanced Appearance")]
+        [DefaultValue(ContentAlignment.MiddleLeft)]           // Tells designer the default value
+        [Browsable(true)]                                    // Makes it visible in Property Grid
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]  // Forces serialization
         public new ContentAlignment ImageAlign
         {
             get { return imageAlign; }
@@ -412,6 +415,13 @@ namespace EasyWinFormLibrary.CustomControls
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets the alignment of the text on the button.
+        /// </summary>
+        [Category("Advanced Appearance")]
+        public ContentAlignment TextAlign { get; set; } = ContentAlignment.MiddleCenter;
+
         #endregion
 
         #region Constructor
@@ -622,10 +632,29 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
+        #region Helper Methods for Padding Support
+
+        /// <summary>
+        /// Gets the content rectangle with padding applied
+        /// </summary>
+        /// <returns>Rectangle with padding applied</returns>
+        private Rectangle GetContentRectangle()
+        {
+            return new Rectangle(
+                borderSize + Padding.Left,
+                borderSize + Padding.Top,
+                this.Width - (borderSize * 2) - Padding.Horizontal,
+                this.Height - (borderSize * 2) - Padding.Vertical
+            );
+        }
+
+        #endregion
+
         #region Image and Text Drawing Methods
 
         /// <summary>
         /// Calculates and returns the rectangle bounds for the button image based on alignment settings.
+        /// Now respects padding.
         /// </summary>
         /// <returns>Rectangle defining the image position and size.</returns>
         private Rectangle GetImageRectangle()
@@ -638,35 +667,38 @@ namespace EasyWinFormLibrary.CustomControls
             int imgWidth = imageSize.Width;
             int imgHeight = imageSize.Height;
 
-            // Calculate position based on alignment
+            // Get content area with padding applied
+            Rectangle contentRect = GetContentRectangle();
+
+            // Calculate position based on alignment within the content rectangle
             switch (imageAlign)
             {
                 case ContentAlignment.TopLeft:
-                    imageRect = new Rectangle(borderSize + 5, borderSize + 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left, contentRect.Top, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.TopCenter:
-                    imageRect = new Rectangle((this.Width - imgWidth) / 2, borderSize + 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left + (contentRect.Width - imgWidth) / 2, contentRect.Top, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.TopRight:
-                    imageRect = new Rectangle(this.Width - imgWidth - borderSize - 5, borderSize + 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Right - imgWidth, contentRect.Top, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.MiddleLeft:
-                    imageRect = new Rectangle(borderSize + 5, (this.Height - imgHeight) / 2, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left, contentRect.Top + (contentRect.Height - imgHeight) / 2, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.MiddleCenter:
-                    imageRect = new Rectangle((this.Width - imgWidth) / 2, (this.Height - imgHeight) / 2, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left + (contentRect.Width - imgWidth) / 2, contentRect.Top + (contentRect.Height - imgHeight) / 2, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.MiddleRight:
-                    imageRect = new Rectangle(this.Width - imgWidth - borderSize - 5, (this.Height - imgHeight) / 2, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Right - imgWidth, contentRect.Top + (contentRect.Height - imgHeight) / 2, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.BottomLeft:
-                    imageRect = new Rectangle(borderSize + 5, this.Height - imgHeight - borderSize - 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left, contentRect.Bottom - imgHeight, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.BottomCenter:
-                    imageRect = new Rectangle((this.Width - imgWidth) / 2, this.Height - imgHeight - borderSize - 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Left + (contentRect.Width - imgWidth) / 2, contentRect.Bottom - imgHeight, imgWidth, imgHeight);
                     break;
                 case ContentAlignment.BottomRight:
-                    imageRect = new Rectangle(this.Width - imgWidth - borderSize - 5, this.Height - imgHeight - borderSize - 5, imgWidth, imgHeight);
+                    imageRect = new Rectangle(contentRect.Right - imgWidth, contentRect.Bottom - imgHeight, imgWidth, imgHeight);
                     break;
             }
 
@@ -675,22 +707,19 @@ namespace EasyWinFormLibrary.CustomControls
 
         /// <summary>
         /// Calculates and returns the rectangle bounds for the button text based on image position and spacing.
-        /// </summary>
-        /// <returns>Rectangle defining the text position and size.</returns>
-        /// <summary>
-        /// Calculates and returns the rectangle bounds for the button text based on image position and spacing.
+        /// Now respects padding.
         /// </summary>
         /// <returns>Rectangle defining the text position and size.</returns>
         private Rectangle GetTextRectangle()
         {
             Rectangle textRect = new Rectangle();
             Rectangle imageRect = GetImageRectangle();
+            Rectangle contentRect = GetContentRectangle();
 
             if (buttonImage == null)
             {
-                // No image, use full button area minus borders
-                textRect = new Rectangle(borderSize + 2, borderSize + 2,
-                    this.Width - (borderSize * 2) - 4, this.Height - (borderSize * 2) - 4);
+                // No image, use full content area
+                textRect = contentRect;
             }
             else
             {
@@ -701,46 +730,59 @@ namespace EasyWinFormLibrary.CustomControls
                     case ContentAlignment.TopCenter:
                     case ContentAlignment.TopRight:
                         // Image at top, text below
-                        textRect = new Rectangle(borderSize + 2, imageRect.Bottom + imageTextSpacing,
-                            this.Width - (borderSize * 2) - 4,
-                            this.Height - imageRect.Bottom - imageTextSpacing - borderSize - 2);
+                        textRect = new Rectangle(
+                            contentRect.Left,
+                            imageRect.Bottom + imageTextSpacing,
+                            contentRect.Width,
+                            contentRect.Bottom - imageRect.Bottom - imageTextSpacing
+                        );
                         break;
 
                     case ContentAlignment.BottomLeft:
                     case ContentAlignment.BottomCenter:
                     case ContentAlignment.BottomRight:
                         // Image at bottom, text above
-                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
-                            this.Width - (borderSize * 2) - 4,
-                            imageRect.Top - imageTextSpacing - borderSize - 2);
+                        textRect = new Rectangle(
+                            contentRect.Left,
+                            contentRect.Top,
+                            contentRect.Width,
+                            imageRect.Top - contentRect.Top - imageTextSpacing
+                        );
                         break;
 
                     case ContentAlignment.MiddleLeft:
                         // Image on left, text on right
-                        textRect = new Rectangle(imageRect.Right + imageTextSpacing, borderSize + 2,
-                            this.Width - imageRect.Right - imageTextSpacing - borderSize - 2,
-                            this.Height - (borderSize * 2) - 4);
+                        textRect = new Rectangle(
+                            imageRect.Right + imageTextSpacing,
+                            contentRect.Top,
+                            contentRect.Right - imageRect.Right - imageTextSpacing,
+                            contentRect.Height
+                        );
                         break;
 
                     case ContentAlignment.MiddleRight:
                         // Image on right, text on left
-                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
-                            imageRect.Left - imageTextSpacing - borderSize - 2,
-                            this.Height - (borderSize * 2) - 4);
+                        textRect = new Rectangle(
+                            contentRect.Left,
+                            contentRect.Top,
+                            imageRect.Left - contentRect.Left - imageTextSpacing,
+                            contentRect.Height
+                        );
                         break;
 
                     case ContentAlignment.MiddleCenter:
-                        // Image in center, text around it (you might want to handle this differently)
-                        // For now, we'll put text below the image
-                        textRect = new Rectangle(borderSize + 2, imageRect.Bottom + imageTextSpacing,
-                            this.Width - (borderSize * 2) - 4,
-                            this.Height - imageRect.Bottom - imageTextSpacing - borderSize - 2);
+                        // Image in center, text below
+                        textRect = new Rectangle(
+                            contentRect.Left,
+                            imageRect.Bottom + imageTextSpacing,
+                            contentRect.Width,
+                            contentRect.Bottom - imageRect.Bottom - imageTextSpacing
+                        );
                         break;
 
                     default:
-                        // Fallback to full area
-                        textRect = new Rectangle(borderSize + 2, borderSize + 2,
-                            this.Width - (borderSize * 2) - 4, this.Height - (borderSize * 2) - 4);
+                        // Fallback to full content area
+                        textRect = contentRect;
                         break;
                 }
             }
@@ -903,6 +945,19 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
+        /// Override to invalidate when padding changes
+        /// </summary>
+        /// <param name="e">Event arguments</param>
+        protected override void OnPaddingChanged(EventArgs e)
+        {
+            base.OnPaddingChanged(e);
+            if (_isInitialized)
+            {
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
         /// Handles the mouse enter event to trigger hover state.
         /// </summary>
         /// <param name="e">Event arguments</param>
@@ -1045,16 +1100,6 @@ namespace EasyWinFormLibrary.CustomControls
                 Invalidate();
             }
         }
-
-        #endregion
-
-        #region Additional Properties for Text Alignment
-
-        /// <summary>
-        /// Gets or sets the alignment of the text on the button.
-        /// </summary>
-        [Category("Advanced Appearance")]
-        public ContentAlignment TextAlign { get; set; } = ContentAlignment.MiddleCenter;
 
         #endregion
     }

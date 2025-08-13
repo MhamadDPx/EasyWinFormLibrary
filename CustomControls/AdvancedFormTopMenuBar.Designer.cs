@@ -83,6 +83,7 @@
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.HoverBackColor = System.Drawing.Color.RosyBrown;
             this.btnClose.HoverBorderColor = System.Drawing.Color.RosyBrown;
+            this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnClose.ImageSize = new System.Drawing.Size(25, 25);
             this.btnClose.ImageTextSpacing = 5;
             this.btnClose.Location = new System.Drawing.Point(817, 3);
@@ -107,6 +108,7 @@
             this.btnMinimize.ForeColor = System.Drawing.Color.White;
             this.btnMinimize.HoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
             this.btnMinimize.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.btnMinimize.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnMinimize.ImageSize = new System.Drawing.Size(25, 25);
             this.btnMinimize.ImageTextSpacing = 5;
             this.btnMinimize.Location = new System.Drawing.Point(767, 3);
