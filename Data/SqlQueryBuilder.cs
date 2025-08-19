@@ -109,7 +109,7 @@ namespace EasyWinFormLibrary.Data
                 }
 
                 // Build the base query
-                queryBuilder.Append($"SELECT {SanitizeIdentifier(selectColumns)} FROM {SanitizeIdentifier(tableName)}");
+                queryBuilder.Append($"SELECT {selectColumns} FROM {SanitizeIdentifier(tableName)}");
 
                 // Build WHERE clause
                 var whereConditions = new List<string>();

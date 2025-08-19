@@ -46,6 +46,7 @@ namespace EasyWinFormLibrary.WinAppNeeds
         /// Gets the current language culture name. Default is "en-US".
         /// </summary>
         public static string LanguageCultureName = "en-US";
+        public static string LanguageShortName = "ku";
 
         public static bool IsKurdishLanguage => _selectedLanguage == FormLanguage.Kurdish;
         public static bool IsArabicLanguage => _selectedLanguage == FormLanguage.Arabic;
@@ -63,15 +64,23 @@ namespace EasyWinFormLibrary.WinAppNeeds
             {
                 case FormLanguage.English:
                     ci = new CultureInfo("en-001");
+                    LanguageCultureName = "en-001";
+                    LanguageShortName = "en";
                     break;
                 case FormLanguage.Kurdish:
                     ci = new CultureInfo("en-US");
+                    LanguageCultureName = "en-US";
+                    LanguageShortName = "ku";
                     break;
                 case FormLanguage.Arabic:
                     ci = new CultureInfo("en-GB");
+                    LanguageCultureName = "en-GB";
+                    LanguageShortName = "ar";
                     break;
                 default:
                     ci = new CultureInfo("en-US");
+                    LanguageCultureName = "en-US";
+                    LanguageShortName = "ku";
                     break;
             }
 

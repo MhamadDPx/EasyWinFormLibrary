@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -192,6 +193,19 @@ namespace EasyWinFormLibrary.Extension
             return false;
         }
 
+        public static IEnumerable<Control> GetAllControls(this Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                yield return control;
+
+                foreach (Control child in control.GetAllControls())
+                {
+                    yield return child;
+                }
+            }
+
+        }
         #region Native Methods
 
         private static class NativeMethods

@@ -254,12 +254,14 @@ namespace EasyWinFormLibrary.Data
                 using (var command = new SqlCommand(query, connection))
                 {
                     await connection.OpenAsync();
-
                     if (parameters != null)
                         command.Parameters.AddRange(parameters);
 
-                    var result = await command.ExecuteScalarAsync();
-                    return (true, result != null, null);
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        bool hasData = reader.HasRows;
+                        return (true, hasData, null);
+                    }
                 }
             }
             catch (Exception ex)

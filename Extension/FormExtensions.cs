@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyWinFormLibrary.CustomControls;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,7 +10,34 @@ namespace EasyWinFormLibrary.Extension
     /// </summary>
     public static class FormExtensions
     {
-
+        public static void InhaceFormPerformance(this Form from)
+        {
+            foreach (Control control in from.GetAllControls())
+            {
+                if (control is AdvancedPanel panel)
+                    panel.OptimizeForPerformance();
+                else if (control is TableLayoutPanel tblp)
+                    tblp.OptimizeForPerformance();
+                else if (control is AdvancedGroupBox advancedGroupBox)
+                    advancedGroupBox.OptimizeForPerformance();
+                else if (control is FlowLayoutPanel flowLayoutPanel)
+                    flowLayoutPanel.OptimizeForPerformance();
+            }
+        }
+        public static void InhaceFormPerformance(this UserControl from)
+        {
+            foreach (Control control in from.GetAllControls())
+            {
+                if (control is AdvancedPanel panel)
+                    panel.OptimizeForPerformance();
+                else if (control is TableLayoutPanel tblp)
+                    tblp.OptimizeForPerformance();
+                else if (control is AdvancedGroupBox advancedGroupBox)
+                    advancedGroupBox.OptimizeForPerformance();
+                else if (control is FlowLayoutPanel flowLayoutPanel)
+                    flowLayoutPanel.OptimizeForPerformance();
+            }
+        }
         /// <summary>
         /// Resizes form to fit the working area (excluding taskbar)
         /// </summary>
