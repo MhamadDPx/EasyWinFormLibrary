@@ -101,6 +101,42 @@ namespace EasyWinFormLibrary.Extension
             }
             return defaultValue;
         }
+        /// <summary>
+        /// Converts a string to DateTime using multiple culture parsing attempts.
+        /// Tries invariant culture, British, German, and current system culture for maximum compatibility.
+        /// </summary>
+        /// <param name="value">The string to convert to DateTime</param>
+        /// <param name="defaultValue">The default DateTime value to return if conversion fails (default: DateTime.MinValue)</param>
+        /// <returns>A DateTime object, or the default value if conversion fails</returns>
+        public static DateTime TextToDateTime(this string value, DateTime defaultValue = default(DateTime))
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return defaultValue;
+
+            // Try multiple cultures for better parsing
+            var cultures = new[]
+            {
+            CultureInfo.InvariantCulture,     // MM-dd-yyyy HH:mm:ss
+            CultureInfo.GetCultureInfo("en-GB"), // dd-MM-yyyy HH:mm:ss  
+            CultureInfo.GetCultureInfo("de-DE"),  // dd.MM.yyyy HH:mm:ss
+            CultureInfo.GetCultureInfo("en-US"),  // MM/dd/yyyy HH:mm:ss
+            CultureInfo.CurrentCulture         // User's system culture
+        };
+
+            foreach (var culture in cultures)
+            {
+                if (DateTime.TryParse(value, culture, DateTimeStyles.None, out DateTime parsedDateTime))
+                {
+                    if (parsedDateTime.Year > 1753 && parsedDateTime.Year <= 9999)
+                    {
+                        return parsedDateTime;
+                    }
+                }
+            }
+
+            return defaultValue;
+        }
+
 
         /// <summary>
         /// Generates a SHA256 hash of the input string.

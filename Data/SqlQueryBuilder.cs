@@ -1,4 +1,5 @@
 ﻿using EasyWinFormLibrary.CustomControls;
+using EasyWinFormLibrary.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -109,7 +110,7 @@ namespace EasyWinFormLibrary.Data
                 }
 
                 // Build the base query
-                queryBuilder.Append($"SELECT {selectColumns} FROM {SanitizeIdentifier(tableName)}");
+                queryBuilder.Append($"SELECT {selectColumns} FROM {tableName}");
 
                 // Build WHERE clause
                 var whereConditions = new List<string>();
@@ -425,7 +426,7 @@ namespace EasyWinFormLibrary.Data
                 var operator_op = reverseSearch ? "<>" : "=";
                 var paramValue = useParameterized
                     ? $"@param_{SanitizeParameterName(columnName)}"
-                    : SanitizeValue(value);
+                    : SanitizeValue(value.TextToDouble().ToString());
                 return $"{columnName} {operator_op} {paramValue}";
             }
 
@@ -433,7 +434,7 @@ namespace EasyWinFormLibrary.Data
             {
                 var paramValue = useParameterized
                     ? $"@param_{SanitizeParameterName(columnName)}"
-                    : SanitizeValue(value);
+                    : SanitizeValue(value.TextToDouble().ToString());
                 return $"{columnName} > {paramValue}";
             }
 
@@ -441,7 +442,7 @@ namespace EasyWinFormLibrary.Data
             {
                 var paramValue = useParameterized
                     ? $"@param_{SanitizeParameterName(columnName)}"
-                    : SanitizeValue(value);
+                    : SanitizeValue(value.TextToDouble().ToString());
                 return $"{columnName} < {paramValue}";
             }
 

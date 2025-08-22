@@ -612,6 +612,69 @@ namespace EasyWinFormLibrary.CustomControls
             ValidationChanged?.Invoke(this, e);
         }
 
+        // <summary>
+        /// Occurs when the control is double-clicked
+        /// </summary>
+        [Category("Action")]
+        [Description("Occurs when the control is double-clicked")]
+        public new event EventHandler DoubleClick;
+
+        /// <summary>
+        /// Occurs when the control is clicked
+        /// </summary>
+        [Category("Action")]
+        [Description("Occurs when the control is clicked")]
+        public new event EventHandler Click;
+
+        /// <summary>
+        /// Occurs when a mouse button is pressed down
+        /// </summary>
+        [Category("Mouse")]
+        [Description("Occurs when a mouse button is pressed down")]
+        public new event MouseEventHandler MouseDown;
+
+        /// <summary>
+        /// Occurs when a mouse button is released
+        /// </summary>
+        [Category("Mouse")]
+        [Description("Occurs when a mouse button is released")]
+        public new event MouseEventHandler MouseUp;
+
+        /// <summary>
+        /// Occurs when the mouse pointer moves over the control
+        /// </summary>
+        [Category("Mouse")]
+        [Description("Occurs when the mouse pointer moves over the control")]
+        public new event MouseEventHandler MouseMove;
+
+        /// <summary>
+        /// Occurs when the mouse pointer enters the control
+        /// </summary>
+        [Category("Mouse")]
+        [Description("Occurs when the mouse pointer enters the control")]
+        public new event EventHandler MouseEnter;
+
+        /// <summary>
+        /// Occurs when the mouse pointer leaves the control
+        /// </summary>
+        [Category("Mouse")]
+        [Description("Occurs when the mouse pointer leaves the control")]
+        public new event EventHandler MouseLeave;
+
+        /// <summary>
+        /// Occurs when the control receives focus
+        /// </summary>
+        [Category("Focus")]
+        [Description("Occurs when the control receives focus")]
+        public new event EventHandler Enter;
+
+        /// <summary>
+        /// Occurs when the control loses focus
+        /// </summary>
+        [Category("Focus")]
+        [Description("Occurs when the control loses focus")]
+        public new event EventHandler Leave;
+
         #endregion
 
         #region Constructor
@@ -677,6 +740,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             if (_textBox != null)
             {
+                // Existing events
                 _textBox.KeyPress += OnTextBoxKeyPress;
                 _textBox.KeyUp += OnTextBoxKeyUp;
                 _textBox.KeyDown += OnTextBoxKeyDown;
@@ -685,10 +749,19 @@ namespace EasyWinFormLibrary.CustomControls
                 _textBox.GotFocus += OnTextBoxGotFocus;
                 _textBox.LostFocus += OnTextBoxLostFocus;
                 _textBox.Enter += OnTextBoxEnter;
-
-                // Add placeholder-specific events
                 _textBox.Enter += OnTextBoxEnterPlaceholder;
                 _textBox.Leave += OnTextBoxLeavePlaceholder;
+
+                // NEW: Add mouse and focus event forwarding
+                _textBox.DoubleClick += OnTextBoxDoubleClick;
+                _textBox.Click += OnTextBoxClick;
+                _textBox.MouseDown += OnTextBoxMouseDown;
+                _textBox.MouseUp += OnTextBoxMouseUp;
+                _textBox.MouseMove += OnTextBoxMouseMove;
+                _textBox.MouseEnter += OnTextBoxMouseEnter;
+                _textBox.MouseLeave += OnTextBoxMouseLeave;
+                _textBox.Enter += OnTextBoxEnterEvent;
+                _textBox.Leave += OnTextBoxLeaveEvent;
             }
 
             Resize += OnControlResize;
@@ -887,6 +960,141 @@ namespace EasyWinFormLibrary.CustomControls
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in OnControlResize: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the DoubleClick event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxDoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                DoubleClick?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxDoubleClick: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxClick(object sender, EventArgs e)
+        {
+            try
+            {
+                Click?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxClick: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseDown event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxMouseDown(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                MouseDown?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxMouseDown: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseUp event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxMouseUp(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                MouseUp?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxMouseUp: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseMove event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxMouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                MouseMove?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxMouseMove: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseEnter event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxMouseEnter(object sender, EventArgs e)
+        {
+            try
+            {
+                MouseEnter?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxMouseEnter: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseLeave event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxMouseLeave(object sender, EventArgs e)
+        {
+            try
+            {
+                MouseLeave?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxMouseLeave: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the Enter event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxEnterEvent(object sender, EventArgs e)
+        {
+            try
+            {
+                Enter?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxEnterEvent: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles the Leave event and forwards it to the custom control
+        /// </summary>
+        private void OnTextBoxLeaveEvent(object sender, EventArgs e)
+        {
+            try
+            {
+                Leave?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnTextBoxLeaveEvent: {ex.Message}");
             }
         }
 
@@ -1998,6 +2206,34 @@ namespace EasyWinFormLibrary.CustomControls
 
         #endregion
 
+        #region Event Forwarding Control
+
+        private bool _forwardAllEvents = true;
+
+        /// <summary>
+        /// Gets or sets whether to forward all events from the internal TextBox to the custom control
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether to forward all events from the internal TextBox to the custom control")]
+        [DefaultValue(true)]
+        public bool ForwardAllEvents
+        {
+            get => _forwardAllEvents;
+            set
+            {
+                if (_forwardAllEvents != value)
+                {
+                    _forwardAllEvents = value;
+
+                    // Reattach event handlers with new setting
+                    DetachEventHandlers();
+                    AttachEventHandlers();
+                }
+            }
+        }
+
+        #endregion
+
         #region Helper Methods
 
         /// <summary>
@@ -2071,6 +2307,7 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 if (_textBox != null)
                 {
+                    // Existing events
                     _textBox.KeyPress -= OnTextBoxKeyPress;
                     _textBox.KeyUp -= OnTextBoxKeyUp;
                     _textBox.KeyDown -= OnTextBoxKeyDown;
@@ -2079,10 +2316,19 @@ namespace EasyWinFormLibrary.CustomControls
                     _textBox.GotFocus -= OnTextBoxGotFocus;
                     _textBox.LostFocus -= OnTextBoxLostFocus;
                     _textBox.Enter -= OnTextBoxEnter;
-
-                    // Remove placeholder-specific events
                     _textBox.Enter -= OnTextBoxEnterPlaceholder;
                     _textBox.Leave -= OnTextBoxLeavePlaceholder;
+
+                    // NEW: Remove mouse and focus event handlers
+                    _textBox.DoubleClick -= OnTextBoxDoubleClick;
+                    _textBox.Click -= OnTextBoxClick;
+                    _textBox.MouseDown -= OnTextBoxMouseDown;
+                    _textBox.MouseUp -= OnTextBoxMouseUp;
+                    _textBox.MouseMove -= OnTextBoxMouseMove;
+                    _textBox.MouseEnter -= OnTextBoxMouseEnter;
+                    _textBox.MouseLeave -= OnTextBoxMouseLeave;
+                    _textBox.Enter -= OnTextBoxEnterEvent;
+                    _textBox.Leave -= OnTextBoxLeaveEvent;
                 }
 
                 Resize -= OnControlResize;
@@ -2091,6 +2337,92 @@ namespace EasyWinFormLibrary.CustomControls
             {
                 System.Diagnostics.Debug.WriteLine($"Error detaching event handlers: {ex.Message}");
             }
+        }
+
+        #endregion
+
+        #region UserControl Event Overrides - Add this region to your class
+
+        /// <summary>
+        /// Handles double-click events at the UserControl level
+        /// </summary>
+        protected override void OnDoubleClick(EventArgs e)
+        {
+            base.OnDoubleClick(e);
+            DoubleClick?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles click events at the UserControl level
+        /// </summary>
+        protected override void OnClick(EventArgs e)
+        {
+            base.OnClick(e);
+            Click?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles mouse down events at the UserControl level
+        /// </summary>
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            MouseDown?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles mouse up events at the UserControl level
+        /// </summary>
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            MouseUp?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles mouse move events at the UserControl level
+        /// </summary>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            MouseMove?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles mouse enter events at the UserControl level
+        /// </summary>
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            MouseEnter?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles mouse leave events at the UserControl level
+        /// </summary>
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            MouseLeave?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Handles enter events at the UserControl level
+        /// </summary>
+        protected override void OnEnter(EventArgs e)
+        {
+            base.OnEnter(e);
+            Enter?.Invoke(this, e);
+            _textBox?.Focus(); // Ensure internal textbox gets focus
+        }
+
+        /// <summary>
+        /// Handles leave events at the UserControl level
+        /// </summary>
+        protected override void OnLeave(EventArgs e)
+        {
+            base.OnLeave(e);
+            Leave?.Invoke(this, e);
         }
 
         #endregion
