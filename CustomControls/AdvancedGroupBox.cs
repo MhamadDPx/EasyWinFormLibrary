@@ -29,7 +29,7 @@ namespace EasyWinFormLibrary.CustomControls
         private Color _contentBackColor = Color.White;
         private Font _titleFont = null;
         private int _borderWidth = 1;
-        private int _titleBarHeight = 30;
+        private int _titleBarHeight = 40;
         private Padding _titlePadding = new Padding(8, 6, 8, 6);
         private StringAlignment _titleAlignment = StringAlignment.Near;
         private bool _showTitleBar = true; // New field for title bar visibility

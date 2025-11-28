@@ -18,6 +18,14 @@ namespace EasyWinFormLibrary.WinAppNeeds
         Arabic
     }
 
+    public enum ReportLanguage
+    {
+        Ku,
+        Ar,
+        En
+    }
+
+
     /// <summary>
     /// Manages language and culture settings for the application.
     /// Provides functionality to change the application's language and date format settings.
@@ -26,6 +34,7 @@ namespace EasyWinFormLibrary.WinAppNeeds
     {
         #region Private Fields
         private static FormLanguage _selectedLanguage = FormLanguage.Kurdish;
+        private static ReportLanguage _selectedReportLanguage = ReportLanguage.Ku;
         #endregion
 
         /// <summary>
@@ -39,6 +48,14 @@ namespace EasyWinFormLibrary.WinAppNeeds
             {
                 _selectedLanguage = value;
                 ChangeLanguage(value);
+            }
+        }
+        public static ReportLanguage SelectedReportLanguage
+        {
+            get { return _selectedReportLanguage; }
+            set
+            {
+                _selectedReportLanguage = value;
             }
         }
 

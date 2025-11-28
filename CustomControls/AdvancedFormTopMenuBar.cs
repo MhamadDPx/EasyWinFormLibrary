@@ -24,7 +24,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Default background color for the top menu bar
         /// </summary>
-        private static readonly Color DEFAULT_BACKGROUND_COLOR = Color.FromArgb(122, 121, 140);
+        public static Color DEFAULT_BACKGROUND_COLOR = Color.FromArgb(129, 129, 153);
 
         #endregion
 
@@ -38,6 +38,7 @@ namespace EasyWinFormLibrary.CustomControls
         private bool _isDragging = false;
         private Point _lastMousePosition = Point.Empty;
         private bool _enableDragAndDrop = true;
+        private bool _usePrimaryColorForBackColor = true;
 
         #endregion
 
@@ -57,6 +58,24 @@ namespace EasyWinFormLibrary.CustomControls
             set
             {
                 btnMinimize.Visible = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to show the close button
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Shows or hides the close button")]
+        [DefaultValue(true)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool ShowCloseButton
+        {
+            get { return btnClose.Visible; }
+            set
+            {
+                btnClose.Visible = value;
                 this.Invalidate();
             }
         }
@@ -181,6 +200,25 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
+        /// Gets or sets whether to use primary color for back color
+        /// </summary>
+        [Category("Advanced Behavior")]
+        [Description("Enables or disables using primary background color")]
+        [DefaultValue(true)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool UsePrimaryColorForBackColor
+        {
+            get => _usePrimaryColorForBackColor;
+            set
+            {
+                _usePrimaryColorForBackColor = value;
+                UpdatePrimaryColorUsage();
+                Invalidate();
+            }
+        }
+
+        /// <summary>
         /// Gets whether the control is currently being dragged
         /// </summary>
         [Browsable(false)]
@@ -201,6 +239,11 @@ namespace EasyWinFormLibrary.CustomControls
         {
             InitializeComponent();
             this.Height = DEFAULT_TOP_MENUBAR_HEIGHT;
+
+            // Initialize with proper default values
+            _usePrimaryColorForBackColor = true;
+            UpdatePrimaryColorUsage();
+
             InitializeDragAndDrop();
             UpdateBackgroundColor(); // Ensure initial color is applied
         }
@@ -208,6 +251,22 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Initialization Methods
+
+        /// <summary>
+        /// Updates the primary color usage and sets the appropriate background color
+        /// </summary>
+        private void UpdatePrimaryColorUsage()
+        {
+            if (_usePrimaryColorForBackColor)
+            {
+                _backgroundColor = LibrarySettings.ProgramPrimaryColor;
+            }
+            else
+            {
+                _backgroundColor = DEFAULT_BACKGROUND_COLOR;
+            }
+            UpdateBackgroundColor();
+        }
 
         /// <summary>
         /// Initializes drag and drop functionality for the control
@@ -243,7 +302,6 @@ namespace EasyWinFormLibrary.CustomControls
                 tblpForm.MouseUp += AdvancedFormTopMenuBar_MouseUp;
             }
         }
-
 
         #endregion
 
@@ -355,10 +413,15 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         private void UpdateBackgroundColor()
         {
+            // Update primary color usage if needed
+            if (_usePrimaryColorForBackColor)
+            {
+                _backgroundColor = LibrarySettings.ProgramPrimaryColor;
+            }
+
             if (TopMenuPanel != null && btnClose != null && btnMinimize != null)
             {
-                TopMenuPanel.GradientEndColor = _backgroundColor;
-                TopMenuPanel.GradientStartColor = _backgroundColor;
+                TopMenuPanel.BackColor = _backgroundColor;
                 btnClose.BackgroundColor = _backgroundColor;
                 btnMinimize.BackgroundColor = _backgroundColor;
             }
@@ -410,54 +473,6 @@ namespace EasyWinFormLibrary.CustomControls
                 // Return original location if screen detection fails
                 return location;
             }
-        }
-
-        /// <summary>
-        /// Determines whether the ShowMinimizeButton property should be serialized
-        /// </summary>
-        private bool ShouldSerializeShowMinimizeButton()
-        {
-            return ShowMinimizeButton != true;
-        }
-
-        /// <summary>
-        /// Resets the ShowMinimizeButton property to its default value
-        /// </summary>
-        private void ResetShowMinimizeButton()
-        {
-            ShowMinimizeButton = true;
-        }
-
-        /// <summary>
-        /// Determines whether the BackgroundColor property should be serialized
-        /// </summary>
-        private bool ShouldSerializeBackgroundColor()
-        {
-            return _backgroundColor != DEFAULT_BACKGROUND_COLOR;
-        }
-
-        /// <summary>
-        /// Resets the BackgroundColor property to its default value
-        /// </summary>
-        private void ResetBackgroundColor()
-        {
-            BackgroundColor = DEFAULT_BACKGROUND_COLOR;
-        }
-
-        /// <summary>
-        /// Determines whether the EnableDragAndDrop property should be serialized
-        /// </summary>
-        private bool ShouldSerializeEnableDragAndDrop()
-        {
-            return _enableDragAndDrop != true;
-        }
-
-        /// <summary>
-        /// Resets the EnableDragAndDrop property to its default value
-        /// </summary>
-        private void ResetEnableDragAndDrop()
-        {
-            EnableDragAndDrop = true;
         }
 
         #endregion
@@ -516,6 +531,19 @@ namespace EasyWinFormLibrary.CustomControls
         public void StopDrag()
         {
             ResetDragState();
+        }
+
+        /// <summary>
+        /// Refreshes the background color from the library settings
+        /// Call this method when LibrarySettings.ProgramPrimaryColor changes
+        /// </summary>
+        public void RefreshPrimaryColor()
+        {
+            if (_usePrimaryColorForBackColor)
+            {
+                UpdatePrimaryColorUsage();
+                Invalidate();
+            }
         }
 
         #endregion

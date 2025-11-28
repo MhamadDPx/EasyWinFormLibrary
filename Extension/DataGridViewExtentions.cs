@@ -387,7 +387,7 @@ namespace EasyWinFormLibrary.Extension
                 Name = columnName,
                 HeaderText = headerText ?? columnName,
                 ReadOnly = readOnly,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
         }
 

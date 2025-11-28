@@ -15,7 +15,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Default background color for the message box title.
         /// </summary>
-        private static readonly Color DEFAULT_TITLE_COLOR = Color.FromArgb(122, 121, 140); // Default blue color
+        private static readonly Color DEFAULT_TITLE_COLOR = LibrarySettings.ProgramPrimaryColor; // Default blue color
 
         #endregion
 

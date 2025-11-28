@@ -32,7 +32,7 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Default header background color
         /// </summary>
-        private static readonly Color DEFAULT_HEADER_COLOR = Color.FromArgb(186, 198, 220);
+        private static readonly Color DEFAULT_HEADER_COLOR = Color.FromArgb(129, 129, 153);
 
         /// <summary>
         /// Default alternating row color
@@ -87,6 +87,8 @@ namespace EasyWinFormLibrary.CustomControls
         /// Flag indicating whether columns can be hidden
         /// </summary>
         private bool _allowHideColumns = true;
+
+        private bool _usePrimaryColorForColumnsHeaderColor = true;
 
         /// <summary>
         /// Context menu for right-click operations
@@ -261,27 +263,6 @@ namespace EasyWinFormLibrary.CustomControls
         #region Properties
 
         /// <summary>
-        /// Gets or sets the header background color
-        /// </summary>
-        [Category("Advanced Appearance")]
-        [Description("Background color for column headers")]
-        [DefaultValue(typeof(Color), "186, 198, 220")]
-        [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public Color ColumnsHeaderColor
-        {
-            get { return _headerBackColor; }
-            set
-            {
-                if (_headerBackColor != value)
-                {
-                    _headerBackColor = value;
-                    UpdateHeaderColors();
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the column types for search functionality
         /// </summary>
         [Category("Advanced Data")]
@@ -358,6 +339,43 @@ namespace EasyWinFormLibrary.CustomControls
         {
             get { return _allowHideColumns; }
             set { _allowHideColumns = value; }
+        }
+
+        // <summary>
+        /// Gets or sets the header background color
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Background color for column headers")]
+        [DefaultValue(typeof(Color), "186, 198, 220")]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Color ColumnsHeaderColor
+        {
+            get { return _headerBackColor; }
+            set
+            {
+                if (_headerBackColor != value)
+                {
+                    _headerBackColor = value;
+                    UpdateHeaderColors();
+                }
+            }
+        }
+
+        [Category("Advanced Behavior")]
+        [Description("Enables or disables using primary background color")]
+        [DefaultValue(true)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool UsePrimaryBackColorForColumnsHeaderColor
+        {
+            get => _usePrimaryColorForColumnsHeaderColor;
+            set
+            {
+                _usePrimaryColorForColumnsHeaderColor = value;
+                UpdatePrimaryColorUsage(); // Use the new method
+                Invalidate();
+            }
         }
 
         /// <summary>
@@ -517,6 +535,11 @@ namespace EasyWinFormLibrary.CustomControls
         {
             InitializeComponent();
             InitializeContextMenu();
+
+            // Initialize with proper default values
+            _usePrimaryColorForColumnsHeaderColor = true;
+            UpdatePrimaryColorUsage(); // Use new method instead of direct assignment
+
             SetDefaultStyles();
         }
 
@@ -564,8 +587,30 @@ namespace EasyWinFormLibrary.CustomControls
         /// </summary>
         private void UpdateHeaderColors()
         {
+            // Update primary color usage if needed
+            if (_usePrimaryColorForColumnsHeaderColor)
+            {
+                _headerBackColor = LibrarySettings.ProgramPrimaryColor;
+            }
+
             this.ColumnHeadersDefaultCellStyle.BackColor = _headerBackColor;
             this.ColumnHeadersDefaultCellStyle.SelectionBackColor = _headerBackColor;
+        }
+
+        /// <summary>
+        /// Updates the primary color usage and sets the appropriate header color
+        /// </summary>
+        private void UpdatePrimaryColorUsage()
+        {
+            if (_usePrimaryColorForColumnsHeaderColor)
+            {
+                _headerBackColor = LibrarySettings.ProgramPrimaryColor;
+            }
+            else
+            {
+                _headerBackColor = DEFAULT_HEADER_COLOR;
+            }
+            UpdateHeaderColors();
         }
 
         /// <summary>
@@ -576,6 +621,7 @@ namespace EasyWinFormLibrary.CustomControls
             this.AlternatingRowsDefaultCellStyle.BackColor = _enableAlternatingRowColors ?
                 _alternatingRowColor : this.DefaultCellStyle.BackColor;
         }
+
 
         #endregion
 
@@ -959,25 +1005,37 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Applies grouping format to cells for visual representation
+        /// Applies grouping format to entire rows for visual representation
         /// </summary>
         /// <param name="args">Cell formatting event arguments</param>
         private void ApplyGroupingFormat(DataGridViewCellFormattingEventArgs args)
         {
-            if (args.ColumnIndex != this.Columns[_groupByColumn].Index) return;
+            if (string.IsNullOrEmpty(_groupByColumn) || args.RowIndex < 0) return;
 
-            if (IsRepeatedCellValue(args.RowIndex))
+            // Get the current row and grouping column value
+            DataGridViewRow currentRow = this.Rows[args.RowIndex];
+            object groupValue = currentRow.Cells[_groupByColumn].Value ?? string.Empty;
+
+            // Skip if this is a repeated value in the grouping column
+            if (args.ColumnIndex == this.Columns[_groupByColumn].Index && IsRepeatedCellValue(args.RowIndex))
             {
                 args.Value = string.Empty;
+                return;
             }
-            else
+
+            // Assign color to the entire row based on group value
+            if (!_groupColors.ContainsKey(groupValue))
             {
-                object cellValue = args.Value ?? string.Empty;
-                if (!_groupColors.ContainsKey(cellValue))
-                {
-                    _groupColors[cellValue] = GetRandomColor();
-                }
-                this.Rows[args.RowIndex].DefaultCellStyle.BackColor = _groupColors[cellValue];
+                _groupColors[groupValue] = GetRandomColor();
+            }
+
+            // Apply the color to the entire row
+            currentRow.DefaultCellStyle.BackColor = _groupColors[groupValue];
+
+            // Optional: Keep header cells with original color for better visibility
+            if (this.ColumnHeadersDefaultCellStyle.BackColor != Color.Empty)
+            {
+                currentRow.DefaultCellStyle.SelectionBackColor = Color.LightSteelBlue; // Optional: different selection color
             }
         }
 
@@ -998,14 +1056,22 @@ namespace EasyWinFormLibrary.CustomControls
         }
 
         /// <summary>
-        /// Generates a random light color for grouping visualization
+        /// Generates a random pastel color for group background
         /// </summary>
-        /// <returns>A light color for group background</returns>
+        /// <returns>A light pastel color for group background</returns>
         private Color GetRandomColor()
         {
-            return Color.FromArgb(_random.Next(MIN_GROUP_COLOR_VALUE, MAX_GROUP_COLOR_VALUE),
-                                 _random.Next(MIN_GROUP_COLOR_VALUE, MAX_GROUP_COLOR_VALUE),
-                                 _random.Next(MIN_GROUP_COLOR_VALUE, MAX_GROUP_COLOR_VALUE));
+            // Generate pastel colors that are easier on the eyes
+            int r = _random.Next(MIN_GROUP_COLOR_VALUE - 30, MAX_GROUP_COLOR_VALUE);
+            int g = _random.Next(MIN_GROUP_COLOR_VALUE - 30, MAX_GROUP_COLOR_VALUE);
+            int b = _random.Next(MIN_GROUP_COLOR_VALUE - 30, MAX_GROUP_COLOR_VALUE);
+
+            // Ensure we don't get colors that are too dark
+            r = Math.Min(255, Math.Max(180, r));
+            g = Math.Min(255, Math.Max(180, g));
+            b = Math.Min(255, Math.Max(180, b));
+
+            return Color.FromArgb(r, g, b);
         }
 
         #endregion
@@ -1527,6 +1593,19 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Refreshes the header color from the library settings
+        /// Call this method when LibrarySettings.ProgramPrimaryColor changes
+        /// </summary>
+        public void RefreshPrimaryColor()
+        {
+            if (_usePrimaryColorForColumnsHeaderColor)
+            {
+                UpdatePrimaryColorUsage();
+                Invalidate();
+            }
+        }
 
         /// <summary>
         /// Refreshes the entire DataGridView display and invalidates cached data

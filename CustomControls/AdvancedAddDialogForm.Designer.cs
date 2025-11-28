@@ -62,7 +62,7 @@
             this.dgvBackPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvBackPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.dgvBackPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(26)))), ((int)(((byte)(52)))));
             this.dgvBackPanel.BorderRadius = 10;
             this.dgvBackPanel.BorderThickness = 0;
             this.dgvBackPanel.Controls.Add(this.DGV);
@@ -70,6 +70,7 @@
             this.dgvBackPanel.Name = "dgvBackPanel";
             this.dgvBackPanel.Size = new System.Drawing.Size(484, 434);
             this.dgvBackPanel.TabIndex = 1;
+            this.dgvBackPanel.UsePrimaryColorForBackColor = true;
             // 
             // DGV
             // 
@@ -86,15 +87,15 @@
             this.DGV.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.DGV.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(26)))), ((int)(((byte)(52)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Rabar_013", 12F, System.Drawing.FontStyle.Bold);
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(26)))), ((int)(((byte)(52)))));
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.DGV.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.DGV.ColumnHeadersHeight = 40;
-            this.DGV.ColumnsHeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(122)))), ((int)(((byte)(121)))), ((int)(((byte)(140)))));
+            this.DGV.ColumnsHeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(26)))), ((int)(((byte)(52)))));
             this.DGV.ColumnsMenuStrip = null;
             this.DGV.ColumnsToSkip = new string[0];
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -199,6 +200,7 @@
             // formTopMenuBar1
             // 
             this.formTopMenuBar1.BackColor = System.Drawing.Color.White;
+            this.formTopMenuBar1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(26)))), ((int)(((byte)(52)))));
             this.formTopMenuBar1.Dock = System.Windows.Forms.DockStyle.Top;
             this.formTopMenuBar1.Font = new System.Drawing.Font("Rabar_013", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.formTopMenuBar1.FormTitlArabic = "ملاحضة";

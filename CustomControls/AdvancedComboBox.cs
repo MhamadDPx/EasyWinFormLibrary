@@ -587,7 +587,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             try
             {
-                string distinctClause = _removeDuplicates ? "" : "DISTINCT";
+                string distinctClause = _removeDuplicates ? "DISTINCT" : "";
                 string whereClause = !_whereCondition.IsEmpty() ? $" WHERE {_whereCondition}" : "";
                 string query = $"SELECT {distinctClause} TOP {_maxResults} {TableColumns} FROM {_tableName}{whereClause}";
 
@@ -613,7 +613,7 @@ namespace EasyWinFormLibrary.CustomControls
         {
             try
             {
-                string beforeSearchText = this.Text.Trim();
+                string beforeSearchText = this.Text;
                 string searchCondition = MakeSearchColumn(_columnFilterNames, _columnFilterTypes,
                                                         beforeSearchText.Split());
 

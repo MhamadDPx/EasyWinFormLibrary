@@ -18,6 +18,11 @@ namespace EasyWinFormLibrary.CustomControls
         #region Constants
 
         /// <summary>
+        /// Flag indicating whether to use primary color for background color.
+        /// </summary>
+        private bool _usePrimaryColorForBackColor = false; 
+
+        /// <summary>
         /// Default background color for the button.
         /// </summary>
         private static readonly Color DEFAULT_BACKGROUND_COLOR = Color.White;
@@ -422,6 +427,28 @@ namespace EasyWinFormLibrary.CustomControls
         [Category("Advanced Appearance")]
         public ContentAlignment TextAlign { get; set; } = ContentAlignment.MiddleCenter;
 
+
+        /// <summary>
+        /// Gets or sets whether to use primary color for background color
+        /// </summary>
+        [Category("Advanced Behavior")]
+        [Description("Enables or disables using primary background color")]
+        [DefaultValue(false)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool UsePrimaryColorForBackColor
+        {
+            get => _usePrimaryColorForBackColor;
+            set
+            {
+                _usePrimaryColorForBackColor = value;
+                UpdatePrimaryColorUsage();
+                if (_isInitialized)
+                {
+                    Invalidate();
+                }
+            }
+        }
         #endregion
 
         #region Constructor
@@ -433,6 +460,11 @@ namespace EasyWinFormLibrary.CustomControls
         {
             InitializeComponent();
             SetDefaultProperties();
+
+            // Initialize with proper default values
+            _usePrimaryColorForBackColor = false;
+            UpdatePrimaryColorUsage();
+
             _isInitialized = true;
         }
 
@@ -458,6 +490,25 @@ namespace EasyWinFormLibrary.CustomControls
             this.BackColor = Color.Transparent; // Let custom drawing handle background
             this.ForeColor = textColor;
             this.Resize += new EventHandler(Button_Resize);
+        }
+
+        /// <summary>
+        /// Updates the primary color usage and sets the appropriate background color
+        /// </summary>
+        private void UpdatePrimaryColorUsage()
+        {
+            if (_usePrimaryColorForBackColor)
+            {
+                backgroundColor = LibrarySettings.ProgramPrimaryColor;
+                pressedBackColor = LibrarySettings.ProgramPrimaryColor;
+                hoverBackColor = LibrarySettings.ProgramPrimaryDimColor;
+            }
+            else
+            {
+                backgroundColor = DEFAULT_BACKGROUND_COLOR;
+                pressedBackColor = DEFAULT_PRESSED_BACKGROUND_COLOR;
+                hoverBackColor = DEFAULT_HOVER_BACKGROUND_COLOR;
+            }
         }
         #endregion
 
@@ -1066,6 +1117,22 @@ namespace EasyWinFormLibrary.CustomControls
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Refreshes the background color from the library settings
+        /// Call this method when LibrarySettings.ProgramPrimaryColor changes
+        /// </summary>
+        public void RefreshPrimaryColor()
+        {
+            if (_usePrimaryColorForBackColor)
+            {
+                UpdatePrimaryColorUsage();
+                if (_isInitialized)
+                {
+                    Invalidate();
+                }
+            }
+        }
 
         /// <summary>
         /// Sets border properties in one method call (from AdvancedActionButton)

@@ -117,18 +117,125 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnSave.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAPRJREFUOE/lVEsSwUAUnEIY2eFQ5FQOgCr5LFhZOwwRv5uwfKN7MmFWKFI2uqqr
-        Ji+vu95LOlG/x9o0grlEQSIjnl31CyxNV8dy1okc1VS0q36B0vAAFnUaFmD+L4YL04LZDtyqsWm66gsw
-        DhMJLTHRnZxoaQYwK19KKn1Xe/RUOj9SQSaRzmSPaHC1BxM72SGM5Ury7Gp+T0GtzWkFXugUjankaPK5
-        pcgaJnLhGQYb735uNdC2Mxk6O4DjjjE+yZUqrkyHa0JYrjyTnq35PZXu7a/oo5fyDHjwnA78m2CXhrX/
-        HE40rccQcWBObc7ejkZtUOoGIHEAFg+9DocAAAAASUVORK5CYII=
-</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="crt_Viewer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <metadata name="dgvElipse.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="crt_Viewer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 40</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="crt_Viewer.ShowCloseButton" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="crt_Viewer.ShowGroupTreeButton" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="crt_Viewer.ShowLogo" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="crt_Viewer.ShowParameterPanelButton" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="crt_Viewer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1139, 688</value>
+  </data>
+  <data name="crt_Viewer.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <assembly alias="CrystalDecisions.Windows.Forms" name="CrystalDecisions.Windows.Forms, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+  <data name="crt_Viewer.ToolPanelView" type="CrystalDecisions.Windows.Forms.ToolPanelViewType, CrystalDecisions.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="&gt;&gt;crt_Viewer.Name" xml:space="preserve">
+    <value>crt_Viewer</value>
+  </data>
+  <data name="&gt;&gt;crt_Viewer.Type" xml:space="preserve">
+    <value>CrystalDecisions.Windows.Forms.CrystalReportViewer, CrystalDecisions.Windows.Forms, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304</value>
+  </data>
+  <data name="&gt;&gt;crt_Viewer.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;crt_Viewer.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="formTopMenuBar1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="formTopMenuBar1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Rabar_013, 10.2pt, style=Bold</value>
+  </data>
+  <data name="formTopMenuBar1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="formTopMenuBar1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1139, 40</value>
+  </data>
+  <data name="formTopMenuBar1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;formTopMenuBar1.Name" xml:space="preserve">
+    <value>formTopMenuBar1</value>
+  </data>
+  <data name="&gt;&gt;formTopMenuBar1.Type" xml:space="preserve">
+    <value>EasyWinFormLibrary.CustomControls.AdvancedFormTopMenuBar, EasyWinFormLibrary, Version=1.1.8.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;formTopMenuBar1.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;formTopMenuBar1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1139, 728</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
   </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>120, 120</value>
+  </data>
+  <data name="$this.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1139, 728</value>
+  </data>
+  <data name="$this.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Yes</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>Manual</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>ڕاپۆرت</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>frm_CrtViewer</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

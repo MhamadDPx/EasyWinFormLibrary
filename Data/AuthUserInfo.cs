@@ -99,7 +99,6 @@ namespace EasyWinFormLibrary.Data
         public static void SetUserActions(DataTable UserActionsDataTable)
         {
             bool NeedReturn = false;
-
             // Check for Admin privileges
             if (UserActionsDataTable.AsEnumerable().Where(row => row.Field<string>("action_name") == "Admin").Count() > 0)
             {

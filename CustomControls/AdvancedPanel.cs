@@ -58,6 +58,7 @@ namespace EasyWinFormLibrary.CustomControls
     [Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design")]
     public class AdvancedPanel : Panel
     {
+        private readonly Color DEFAULT_BACK_COLOR = Color.FromArgb(129, 129, 153);
         #region Windows API Declarations
         [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(
@@ -97,6 +98,7 @@ namespace EasyWinFormLibrary.CustomControls
         private Color _highlightColor = Color.White;
         private Color _shadowBorderColor = Color.Gray;
         private AdvancedPanelBorderSides _AdvancedPanelBorderSides = AdvancedPanelBorderSides.All;
+        private bool _usePrimaryColorForBackColor = false;
 
         // Performance optimization fields
         private IntPtr _currentRegion = IntPtr.Zero;
@@ -193,6 +195,29 @@ namespace EasyWinFormLibrary.CustomControls
                     _useGradient = value;
                     Invalidate();
                 }
+            }
+        }
+        /// <summary>
+        /// Gets or sets whether to use primary color for back color
+        /// </summary>
+        [Category("Advanced Appearance")]
+        [Description("Enables back color use primary back color")]
+        [DefaultValue(false)]
+        public bool UsePrimaryColorForBackColor
+        {
+            get { return _usePrimaryColorForBackColor; }
+            set
+            {
+                _usePrimaryColorForBackColor = value;
+                if (value)
+                {
+                    BackColor = LibrarySettings.ProgramPrimaryColor;
+                }
+                else
+                {
+                    BackColor = DEFAULT_BACK_COLOR;
+                }
+                Invalidate();
             }
         }
 
@@ -425,8 +450,7 @@ namespace EasyWinFormLibrary.CustomControls
                      ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 
-            // Set default properties
-            BackColor = Color.Transparent;
+            BackColor = _usePrimaryColorForBackColor ? LibrarySettings.ProgramPrimaryColor : DEFAULT_BACK_COLOR;
             Size = new Size(200, 100);
         }
 
@@ -592,7 +616,8 @@ namespace EasyWinFormLibrary.CustomControls
             // Use BeginInvoke to ensure the handle is fully created
             if (IsHandleCreated)
             {
-                BeginInvoke(new MethodInvoker(() => {
+                BeginInvoke(new MethodInvoker(() =>
+                {
                     UpdateRegionIfNeeded();
                     Invalidate();
                 }));
