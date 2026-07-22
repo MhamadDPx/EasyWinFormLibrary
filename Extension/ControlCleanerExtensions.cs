@@ -335,7 +335,7 @@ namespace EasyWinFormLibrary.Extension
             {
                 case ControlType.DateTime:
                     dtp.Format = DateTimePickerFormat.Custom;
-                    dtp.CustomFormat = "yyyy-MM-dd HH:mm tt";
+                    dtp.CustomFormat = "yyyy-MM-dd HH:mm:ss";
                     dtp.Value = DateTime.Now;
                     break;
 

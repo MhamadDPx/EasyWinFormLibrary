@@ -5,9 +5,11 @@ VisualStudioVersion = 17.14.36310.24 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormLibrary", "EasyWinFormLibrary.csproj", "{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormLibraryTest", "..\EasyWinFormLibraryTest\EasyWinFormLibraryTest.csproj", "{CC1F37F5-4000-426B-8B2F-FAEF3241031A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormLibrary.Reporting", "EasyWinFormLibrary.Reporting\EasyWinFormLibrary.Reporting.csproj", "{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormUI", "..\EasyWinFormUI\EasyWinFormUI.csproj", "{99B89CD7-EEE8-4E90-A017-CFF9E4AF8122}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormLibrary.Logging", "EasyWinFormLibrary.Logging\EasyWinFormLibrary.Logging.csproj", "{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWinFormLibrary.Excel", "EasyWinFormLibrary.Excel\EasyWinFormLibrary.Excel.csproj", "{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,18 @@ Global
 		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC1F37F5-4000-426B-8B2F-FAEF3241031A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC1F37F5-4000-426B-8B2F-FAEF3241031A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC1F37F5-4000-426B-8B2F-FAEF3241031A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC1F37F5-4000-426B-8B2F-FAEF3241031A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99B89CD7-EEE8-4E90-A017-CFF9E4AF8122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99B89CD7-EEE8-4E90-A017-CFF9E4AF8122}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99B89CD7-EEE8-4E90-A017-CFF9E4AF8122}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99B89CD7-EEE8-4E90-A017-CFF9E4AF8122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9285DBE6-C9A8-4FC0-9947-8BCD25BA79D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

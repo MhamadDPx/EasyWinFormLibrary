@@ -6,14 +6,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using EasyWinFormLibrary.WinAppNeeds;
-using Microsoft.Office.Interop.Excel;
-using XlBorderWeight = Microsoft.Office.Interop.Excel.XlBorderWeight;
-using XlLineStyle = Microsoft.Office.Interop.Excel.XlLineStyle;
 
 namespace EasyWinFormLibrary.CustomControls
 {
@@ -52,7 +48,6 @@ namespace EasyWinFormLibrary.CustomControls
         /// <summary>
         /// Default header row height for Excel export
         /// </summary>
-        private const double EXCEL_HEADER_ROW_HEIGHT = 25.0;
 
         #endregion
 
@@ -1079,7 +1074,16 @@ namespace EasyWinFormLibrary.CustomControls
         #region Export Methods
 
         /// <summary>
-        /// Exports data asynchronously to Excel format
+        /// Pluggable export provider used by <see cref="ExportDataAsync"/>. Core has no
+        /// export implementation of its own (and no Office/COM dependency) — install the
+        /// optional EasyWinFormLibrary.Excel package and set this once at startup:
+        /// <c>AdvancedDataGridView.ExportProvider = new ExcelGridExportProvider();</c>
+        /// or assign your own <see cref="IGridExportProvider"/> to export to any format.
+        /// </summary>
+        public static IGridExportProvider ExportProvider { get; set; }
+
+        /// <summary>
+        /// Exports data asynchronously using the configured <see cref="ExportProvider"/>.
         /// </summary>
         public async Task ExportDataAsync()
         {
@@ -1089,11 +1093,17 @@ namespace EasyWinFormLibrary.CustomControls
                 return;
             }
 
+            if (ExportProvider == null)
+            {
+                ShowErrorMessage("No export provider configured. Install EasyWinFormLibrary.Excel and set AdvancedDataGridView.ExportProvider at startup, or assign a custom IGridExportProvider.");
+                return;
+            }
+
             try
             {
                 var eventArgs = new ExportEventArgs
                 {
-                    FilePath = GetExportFilePath(),
+                    FilePath = Path.Combine(ExportPath, $"Export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"),
                     RowCount = this.Rows.Count,
                     ColumnCount = this.Columns.Cast<DataGridViewColumn>().Count(col => col.Visible)
                 };
@@ -1108,7 +1118,7 @@ namespace EasyWinFormLibrary.CustomControls
                     {
                         try
                         {
-                            ExportToExcel(true);
+                            ExportProvider.Export(this, eventArgs.FilePath, showResult: true);
                         }
                         catch (Exception ex)
                         {
@@ -1125,182 +1135,6 @@ namespace EasyWinFormLibrary.CustomControls
             catch (Exception ex)
             {
                 ShowErrorMessage($"Export operation failed: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Exports data to Excel format with formatting and styling
-        /// </summary>
-        /// <param name="showExcel">Whether to show Excel application after export</param>
-        private void ExportToExcel(bool showExcel = true)
-        {
-            Microsoft.Office.Interop.Excel.Application excelApp = null;
-            Workbook excelWorkBook = null;
-            Worksheet excelWorkSheet = null;
-
-            try
-            {
-                PrepareForExport();
-
-                excelApp = new Microsoft.Office.Interop.Excel.Application();
-                excelApp.Visible = showExcel;
-                excelWorkBook = excelApp.Workbooks.Add(Missing.Value);
-                excelWorkSheet = (Worksheet)excelWorkBook.Worksheets.get_Item(1);
-
-                // Paste data
-                excelWorkSheet.PasteSpecial(excelWorkSheet.Range["A1"], Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
-
-                // Format the worksheet
-                FormatExcelWorksheet(excelWorkSheet);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Excel export failed: {ex.Message}", ex);
-            }
-            finally
-            {
-                RestoreAfterExport();
-                if (!showExcel)
-                {
-                    CleanupExcelObjects(excelWorkSheet, excelWorkBook, excelApp);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Prepares the DataGridView for export operations by configuring visibility and clipboard
-        /// </summary>
-        private void PrepareForExport()
-        {
-            this.Invoke((MethodInvoker)delegate
-            {
-                // Hide non-text columns temporarily
-                foreach (DataGridViewColumn column in this.Columns)
-                {
-                    if (!(column is DataGridViewTextBoxColumn))
-                    {
-                        column.Tag = column.Visible ? "WasVisible" : "WasHidden";
-                        column.Visible = false;
-                    }
-                }
-
-                // Configure clipboard settings
-                this.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-                this.MultiSelect = true;
-                this.SelectAll();
-
-                // Copy to clipboard
-                DataObject dataObj = this.GetClipboardContent();
-                if (dataObj != null)
-                    Clipboard.SetDataObject(dataObj);
-            });
-        }
-
-        /// <summary>
-        /// Restores the DataGridView state after export operations
-        /// </summary>
-        private void RestoreAfterExport()
-        {
-            this.Invoke((MethodInvoker)delegate
-            {
-                // Restore column visibility
-                foreach (DataGridViewColumn column in this.Columns)
-                {
-                    if (!(column is DataGridViewTextBoxColumn))
-                    {
-                        column.Visible = column.Tag?.ToString() == "WasVisible";
-                        column.Tag = null;
-                    }
-                }
-
-                this.ClearSelection();
-                this.MultiSelect = false;
-            });
-        }
-
-        /// <summary>
-        /// Formats Excel worksheet with professional styling and borders
-        /// </summary>
-        /// <param name="worksheet">Excel worksheet to format</param>
-        private void FormatExcelWorksheet(Worksheet worksheet)
-        {
-            try
-            {
-                // Set row height for header
-                worksheet.Rows[1].RowHeight = EXCEL_HEADER_ROW_HEIGHT;
-
-                // Format header row
-                Range headerRange = worksheet.Range["A1", worksheet.Cells[1, worksheet.UsedRange.Columns.Count]];
-                headerRange.Interior.Color = ColorTranslator.ToOle(_headerBackColor);
-                headerRange.Font.Bold = true;
-                headerRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-
-                // Add borders to all data
-                Range dataRange = worksheet.Range["A1"].Resize[worksheet.UsedRange.Rows.Count, worksheet.UsedRange.Columns.Count];
-                dataRange.Borders.LineStyle = XlLineStyle.xlContinuous;
-                dataRange.Borders.Weight = XlBorderWeight.xlThin;
-
-                // Auto-fit columns if enabled
-                if (_autoFitColumns)
-                {
-                    for (int i = 1; i <= worksheet.UsedRange.Columns.Count; i++)
-                    {
-                        worksheet.Columns[i].AutoFit();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log formatting error but don't fail the export
-                System.Diagnostics.Debug.WriteLine($"Excel formatting error: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Gets the export file path with timestamp for uniqueness
-        /// </summary>
-        /// <returns>Full path for the Excel export file</returns>
-        private string GetExportFilePath()
-        {
-            return Path.Combine(ExportPath, $"Export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
-        }
-
-        /// <summary>
-        /// Cleans up Excel COM objects to prevent memory leaks
-        /// </summary>
-        /// <param name="worksheet">Excel worksheet to cleanup</param>
-        /// <param name="workbook">Excel workbook to cleanup</param>
-        /// <param name="application">Excel application to cleanup</param>
-        private void CleanupExcelObjects(Worksheet worksheet, Workbook workbook, Microsoft.Office.Interop.Excel.Application application)
-        {
-            try
-            {
-                if (worksheet != null)
-                {
-                    Marshal.ReleaseComObject(worksheet);
-                    worksheet = null;
-                }
-
-                if (workbook != null)
-                {
-                    workbook.Close(false);
-                    Marshal.ReleaseComObject(workbook);
-                    workbook = null;
-                }
-
-                if (application != null)
-                {
-                    application.Quit();
-                    Marshal.ReleaseComObject(application);
-                    application = null;
-                }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"COM cleanup error: {ex.Message}");
             }
         }
 

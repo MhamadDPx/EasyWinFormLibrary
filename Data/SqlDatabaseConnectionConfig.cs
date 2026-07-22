@@ -80,7 +80,7 @@ namespace EasyWinFormLibrary.Data
         {
             if (IntegratedSecurity)
             {
-                return $"Server={ServerName};{(HasDatabaseName ? $"Database={ActualDatabaseName}" : string.Empty)};Integrated Security=True;TrustServerCertificate=True;";
+                return $"Server={ServerName},{Port};{(HasDatabaseName ? $"Database={ActualDatabaseName}" : string.Empty)};Integrated Security=True;";
             }
             else
             {
