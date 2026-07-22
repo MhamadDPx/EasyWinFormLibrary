@@ -39,7 +39,8 @@ namespace EasyWinFormLibrary.Data
         /// <remarks>
         /// This method automatically manages database connections and provides comprehensive error handling.
         /// In DEBUG mode, detailed error messages are shown in alerts. In RELEASE mode, generic error messages
-        /// are displayed to users while detailed errors are logged to Sentry.
+        /// are displayed to users while detailed errors are logged via EasyLog.Logger
+        /// (a no-op unless the app assigns a logger, e.g. via the optional EasyWinFormLibrary.Logging package).
         /// </remarks>
         /// <example>
         /// <code>
@@ -90,7 +91,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert(ex.Message, ex.Message, ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in GetDataAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in GetDataAsync.");
 #endif
                 return (false, null, ex.Message);
             }
@@ -155,7 +156,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in GetRowsAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in GetRowsAsync.");
 #endif
                 return (false, null, ex.Message);
             }
@@ -211,7 +212,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in GetSingleValueAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in GetSingleValueAsync.");
 #endif
                 return (false, string.Empty, ex.Message);
             }
@@ -270,7 +271,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in HasDataAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in HasDataAsync.");
 #endif
                 return (false, false, ex.Message);
             }
@@ -361,7 +362,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in HasDataAsync<T>.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in HasDataAsync<T>.");
 #endif
                 return (false, false, default(T), ex.Message);
             }
@@ -432,7 +433,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in GetMaxNumberAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in GetMaxNumberAsync.");
 #endif
                 return (false, "1", ex.Message);
             }
@@ -501,7 +502,7 @@ namespace EasyWinFormLibrary.Data
 #if DEBUG
                             AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
-                            LogManager.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync transaction.");
+                            EasyLog.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync transaction.");
 #endif
                             return (false, ex.Message);
                         }
@@ -514,7 +515,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشkلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in ExecuteCommandAsync.");
 #endif
                 return (false, ex.Message);
             }
@@ -599,7 +600,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in InsertDataAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in InsertDataAsync.");
 #endif
                 return (false, ex.Message);
             }
@@ -690,7 +691,7 @@ namespace EasyWinFormLibrary.Data
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in UpdateDataAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in UpdateDataAsync.");
 #endif
                 return (false, ex.Message);
             }
@@ -768,7 +769,7 @@ namespace EasyWinFormLibrary.Data
         AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in DeleteDataAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in DeleteDataAsync.");
 #endif
                 return (false, ex.Message);
             }
@@ -876,7 +877,7 @@ namespace EasyWinFormLibrary.Data
         AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in BulkInsertAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in BulkInsertAsync.");
 #endif
                 return (false, 0, new List<string> { ex.Message });
             }
@@ -1005,7 +1006,7 @@ namespace EasyWinFormLibrary.Data
 #if DEBUG
                     AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
-                            LogManager.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync transaction.");
+                            EasyLog.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync transaction.");
 #endif
                             return (false, 0, ex.Message);
                         }
@@ -1018,7 +1019,7 @@ namespace EasyWinFormLibrary.Data
         AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا: " + ex.Message, $"حدثت مشكلة : " + ex.Message, $"Error: " + ex.Message, AdvancedAlert.AlertType.Error, 5);
 #else
                 AdvancedAlert.ShowAlert($"کێشەیەک ڕوویدا", $"حدثت مشكلة", $"Error", AdvancedAlert.AlertType.Error, 5);
-                LogManager.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync.");
+                EasyLog.Logger?.Error(ex, "Something went wrong in ExecuteMultipleCommandsAsync.");
 #endif
                 return (false, 0, ex.Message);
             }

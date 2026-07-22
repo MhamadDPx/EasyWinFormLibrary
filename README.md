@@ -36,6 +36,15 @@ The goal of this project is to make WinForms development faster and easier by re
 
 Built for developers who want cleaner, more professional, and more productive Windows desktop applications.
 
+**As of v2.0.0**, the core package has no dependency on Office, Crystal Reports, Serilog, or Sentry — those live in optional companion packages so `Install-Package EasyWinFormLibrary` stays lightweight.
+
+| Package | What it adds | Depends on |
+|---|---|---|
+| `EasyWinFormLibrary` | Controls, SQL Server helpers, extensions | .NET Framework 4.8 only |
+| `EasyWinFormLibrary.Excel` | Excel export for `AdvancedDataGridView` | Microsoft Excel (Interop) |
+| `EasyWinFormLibrary.Reporting` | Crystal Reports viewer form | SAP Crystal Reports runtime |
+| `EasyWinFormLibrary.Logging` | Routes internal error logging to Sentry | Serilog, Sentry |
+
 ---
 
 # Features
@@ -107,7 +116,7 @@ Built for developers who want cleaner, more professional, and more productive Wi
 
 ## NuGet Package
 
-Install using NuGet Package Manager:
+Install the core library:
 
 ```powershell
 Install-Package EasyWinFormLibrary
@@ -117,6 +126,14 @@ or using .NET CLI:
 
 ```powershell
 dotnet add package EasyWinFormLibrary
+```
+
+Add the optional modules only if you need them:
+
+```powershell
+Install-Package EasyWinFormLibrary.Excel      # Excel export for AdvancedDataGridView
+Install-Package EasyWinFormLibrary.Reporting  # Crystal Reports viewer
+Install-Package EasyWinFormLibrary.Logging    # Sentry/Serilog error logging
 ```
 
 ---
@@ -136,6 +153,19 @@ textBox.AllowNegative = false;
 textBox.PlaceholderText = "Enter value";
 
 this.Controls.Add(textBox);
+```
+
+### Enabling Excel export (optional module)
+
+```csharp
+using EasyWinFormLibrary.Excel;
+using EasyWinFormLibrary.CustomControls;
+
+// Once, at application startup:
+AdvancedDataGridView.ExportProvider = new ExcelGridExportProvider();
+
+// Anywhere you use the grid:
+await myAdvancedDataGridView.ExportDataAsync();
 ```
 
 ---
